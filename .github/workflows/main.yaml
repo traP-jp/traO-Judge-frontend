@@ -1,0 +1,31 @@
+name: CI (main)
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  package:
+    name: node package install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+  build:
+    name: type and build check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run build
