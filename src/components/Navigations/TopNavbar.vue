@@ -5,7 +5,8 @@ import SideMenuButton from '@/components/Navigations/SideMenuButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
 defineProps({
-  isLoggedIn: Boolean
+  isLoggedIn: Boolean,
+  username: String,
 })
 
 const isMenuOpen = ref(false)
@@ -15,11 +16,13 @@ const isMenuOpen = ref(false)
   <header
     class="fixed flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
   >
-    <a class="flex items-center gap-3">
+    <a
+      class="flex items-center gap-3"
+      href="/"
+    >
       <img
         src=""
         class="inline-block size-7.5"
-        alt=""
       >
       <span class="text-xl font-semibold">traO Judge</span>
     </a>
@@ -41,7 +44,7 @@ const isMenuOpen = ref(false)
         class="relative flex items-center gap-1"
         @click="isMenuOpen = !isMenuOpen"
       >
-        <span class="inline-block">test_user</span>
+        <span class="inline-block">{{ username }}</span>
         <IconDropdownTriangle
           class="inline-block h-1.625"
           :class="isMenuOpen ? [] : ['rotate-180']"
@@ -53,7 +56,7 @@ const isMenuOpen = ref(false)
               isMenuOpen = false
             }
           "
-          class="absolute right-0 top-7 flex h-27 w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
+          class="absolute right-0 top-7 flex w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
         >
           <SideMenuButton
             icon=""
