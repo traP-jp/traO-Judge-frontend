@@ -6,15 +6,42 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
 defineProps({
   isLoggedIn: Boolean,
-  username: String,
+  username: String
 })
 
 const isMenuOpen = ref(false)
+
+const handler = (e: MouseEvent) => {
+  if (e.target instanceof HTMLElement) {
+    if (e.target.closest('#top-navbar-menu')) {
+      return
+    }
+    closeMenu()
+  }
+}
+
+const toggleMenu = () => {
+  if (isMenuOpen.value) {
+    closeMenu()
+  } else {
+    openMenu()
+  }
+}
+
+const openMenu = () => {
+  isMenuOpen.value = true
+  document.addEventListener('mousedown', handler)
+}
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+  document.removeEventListener('mousedown', handler)
+}
 </script>
 
 <template>
   <header
-    class="fixed flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
+    class="fixed z-50 flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
   >
     <a
       class="flex items-center gap-3"
@@ -41,8 +68,9 @@ const isMenuOpen = ref(false)
       />
       <button
         v-if="isLoggedIn"
+        id="top-navbar-menu"
         class="relative flex items-center gap-1"
-        @click="isMenuOpen = !isMenuOpen"
+        @click="toggleMenu"
       >
         <span class="inline-block">{{ username }}</span>
         <IconDropdownTriangle
@@ -51,11 +79,6 @@ const isMenuOpen = ref(false)
         />
         <div
           v-if="isMenuOpen"
-          v-click-outside="
-            () => {
-              isMenuOpen = false
-            }
-          "
           class="absolute right-0 top-7 flex w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
         >
           <SideMenuButton
