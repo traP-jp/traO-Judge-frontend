@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import IconDropdownTriangle from '@/components/icons/IconDropdownTriangle.vue'
-import SideMenuButton from '@/components/Navigations/SideMenuButton.vue'
+import MenuButton from '@/components/Navigations/MenuButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
 defineProps({
@@ -73,7 +73,7 @@ const setMenuState = (state: boolean) => {
           v-if="isMenuOpen"
           class="absolute right-0 top-7 flex w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
         >
-          <SideMenuButton
+          <MenuButton
             icon=""
             text="プロフィール"
             @click="
@@ -82,11 +82,11 @@ const setMenuState = (state: boolean) => {
               }
             "
           />
-          <SideMenuButton
+          <MenuButton
             icon=""
             text="設定"
           />
-          <SideMenuButton
+          <MenuButton
             icon=""
             text="ログアウト"
           />
