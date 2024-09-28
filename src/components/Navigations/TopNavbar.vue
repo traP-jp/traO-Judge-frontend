@@ -11,31 +11,19 @@ defineProps({
 
 const isMenuOpen = ref(false)
 
-const handler = (e: MouseEvent) => {
-  if (e.target instanceof HTMLElement) {
-    if (e.target.closest('#top-navbar-menu')) {
-      return
-    }
-    closeMenu()
-  }
+const modalHandler = (e: MouseEvent) => {
+  if (!(e.target instanceof HTMLElement) || e.target.closest('#top-navbar-menu')) return
+  setMenuState(false)
 }
 
 const toggleMenu = () => {
-  if (isMenuOpen.value) {
-    closeMenu()
-  } else {
-    openMenu()
-  }
+  setMenuState(!(isMenuOpen.value as boolean))
 }
 
-const openMenu = () => {
-  isMenuOpen.value = true
-  document.addEventListener('mousedown', handler)
-}
-
-const closeMenu = () => {
-  isMenuOpen.value = false
-  document.removeEventListener('mousedown', handler)
+const setMenuState = (state: boolean) => {
+  isMenuOpen.value = state
+  if(state) document.addEventListener('mousedown', modalHandler)
+  else document.removeEventListener('mousedown', modalHandler)
 }
 </script>
 
@@ -66,17 +54,21 @@ const closeMenu = () => {
           }
         "
       />
-      <button
-        v-if="isLoggedIn"
+      <div
         id="top-navbar-menu"
-        class="relative flex items-center gap-1"
-        @click="toggleMenu"
+        class="relative"
       >
-        <span class="inline-block">{{ username }}</span>
-        <IconDropdownTriangle
-          class="inline-block h-1.625"
-          :class="isMenuOpen ? [] : ['rotate-180']"
-        />
+        <button
+          v-if="isLoggedIn"
+          class="flex items-center gap-1"
+          @click="toggleMenu"
+        >
+          <span class="inline-block">{{ username }}</span>
+          <IconDropdownTriangle
+            class="inline-block h-1.625"
+            :class="isMenuOpen ? [] : ['rotate-180']"
+          />
+        </button>
         <div
           v-if="isMenuOpen"
           class="absolute right-0 top-7 flex w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
@@ -99,7 +91,7 @@ const closeMenu = () => {
             text="ログアウト"
           />
         </div>
-      </button>
+      </div>
     </span>
   </header>
 </template>

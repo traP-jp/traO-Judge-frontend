@@ -11,7 +11,7 @@ function onClick() {
 
 <template>
   <button
-    class="flex w-full items-center px-2 py-1"
+    class="flex w-full items-center gap-1 px-2 py-1"
     @click="onClick"
   >
     <img
@@ -19,7 +19,7 @@ function onClick() {
       alt="icon"
       class="inline-block size-4.5"
     >
-    <span class="fontstyle-ui-control-strong ml-1 inline-block text-text-primary">{{ text }}</span>
+    <span class="fontstyle-ui-control-strong inline-block text-text-primary">{{ text }}</span>
   </button>
 </template>
 
