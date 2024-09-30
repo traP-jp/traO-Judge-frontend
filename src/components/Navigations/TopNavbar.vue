@@ -74,21 +74,31 @@ const setMenuState = (state: boolean) => {
           class="absolute right-0 top-7 flex w-50 flex-col gap-y-1 rounded-lg border border-border-secondary bg-background-primary p-2"
         >
           <MenuButton
-            icon=""
+            icon="person"
             text="プロフィール"
             @click="
               () => {
-                console.log('pf')
+                console.log('TODO: プロフィール画面へ遷移')
               }
             "
           />
           <MenuButton
-            icon=""
+            icon="settings"
             text="設定"
+            @click="
+              () => {
+                console.log('TODO: 設定画面へ遷移')
+              }
+            "
           />
           <MenuButton
-            icon=""
+            icon="logout"
             text="ログアウト"
+            @click="
+              () => {
+                console.log('TODO: ログアウト')
+              }
+            "
           />
         </div>
       </div>

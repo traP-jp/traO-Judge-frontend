@@ -1,9 +1,12 @@
 <script setup lang="ts">
-defineProps({
-  icon: String,
-  text: String
-})
+import MaterialIcon, { type Icon } from '@/components/MaterialIcon.vue'
+
+defineProps<{
+  icon: Icon,
+  text: string
+}>()
 const emit = defineEmits(['click'])
+
 function onClick() {
   emit('click')
 }
@@ -11,14 +14,13 @@ function onClick() {
 
 <template>
   <button
-    class="flex w-full items-center gap-1 px-2 py-1"
+    class="flex w-full items-center gap-2 px-4 py-1"
     @click="onClick"
   >
-    <img
-      src=""
-      alt="icon"
-      class="inline-block size-4.5"
-    >
+    <MaterialIcon
+      :icon="icon"
+      size="18px"
+    />
     <span class="fontstyle-ui-control-strong inline-block text-text-primary">{{ text }}</span>
   </button>
 </template>
