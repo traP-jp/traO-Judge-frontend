@@ -22,7 +22,7 @@ const toggleMenu = () => {
 
 const setMenuState = (state: boolean) => {
   isMenuOpen.value = state
-  if(state) document.addEventListener('mousedown', modalHandler)
+  if (state) document.addEventListener('mousedown', modalHandler)
   else document.removeEventListener('mousedown', modalHandler)
 }
 </script>
