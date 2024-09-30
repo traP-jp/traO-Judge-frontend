@@ -29,7 +29,7 @@ const setMenuState = (state: boolean) => {
 
 <template>
   <header
-    class="fixed z-50 flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
+    class="sticky top-0 z-50 flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
   >
     <a
       class="flex items-center gap-3"

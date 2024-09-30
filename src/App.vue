@@ -8,7 +8,7 @@ import TopNavbar from '@/components/Navigations/TopNavbar.vue'
     :is-logged-in="true"
     username="test_user"
   />
-  <main class="pt-14">
+  <main>
     <RouterView />
   </main>
 </template>
