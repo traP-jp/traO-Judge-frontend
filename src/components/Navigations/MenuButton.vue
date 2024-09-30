@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import MaterialIcon, { type Icon } from '@/components/MaterialIcon.vue'
 
-defineProps<{
+const {selected = false} = defineProps<{
   icon: Icon,
   text: string,
-  selected: boolean,
+  selected?: boolean,
 }>()
 const emit = defineEmits(['click'])
 
