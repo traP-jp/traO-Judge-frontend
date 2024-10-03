@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import MaterialIcon, { type Icon } from '@/components/MaterialIcon.vue'
 
-const {selected = false} = defineProps<{
-  icon: Icon,
-  text: string,
-  selected?: boolean,
+const { selected = false } = defineProps<{
+  icon: Icon
+  text: string
+  selected?: boolean
 }>()
 const emit = defineEmits(['click'])
 
@@ -28,7 +28,8 @@ function onClick() {
     <span
       class="fontstyle-ui-control-strong inline-block"
       :class="selected ? 'text-brand-primary' : 'text-text-primary'"
-    >{{ text }}</span>
+      >{{ text }}</span
+    >
   </button>
 </template>
 

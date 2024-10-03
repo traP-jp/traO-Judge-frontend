@@ -31,14 +31,8 @@ const setMenuState = (state: boolean) => {
   <header
     class="sticky top-0 z-50 flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
   >
-    <a
-      class="flex items-center gap-3"
-      href="/"
-    >
-      <img
-        src=""
-        class="inline-block size-7.5"
-      >
+    <a class="flex items-center gap-3" href="/">
+      <img src="" class="inline-block size-7.5" />
       <span class="text-xl font-semibold">traO Judge</span>
     </a>
     <span class="fontstyle-ui-control-strong ml-auto flex items-center gap-5">
@@ -54,15 +48,8 @@ const setMenuState = (state: boolean) => {
           }
         "
       />
-      <div
-        id="top-navbar-menu"
-        class="relative"
-      >
-        <button
-          v-if="isLoggedIn"
-          class="flex items-center gap-1"
-          @click="toggleMenu"
-        >
+      <div id="top-navbar-menu" class="relative">
+        <button v-if="isLoggedIn" class="flex items-center gap-1" @click="toggleMenu">
           <span class="inline-block">{{ username }}</span>
           <IconDropdownTriangle
             class="inline-block h-1.625"

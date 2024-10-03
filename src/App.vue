@@ -4,10 +4,7 @@ import TopNavbar from '@/components/Navigations/TopNavbar.vue'
 </script>
 
 <template>
-  <TopNavbar
-    :is-logged-in="true"
-    username="test_user"
-  />
+  <TopNavbar :is-logged-in="true" username="test_user" />
   <main>
     <RouterView />
   </main>
