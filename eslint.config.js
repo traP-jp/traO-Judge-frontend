@@ -3,6 +3,7 @@ import pluginJs from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import tailwind from 'eslint-plugin-tailwindcss'
+import eslintPrettierConfig from 'eslint-config-prettier'
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
@@ -14,6 +15,8 @@ export default [
   ...tseslint.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   ...tailwind.configs['flat/recommended'],
+  eslintPrettierConfig,
+  { files: ['**/*.ts'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
   { files: ['**/*.vue'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
   {
     rules: {
