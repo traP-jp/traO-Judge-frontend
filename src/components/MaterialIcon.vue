@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type Icon =
+export type Icon =
   | 'assignment'
   | 'assignment_turned_in'
   | 'code'
