@@ -4,10 +4,10 @@ import IconDropdownTriangle from '@/components/icons/IconDropdownTriangle.vue'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
-defineProps({
-  isLoggedIn: Boolean,
-  username: String
-})
+const { isLoggedIn = false, username = '' } = defineProps<{
+  isLoggedIn: boolean
+  username: string
+}>()
 
 const isMenuOpen = ref(false)
 
