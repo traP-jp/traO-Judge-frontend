@@ -50,7 +50,7 @@ const bottomContents = computed((): SideMenuProps[] => {
 <template>
   <SideMenuBase :main-contents="mainContents" :bottom-contents="bottomContents">
     <div class="flex w-full flex-col items-center justify-center">
-      <img src="https://via.placeholder.com/160x160" alt="user-icon" class="size-40 rounded-full" />
+      <img src="" alt="user-icon" class="size-40 rounded-full" />
       <span class="mt-2 font-primary text-xl font-semibold text-text-primary">{{ username }}</span>
     </div>
   </SideMenuBase>
