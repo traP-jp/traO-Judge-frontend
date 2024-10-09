@@ -11,8 +11,8 @@ const { isAdmin = false, isEditorialAvailable = false } = defineProps<{
   isEditorialAvailable?: boolean
 }>()
 
-const mainContents = computed((): SideMenuProps[] => {
-  const contents = [
+const mainContents = computed(() => {
+  const contents: SideMenuProps[] = [
     {
       text: '問題',
       icon: 'assignment',

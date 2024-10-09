@@ -22,7 +22,7 @@ const mainContents: SideMenuProps[] = [
 </script>
 
 <template>
-  <SideMenuBase :main-contents="mainContents" :bottom-contents="bottomContents">
+  <SideMenuBase :main-contents="mainContents">
     <h1 class="fontstyle-ui-subtitle">設定</h1>
   </SideMenuBase>
 </template>
