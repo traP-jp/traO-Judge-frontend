@@ -2,6 +2,7 @@
 const { disabled = false } = defineProps<{
   disabled?: boolean
   text: string
+  padding?: string
 }>()
 const emit = defineEmits(['click'])
 function onClick() {
@@ -12,7 +13,8 @@ function onClick() {
 <template>
   <button
     :disabled="disabled"
-    class="fontstyle-ui-control-strong rounded border border-text-primary px-6 py-1.75 text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
+    class="fontstyle-ui-control-strong inline-block h-9 rounded border border-text-primary px-6 text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
+    :style="{paddingLeft: padding, paddingRight: padding}"
     @click="onClick"
   >
     {{ text }}
