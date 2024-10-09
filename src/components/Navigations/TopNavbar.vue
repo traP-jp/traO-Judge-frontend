@@ -40,7 +40,7 @@ const setMenuState = (state: boolean) => {
       <button>提出一覧</button>
       <PrimaryButton
         v-if="!isLoggedIn"
-        class="px-4"
+        padding="1rem"
         text="ログイン"
         @click="
           () => {
