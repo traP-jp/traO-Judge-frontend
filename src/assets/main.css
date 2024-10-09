@@ -1,5 +1,13 @@
 @import './base.css';
 
+.fontstyle-ui-subtitle {
+  @apply font-primary;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.75rem;
+}
+
 .fontstyle-ui-control-strong {
   @apply font-primary;
   font-size: 0.875rem;
