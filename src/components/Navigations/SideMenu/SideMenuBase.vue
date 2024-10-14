@@ -17,7 +17,7 @@ const currentTab = ref(0)
 </script>
 
 <template>
-  <nav class="flex h-full w-74.5 flex-col px-6 py-12">
+  <nav class="flex h-full w-62.5 flex-col py-6">
     <slot></slot>
     <div class="flex grow flex-col">
       <ul class="mt-6 flex flex-col gap-1">
