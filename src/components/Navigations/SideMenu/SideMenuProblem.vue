@@ -5,7 +5,6 @@ import SideMenuBase, {
 import { computed } from 'vue'
 
 const { isAdmin = false, isEditorialAvailable = false } = defineProps<{
-  problemId: number
   problemName: string
   isAdmin?: boolean
   isEditorialAvailable?: boolean
@@ -72,7 +71,6 @@ const bottomContents = computed((): SideMenuProps[] => {
 
 <template>
   <SideMenuBase :main-contents="mainContents" :bottom-contents="bottomContents">
-    <h2 class="font-primary text-sm font-semibold text-text-secondary">{{ problemId }}</h2>
     <h1 class="fontstyle-ui-subtitle">{{ problemName }}</h1>
   </SideMenuBase>
 </template>
