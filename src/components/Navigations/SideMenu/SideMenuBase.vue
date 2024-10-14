@@ -17,10 +17,12 @@ const currentTab = ref(0)
 </script>
 
 <template>
-  <nav class="flex h-full w-62.5 flex-col py-6">
-    <slot></slot>
+  <nav class="flex h-full w-62.5 flex-col">
+    <div class="py-6">
+      <slot></slot>
+    </div>
     <div class="flex grow flex-col">
-      <ul class="mt-6 flex flex-col gap-1">
+      <ul class="flex flex-col gap-1">
         <li v-for="content in mainContents" :key="content.text">
           <MenuButton
             :icon="content.icon"
@@ -35,7 +37,7 @@ const currentTab = ref(0)
           />
         </li>
       </ul>
-      <ul class="mt-auto flex flex-col gap-1">
+      <ul class="mt-auto flex flex-col gap-1 pb-6">
         <li v-for="content in bottomContents" :key="content.text">
           <MenuButton
             :icon="content.icon"
