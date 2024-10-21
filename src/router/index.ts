@@ -85,8 +85,16 @@ const router = createRouter({
           component: () => import('@/views/problem/ProblemSubmissionView.vue')
         },
         {
-          path: 'editorial',
+          path: 'editorials',
+          component: () => import('@/views/problem/ProblemEditorialsView.vue')
+        },
+        {
+          path: 'editorials/:editorialId',
           component: () => import('@/views/problem/ProblemEditorialView.vue')
+        },
+        {
+          path: 'editorials/:editorialId/edit',
+          component: () => import('@/views/problem/ProblemEditorialEditView.vue')
         },
         {
           path: 'edit',
