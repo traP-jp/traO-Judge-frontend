@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <h2>Reset Password Form</h2>
+    <h1>Signup Register</h1>
   </div>
 </template>
 

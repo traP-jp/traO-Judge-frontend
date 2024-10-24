@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <h2>Signup After Mail</h2>
+    <h1>Reset Password Form</h1>
   </div>
 </template>
 

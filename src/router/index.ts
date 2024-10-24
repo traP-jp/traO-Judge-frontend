@@ -10,38 +10,36 @@ const router = createRouter({
     },
     {
       path: '/signup',
-      component: () => import('@/views/SignupView.vue'),
       children: [
         {
           path: '',
-          component: () => import('@/views/signup/SignupHomeView.vue')
+          component: () => import('@/views/SignupView.vue')
         },
         {
           path: 'register',
-          component: () => import('@/views/signup/SignupRegisterView.vue')
+          component: () => import('@/views/SignupRegisterView.vue')
         },
         {
           path: 'after-mail',
-          component: () => import('@/views/signup/SignupAfterMailView.vue')
+          component: () => import('@/views/SignupAfterMailView.vue')
         }
       ]
     },
     { path: '/login', component: () => import('@/views/LoginView.vue') },
     {
       path: '/reset-password',
-      component: () => import('@/views/ResetPasswordView.vue'),
       children: [
         {
           path: '',
-          component: () => import('@/views/reset-password/ResetPasswordHomeView.vue')
+          component: () => import('@/views/ResetPasswordView.vue')
         },
         {
           path: 'form',
-          component: () => import('@/views/reset-password/ResetPasswordFormView.vue')
+          component: () => import('@/views/ResetPasswordFormView.vue')
         },
         {
           path: 'after-mail',
-          component: () => import('@/views/reset-password/ResetPasswordAfterMailView.vue')
+          component: () => import('@/views/ResetPasswordAfterMailView.vue')
         }
       ]
     },
@@ -51,13 +49,13 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('@/views/user/UserHomeView.vue')
+          component: () => import('@/views/user/UserHome.vue')
         },
         {
           path: 'submissions',
-          component: () => import('@/views/user/UserSubmissionsView.vue')
+          component: () => import('@/views/user/UserSubmissions.vue')
         },
-        { path: 'problems', component: () => import('@/views/user/UserProblemsView.vue') }
+        { path: 'problems', component: () => import('@/views/user/UserProblems.vue') }
       ]
     },
     {
@@ -70,35 +68,35 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('@/views/problem/ProblemHomeView.vue')
+          component: () => import('@/views/problem/ProblemHome.vue')
         },
         {
           path: 'submit',
-          component: () => import('@/views/problem/ProblemSubmitView.vue')
+          component: () => import('@/views/problem/ProblemSubmit.vue')
         },
         {
           path: 'submissions',
-          component: () => import('@/views/problem/ProblemSubmissionsView.vue')
+          component: () => import('@/views/problem/ProblemSubmissions.vue')
         },
         {
           path: 'submissions/:submissionId',
-          component: () => import('@/views/problem/ProblemSubmissionView.vue')
+          component: () => import('@/views/problem/ProblemSubmission.vue')
         },
         {
           path: 'editorials',
-          component: () => import('@/views/problem/ProblemEditorialsView.vue')
+          component: () => import('@/views/problem/ProblemEditorials.vue')
         },
         {
           path: 'editorials/:editorialId',
-          component: () => import('@/views/problem/ProblemEditorialView.vue')
+          component: () => import('@/views/problem/ProblemEditorial.vue')
         },
         {
           path: 'editorials/:editorialId/edit',
-          component: () => import('@/views/problem/ProblemEditorialEditView.vue')
+          component: () => import('@/views/problem/ProblemEditorialEdit.vue')
         },
         {
           path: 'edit',
-          component: () => import('@/views/problem/ProblemEditView.vue')
+          component: () => import('@/views/problem/ProblemEdit.vue')
         }
       ]
     },
@@ -109,11 +107,11 @@ const router = createRouter({
         { path: '', redirect: '/settings/account' },
         {
           path: 'account',
-          component: () => import('@/views/settings/SettingsAccountView.vue')
+          component: () => import('@/views/settings/SettingsAccount.vue')
         },
         {
           path: 'profile',
-          component: () => import('@/views/settings/SettingsProfileView.vue')
+          component: () => import('@/views/settings/SettingsProfile.vue')
         }
       ]
     }
