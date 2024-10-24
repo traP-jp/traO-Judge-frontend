@@ -5,6 +5,7 @@ export type Icon =
   | 'code'
   | 'edit'
   | 'edit_note'
+  | 'error'
   | 'format_list_bulleted'
   | 'id_card'
   | 'info'
