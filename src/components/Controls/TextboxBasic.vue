@@ -8,12 +8,14 @@ const {
   error?: boolean
   placeholder?: string
 }>()
+const emits = defineEmits<{
+  input: [event: Event]
+  change: [event: Event]
+}>()
 </script>
 
 <template>
   <input
-    type="text"
-    class="fontstyle-ui-body rounded bg-background-primary px-4 py-1 text-text-primary outline-none placeholder:text-text-tertiary focus:border-2 disabled:bg-background-secondary"
     :class="{
       'border-2': error,
       border: !error,
@@ -24,6 +26,10 @@ const {
     }"
     :disabled="disabled"
     :placeholder="placeholder"
+    class="fontstyle-ui-body rounded bg-background-primary px-4 py-1 text-text-primary outline-none placeholder:text-text-tertiary focus:border-2 disabled:bg-background-secondary"
+    type="text"
+    @change="(e) => emits('change', e)"
+    @input="(e) => emits('input', e)"
   />
 </template>
 
