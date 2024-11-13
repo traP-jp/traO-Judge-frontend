@@ -19,7 +19,7 @@ const emits = defineEmits<{
 <template>
   <input
     :class="[
-      { 'border-border-secondary focus:border-text-primary': !error },
+      { 'border-border-secondary outline-text-primary focus:border-text-primary': !error },
       { 'border-status-error outline outline-1 outline-status-error': error },
       'fontstyle-ui-body rounded border bg-background-primary px-4 py-1 text-text-primary placeholder:text-text-tertiary focus:outline focus:outline-1 disabled:bg-background-secondary'
     ]"
