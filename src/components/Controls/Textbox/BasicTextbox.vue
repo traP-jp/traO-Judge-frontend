@@ -2,11 +2,13 @@
 const {
   disabled = false,
   error = false,
-  placeholder = ''
+  placeholder = '',
+  value = ''
 } = defineProps<{
   disabled?: boolean
   error?: boolean
   placeholder?: string
+  value?: string
 }>()
 const emits = defineEmits<{
   input: [event: Event]
@@ -16,18 +18,15 @@ const emits = defineEmits<{
 
 <template>
   <input
-    :class="{
-      'border-2': error,
-      border: !error,
-      'border-status-error': error,
-      'border-border-secondary': !error,
-      'focus:border-status-error': error,
-      'focus:border-text-primary': !error
-    }"
+    :class="[
+      { 'border-border-secondary focus:border-text-primary': !error },
+      { 'border-status-error outline outline-1 outline-status-error': error },
+      'fontstyle-ui-body rounded border bg-background-primary px-4 py-1 text-text-primary placeholder:text-text-tertiary focus:outline focus:outline-1 disabled:bg-background-secondary'
+    ]"
     :disabled="disabled"
     :placeholder="placeholder"
-    class="fontstyle-ui-body rounded bg-background-primary px-4 py-1 text-text-primary outline-none placeholder:text-text-tertiary focus:border-2 disabled:bg-background-secondary"
     type="text"
+    :value
     @change="(e) => emits('change', e)"
     @input="(e) => emits('input', e)"
   />
