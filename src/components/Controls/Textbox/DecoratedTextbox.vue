@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import PrimaryTextbox from '@/components/Controls/TextboxBasic.vue'
+import BasicTextbox from '@/components/Controls/Textbox/BasicTextbox.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
-import TextboxLabel from '@/components/Controls/TextboxLabel.vue'
+import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 
 const { errorMessage = '', label = '' } = defineProps<{
   isRequired?: boolean
@@ -22,7 +22,7 @@ const emits = defineEmits<{
   <div class="flex flex-col gap-2">
     <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" />
     <div>
-      <PrimaryTextbox
+      <BasicTextbox
         :disabled="disabled"
         :error="error"
         :placeholder="placeholder"
