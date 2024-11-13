@@ -8,6 +8,7 @@ const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
   error?: boolean
   placeholder?: string
+  value?: string
   errorMessage?: string
   label?: string
 }>()
@@ -26,6 +27,7 @@ const emits = defineEmits<{
         :disabled="disabled"
         :error="error"
         :placeholder="placeholder"
+        :value="value"
         @input="(e) => emits('input', e)"
         @change="(e) => emits('change', e)"
       />
