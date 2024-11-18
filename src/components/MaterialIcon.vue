@@ -14,6 +14,8 @@ export type Icon =
   | 'open_in_new'
   | 'person'
   | 'settings'
+  | 'visibility'
+  | 'visibility_off'
 const { size = '1.5rem', isFilled = false } = defineProps<{
   icon: Icon
   size?: string

@@ -6,6 +6,7 @@ import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
   errorMessage?: string
+  isPassword?: boolean
   isRequired?: boolean
   label?: string
   placeholder?: string
@@ -22,6 +23,7 @@ const value = defineModel<string>('value')
         class="w-full"
         :disabled
         :error="errorMessage != ''"
+        :is-password="isPassword"
         :placeholder="placeholder"
       />
     </div>
