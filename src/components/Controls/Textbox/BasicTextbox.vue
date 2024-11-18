@@ -3,21 +3,17 @@ const {
   disabled = false,
   error = false,
   placeholder = '',
-  value = ''
 } = defineProps<{
   disabled?: boolean
   error?: boolean
   placeholder?: string
-  value?: string
 }>()
-const emits = defineEmits<{
-  input: [event: Event]
-  change: [event: Event]
-}>()
+const value = defineModel<string>("value");
 </script>
 
 <template>
   <input
+    v-model="value"
     :class="[
       { 'border-border-secondary outline-text-primary focus:border-text-primary': !error },
       { 'border-status-error outline outline-1 outline-status-error': error },
@@ -26,9 +22,6 @@ const emits = defineEmits<{
     :disabled="disabled"
     :placeholder="placeholder"
     type="text"
-    :value
-    @change="(e) => emits('change', e)"
-    @input="(e) => emits('input', e)"
   />
 </template>
 

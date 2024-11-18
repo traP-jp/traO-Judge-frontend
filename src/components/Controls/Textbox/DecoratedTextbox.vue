@@ -4,19 +4,13 @@ import MaterialIcon from '@/components/MaterialIcon.vue'
 import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 
 const { errorMessage = '', label = '' } = defineProps<{
-  isRequired?: boolean
   disabled?: boolean
-  error?: boolean
-  placeholder?: string
-  value?: string
   errorMessage?: string
+  isRequired?: boolean
   label?: string
+  placeholder?: string
 }>()
-
-const emits = defineEmits<{
-  input: [event: Event]
-  change: [event: Event]
-}>()
+const value = defineModel<string>('value')
 </script>
 
 <template>
@@ -24,12 +18,10 @@ const emits = defineEmits<{
     <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" />
     <div>
       <BasicTextbox
-        :disabled="disabled"
-        :error="error"
+        v-model="value"
+        :disabled
+        :error="errorMessage != ''"
         :placeholder="placeholder"
-        :value="value"
-        @input="(e) => emits('input', e)"
-        @change="(e) => emits('change', e)"
       />
     </div>
     <div v-if="errorMessage != ''" class="flex items-center gap-2 pl-1 text-status-error">
