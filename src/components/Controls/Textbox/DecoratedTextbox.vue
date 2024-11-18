@@ -19,12 +19,13 @@ const value = defineModel<string>('value')
     <div>
       <BasicTextbox
         v-model="value"
+        class="w-full"
         :disabled
         :error="errorMessage != ''"
         :placeholder="placeholder"
       />
     </div>
-    <div v-if="errorMessage != ''" class="flex items-center gap-2 pl-1 text-status-error">
+    <div v-if="errorMessage != ''" class="flex items-start gap-2 pl-1 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" />
       <span class="fontstyle-ui-control">{{ errorMessage }}</span>
     </div>
