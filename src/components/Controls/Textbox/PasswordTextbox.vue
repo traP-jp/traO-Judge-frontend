@@ -43,7 +43,7 @@ const passwordShown = ref<boolean>(false)
     </span>
     <div v-if="errorMessage != ''" class="flex items-start gap-2 pl-1 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" />
-      <span class="fontstyle-ui-control">{{ errorMessage }}</span>
+      <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
     </div>
   </div>
 </template>
