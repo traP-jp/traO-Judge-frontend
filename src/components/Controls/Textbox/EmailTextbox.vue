@@ -2,6 +2,7 @@
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 import { computed } from 'vue'
+import isEmail from 'validator/lib/isEmail'
 
 const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
@@ -12,7 +13,8 @@ const { errorMessage = '', label = '' } = defineProps<{
   autocomplete?: string
 }>()
 const value = defineModel<string>()
-const isError = computed(() => errorMessage != '')
+const isEmailError = computed(() => (value.value?.length ?? 0) > 0 && !isEmail(value.value ?? ''))
+const isError = computed(() => errorMessage != '' || isEmailError.value)
 </script>
 
 <template>
@@ -34,7 +36,9 @@ const isError = computed(() => errorMessage != '')
     />
     <div v-if="isError" class="flex items-start gap-2 pl-1 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" />
-      <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
+      <span class="fontstyle-ui-control min-w-0 break-words">{{
+        isEmailError ? 'メールアドレスの形式が正しくありません' : errorMessage
+      }}</span>
     </div>
   </div>
 </template>
