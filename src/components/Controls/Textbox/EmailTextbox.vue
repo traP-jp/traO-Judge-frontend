@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
+import { computed } from 'vue'
 
 const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
@@ -11,6 +12,7 @@ const { errorMessage = '', label = '' } = defineProps<{
   autocomplete?: string
 }>()
 const value = defineModel<string>()
+const isError = computed(() => errorMessage != '')
 </script>
 
 <template>
@@ -21,17 +23,16 @@ const value = defineModel<string>()
       :autocomplete="autocomplete"
       :class="[
         {
-          'border-border-secondary outline-text-primary focus:border-text-primary':
-            errorMessage == ''
+          'border-border-secondary outline-text-primary focus:border-text-primary': !isError
         },
-        { 'border-status-error outline outline-1 outline-status-error': errorMessage != '' },
+        { 'border-status-error outline outline-1 outline-status-error': isError },
         'fontstyle-ui-body w-full rounded border bg-background-primary py-1 pl-4 text-text-primary placeholder:text-text-tertiary focus:outline focus:outline-1 disabled:bg-background-secondary'
       ]"
       :disabled="disabled"
       :placeholder="placeholder"
       type="email"
     />
-    <div v-if="errorMessage != ''" class="flex items-start gap-2 pl-1 text-status-error">
+    <div v-if="isError" class="flex items-start gap-2 pl-1 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" />
       <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
     </div>
