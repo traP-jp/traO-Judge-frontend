@@ -5,6 +5,7 @@ export type Icon =
   | 'code'
   | 'edit'
   | 'edit_note'
+  | 'error'
   | 'format_list_bulleted'
   | 'id_card'
   | 'info'
@@ -13,6 +14,8 @@ export type Icon =
   | 'open_in_new'
   | 'person'
   | 'settings'
+  | 'visibility'
+  | 'visibility_off'
 const { size = '1.5rem', isFilled = false } = defineProps<{
   icon: Icon
   size?: string
