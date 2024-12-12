@@ -73,7 +73,7 @@
   text-decoration: underline;
 }
 
-.fontstyle-ui-caption {
+.fontstyle-ui-caption-strong {
   @apply font-primary;
   font-size: 0.75rem;
   font-style: normal;
