@@ -1,12 +1,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import OAuthButton from '@/components/Controls/OAuthButton.vue'
 
 const emailAddress = ref('')
-function onEmailSignup() {
-  // TODO: Implement email signup
+const router = useRouter()
+async function onEmailSignup() {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup/request`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: emailAddress.value })
+    })
+    if (response.status === 201) {
+      router.push('/signup/after-mail')
+    } else if (response.status === 400) {
+      alert('不正なリクエストです　メールアドレスの形式を確認してください')
+    }
+    else {
+      alert(response.status)
+    }
+  } catch (error) {
+    console.error('Signup Error:', error)
+    alert('Signup Error:' + error)
+  }
 }
 </script>
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
+const router = useRouter()
+
 function onClose() {
-  // TODO: Implement closing the dialog
+  router.push('/')
 }
 function onResendEmail() {
-  // TODO: Implenent resending the email
+  router.push('/signup')
 }
 </script>
 

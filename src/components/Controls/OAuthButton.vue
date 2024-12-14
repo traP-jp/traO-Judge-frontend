@@ -1,11 +1,66 @@
 <script setup lang="ts">
-const { disabled = false } = defineProps<{
+import { useRouter } from 'vue-router'
+
+const {
+  disabled = false,
+  app,
+  mode
+} = defineProps<{
   disabled?: boolean
   app: string
   mode: 'signup' | 'login'
 }>()
-function onOAuthClick() {
-  // TODO: some OAuth login/signup logic
+
+const router = useRouter()
+
+async function onOAuthClick() {
+  try {
+    if (mode === 'signup') {
+      if (app === 'Github') {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/github-oauth2/params`)
+    if (response.status === 200) {
+          const responseJson = await response.json()
+          alert(responseJson.url)
+          router.push(responseJson.url)
+        } else if (response.status === 500) {
+          const responseJson = await response.json()
+          alert('Internal Server Error: ' + responseJson.message)
+        }
+        else {
+          alert(response.status)
+        }
+      }
+      if (app === 'Google') {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/google-oauth2/params`)
+        if (response.status === 200) {
+          const responseJson = await response.json()
+          router.push(responseJson.url)
+        } else if (response.status === 500) {
+          const responseJson = await response.json()
+          alert('Internal Server Error: ' + responseJson.message)
+        }
+        else {
+          alert(response.status)
+        }
+      }
+      if (app === 'traQ') {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/traq-oauth2/params`)
+        if (response.status === 200) {
+          const responseJson = await response.json()
+          router.push(responseJson.url)
+        } else if (response.status === 500) {
+          const responseJson = await response.json()
+          alert('Internal Server Error: ' + responseJson.message)
+        }
+        else {
+          alert(response.status)
+        }
+      }
+    }
+  } catch (error) {
+    console.error('OAuth Error:', error)
+    alert('OAuth Error:' + error)
+  }
 }
 </script>
 

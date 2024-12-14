@@ -1,15 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
 const username = ref('')
-const emailAddress = ref('example@example.com') // TODO: get value of emailAddress
+const emailAddress = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-function onSignupRegister() {
-  // TODO: Implement email signup
+const confirmPasswordErrorMessage = ref('')
+
+onMounted(() => {
+  try {
+    const token = new URLSearchParams(window.location.search).get('token')
+    if (token) {
+      const decodedToken = jwtDecode<{ email: string }>(token)
+      emailAddress.value = decodedToken.email
+    }
+  } catch (error) {
+    console.error('Signup Register Error:', error)
+    alert('Signup Register Error:' + error)
+  }
+})
+
+const router = useRouter()
+
+async function onSignupRegister() {
+  try {
+    if (password.value !== confirmPassword.value) {
+      confirmPasswordErrorMessage.value = 'パスワードが一致しません'
+      return
+    }
+    const token = new URLSearchParams(window.location.search).get('token')
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userName: username.value, password: password.value, token: token })
+    })
+    if (response.status === 201) {
+      router.push('/login')
+    } else if (response.status === 400) {
+      alert('不正なリクエストです')
+    } else if (response.status === 401) {
+      alert('Unauthorized')
+    } else {
+      alert(response.status)
+    }
+  } catch (error) {
+    console.error('Signup Register Error:', error)
+    alert('Signup Register Error:' + error)
+  }
 }
 </script>
 
@@ -68,7 +112,10 @@ function onSignupRegister() {
             <span class="fontstyle-ui-body-strong text-status-error">*</span>
           </div>
           <div class="flex-1">
-            <PasswordTextbox v-model="confirmPassword" />
+            <PasswordTextbox
+              v-model="confirmPassword"
+              :error-message="confirmPasswordErrorMessage"
+            />
           </div>
         </div>
         <div class="flex justify-center">
