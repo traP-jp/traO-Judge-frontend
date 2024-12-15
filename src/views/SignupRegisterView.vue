@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
-import { usernameVlidator, passwordValidator } from '@/utils/validator'
+import { usernameValidator, passwordValidator } from '@/utils/validator'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -37,7 +37,7 @@ async function onSignupRegister() {
     if (!username.value) {
       usernameErrorMessage.value = 'ユーザー名を入力してください'
       error = true
-    } else if (!usernameVlidator(username.value)) {
+    } else if (!usernameValidator(username.value)) {
       usernameErrorMessage.value = '無効なユーザー名'
       error = true
     } else {
@@ -48,7 +48,7 @@ async function onSignupRegister() {
       passwordErrorMessage.value = 'パスワードを入力してください'
       error = true
     } else if (!passwordValidator(username.value)) {
-      passwordErrorMessage.value = '無効なユーザー名'
+      passwordErrorMessage.value = '無効なパスワード'
       error = true
     } else {
       passwordErrorMessage.value = ''
