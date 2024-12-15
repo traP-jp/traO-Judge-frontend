@@ -40,14 +40,14 @@ async function onEmailSignup() {
       <div class="fontstyle-ui-title text-left">新規登録</div>
       <div class="flex divide-x divide-border-secondary">
         <div class="flex-1 pr-4">
-          <div class="space-y-3 p-2.5">
+          <div class="grid space-y-3 p-2.5">
             <OAuthButton app="Github" mode="signup" class="w-full" />
             <OAuthButton app="Google" mode="signup" class="w-full" />
             <OAuthButton app="traQ" mode="signup" class="w-full" />
           </div>
         </div>
         <div class="flex-1 pl-4">
-          <div class="space-y-3 p-2.5">
+          <div class="grid space-y-3 p-2.5">
             <div class="fontstyle-ui-body-strong text-left">メールアドレスで新規登録</div>
             <EmailTextbox v-model="emailAddress" placeholder="メールアドレス" />
             <PrimaryButton text="次へ" class="w-full" @click="onEmailSignup" />

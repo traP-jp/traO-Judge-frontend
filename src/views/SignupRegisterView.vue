@@ -2,13 +2,16 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
+import { usernameVlidator, passwordValidator } from '@/utils/validator'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
 const username = ref('')
+const usernameErrorMessage = ref('')
 const emailAddress = ref('')
 const password = ref('')
+const passwordErrorMessage = ref('')
 const confirmPassword = ref('')
 const confirmPasswordErrorMessage = ref('')
 
@@ -29,8 +32,38 @@ const router = useRouter()
 
 async function onSignupRegister() {
   try {
-    if (password.value !== confirmPassword.value) {
+    let error = false
+    // check user name
+    if (!username.value) {
+      usernameErrorMessage.value = 'ユーザー名を入力してください'
+      error = true
+    } else if (!usernameVlidator(username.value)) {
+      usernameErrorMessage.value = '無効なユーザー名'
+      error = true
+    } else {
+      usernameErrorMessage.value = ''
+    }
+    // check password
+    if (!password.value) {
+      passwordErrorMessage.value = 'パスワードを入力してください'
+      error = true
+    } else if (!passwordValidator(username.value)) {
+      passwordErrorMessage.value = '無効なユーザー名'
+      error = true
+    } else {
+      passwordErrorMessage.value = ''
+    }
+    // check confirm password
+    if (!confirmPassword.value) {
+      confirmPasswordErrorMessage.value = 'パスワード（確認）を入力してください'
+      error = true
+    } else if (password.value !== confirmPassword.value) {
       confirmPasswordErrorMessage.value = 'パスワードが一致しません'
+      error = true
+    } else {
+      confirmPasswordErrorMessage.value = ''
+    }
+    if (error) {
       return
     }
     const token = new URLSearchParams(window.location.search).get('token')
@@ -68,16 +101,16 @@ async function onSignupRegister() {
         <span class="fontstyle-ui-body text-status-error">*</span>
         <span class="fontstyle-ui-body text-text-primary">がついた項目は必須です。</span>
       </div>
-      <div class="space-y-5 p-2.5">
+      <div class="grid space-y-5 p-2.5">
         <div class="flex gap-6">
-          <div class="w-50 text-right">
+          <label for="username" class="w-50 text-right">
             <span class="fontstyle-ui-body-strong text-text-primary">ユーザー名</span>
             <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </div>
+          </label>
           <div class="flex-1">
-            <PlainTextbox v-model="username" />
-            <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
-              文字数は〇以上〇以下で、半角英数字とアンダースコアのみが使用できます。
+            <PlainTextbox id="username" v-model="username" :error-message="usernameErrorMessage" />
+            <div class="fontstyle-ui-caption-strong text-nowrap pt-1 text-text-secondary">
+              文字数は5以上10以下で、半角英数字とアンダースコアのみが使用できます。
             </div>
           </div>
         </div>
@@ -92,12 +125,16 @@ async function onSignupRegister() {
           </div>
         </div>
         <div class="flex gap-6">
-          <div class="w-50 text-right">
+          <label for="password" class="w-50 text-right">
             <span class="fontstyle-ui-body-strong text-text-primary">パスワード</span>
             <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </div>
+          </label>
           <div class="flex-1">
-            <PasswordTextbox v-model="password" />
+            <PasswordTextbox
+              id="password"
+              v-model="password"
+              :error-message="passwordErrorMessage"
+            />
             <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
               文字数は〇以上〇以下で、半角英数字と記号が使用できます。
             </div>
@@ -107,12 +144,13 @@ async function onSignupRegister() {
           </div>
         </div>
         <div class="flex gap-6">
-          <div class="w-50 text-right">
+          <label for="confirPassword" class="w-50 text-right">
             <span class="fontstyle-ui-body-strong text-text-primary">パスワード（確認）</span>
             <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </div>
+          </label>
           <div class="flex-1">
             <PasswordTextbox
+              id="confirmPassword"
               v-model="confirmPassword"
               :error-message="confirmPasswordErrorMessage"
             />
