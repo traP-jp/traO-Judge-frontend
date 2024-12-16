@@ -47,7 +47,7 @@ async function onSignupRegister() {
     if (!password.value) {
       passwordErrorMessage.value = 'パスワードを入力してください'
       error = true
-    } else if (!passwordValidator(username.value)) {
+    } else if (!passwordValidator(password.value)) {
       passwordErrorMessage.value = '無効なパスワード'
       error = true
     } else {
