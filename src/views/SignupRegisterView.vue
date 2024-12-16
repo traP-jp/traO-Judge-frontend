@@ -136,7 +136,7 @@ async function onSignupRegister() {
               :error-message="passwordErrorMessage"
             />
             <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
-              文字数は〇以上〇以下で、半角英数字と記号が使用できます。
+              文字数は10以上64以下で、半角英数字と記号が使用できます。
             </div>
             <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
               英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
