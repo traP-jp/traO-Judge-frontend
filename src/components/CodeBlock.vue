@@ -17,7 +17,7 @@ const { language } = defineProps<{
 const model = defineModel<string>({ required: true })
 
 let editor: monaco.editor.IStandaloneCodeEditor | undefined
-const element = useTemplateRef('codeBlock')
+const element = useTemplateRef<HTMLElement>('codeBlock')
 
 let highlighter = await createHighlighter({
   themes: ['github-light'],
