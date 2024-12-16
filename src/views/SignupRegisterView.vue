@@ -101,7 +101,7 @@ async function onSignupRegister() {
         <span class="fontstyle-ui-body text-status-error">*</span>
         <span class="fontstyle-ui-body text-text-primary">がついた項目は必須です。</span>
       </div>
-      <div class="grid space-y-5 p-2.5">
+      <div class="flex flex-col space-y-5 p-2.5">
         <div class="flex gap-6">
           <label for="username" class="w-50 text-right">
             <span class="fontstyle-ui-body-strong text-text-primary">ユーザー名</span>
