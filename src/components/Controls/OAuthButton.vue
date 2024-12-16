@@ -18,15 +18,14 @@ async function onOAuthClick() {
     if (mode === 'signup') {
       if (app === 'Github') {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/github-oauth2/params`)
-    if (response.status === 200) {
+        if (response.status === 200) {
           const responseJson = await response.json()
           alert(responseJson.url)
           router.push(responseJson.url)
         } else if (response.status === 500) {
           const responseJson = await response.json()
           alert('Internal Server Error: ' + responseJson.message)
-        }
-        else {
+        } else {
           alert(response.status)
         }
       }
@@ -38,23 +37,12 @@ async function onOAuthClick() {
         } else if (response.status === 500) {
           const responseJson = await response.json()
           alert('Internal Server Error: ' + responseJson.message)
-        }
-        else {
+        } else {
           alert(response.status)
         }
       }
       if (app === 'traQ') {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/traq-oauth2/params`)
-        if (response.status === 200) {
-          const responseJson = await response.json()
-          router.push(responseJson.url)
-        } else if (response.status === 500) {
-          const responseJson = await response.json()
-          alert('Internal Server Error: ' + responseJson.message)
-        }
-        else {
-          alert(response.status)
-        }
+        router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
       }
     }
   } catch (error) {
