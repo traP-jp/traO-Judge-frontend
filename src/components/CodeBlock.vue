@@ -2,41 +2,57 @@
 import { onMounted, onUpdated, useTemplateRef, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import { shikiToMonaco } from '@shikijs/monaco'
-import {
-  type BundledLanguage,
-  type BundledTheme,
-  createHighlighter,
-  type HighlighterGeneric
-} from 'shiki'
+import { type BundledLanguage, createHighlighter } from 'shiki'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import { type Language } from '@/api/generated'
 
-const { lang } = defineProps<{
-  lang?: BundledLanguage
+const { language } = defineProps<{
+  language: Language
 }>()
 
-const model = defineModel<string>()
-
-const codeBlock = useTemplateRef('codeBlock')
+const model = defineModel<string>({ required: true })
 
 let editor: monaco.editor.IStandaloneCodeEditor | undefined
+const element = useTemplateRef('codeBlock')
 
-let highlighter: HighlighterGeneric<BundledLanguage, BundledTheme> | undefined
+let highlighter = await createHighlighter({
+  themes: ['github-light'],
+  langs: []
+})
 
-const setLanguage = async (lang: BundledLanguage) => {
-  if (lang != undefined && editor != undefined) {
-    highlighter?.loadLanguage(lang)
-    monaco.languages.register({ id: lang })
-    monaco.editor.setModelLanguage(editor!.getModel()!, lang)
+// APIより得られる言語名と、それに対応したフォーマットの対応
+const syntaxMapping: Map<string, BundledLanguage> = new Map(
+  Object.entries({
+    C: 'c',
+    'C++': 'cpp',
+    Java: 'java',
+    Python: 'python',
+    JavaScript: 'javascript',
+    Ruby: 'ruby',
+    Swift: 'swift',
+    Go: 'go',
+    Rust: 'rust',
+    Kotlin: 'kotlin'
+  })
+)
+
+const setLanguage = async (language?: Language) => {
+  if (editor == undefined) return
+  let syntaxName: BundledLanguage | undefined
+  if (language != undefined && syntaxMapping.has(language.name)) {
+    syntaxName = syntaxMapping.get(language.name)!
+    await highlighter.loadLanguage(syntaxName)
+    monaco.languages.register({ id: syntaxName })
   }
+  // 対応していない言語の場合、textフォーマッタを使用
+  monaco.editor.setModelLanguage(editor!.getModel()!, syntaxName || 'text')
 }
 
-onMounted(async () => {
-  if (import.meta.env.SSR) return
-
+const configureMonacoEditor = () => {
   self.MonacoEnvironment = {
     getWorker(_, label) {
       if (label === 'json') {
@@ -55,28 +71,32 @@ onMounted(async () => {
     }
   }
   monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
+}
 
-  editor = monaco.editor.create(codeBlock.value!, {
-    value: model.value!,
+onMounted(async () => {
+  if (import.meta.env.SSR) return
+
+  configureMonacoEditor()
+
+  editor = monaco.editor.create(element.value!, {
+    value: model.value,
     automaticLayout: true
   })
-  highlighter = await createHighlighter({
-    themes: ['github-light'],
-    langs: []
-  })
+
   shikiToMonaco(highlighter, monaco)
 
-  if (lang !== undefined) await setLanguage(lang!)
+  await setLanguage(language)
   editor.getModel()?.onDidChangeContent(() => {
     model.value = editor!.getValue()
   })
 })
 
 onUpdated(async () => {
-  await setLanguage(lang!)
+  await setLanguage(language)
 })
+
 watch(model, () => {
-  if (model.value != editor?.getValue()) editor!.setValue(model.value!)
+  if (model.value != editor?.getValue()) editor?.setValue(model.value)
 })
 </script>
 
