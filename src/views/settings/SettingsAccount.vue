@@ -33,6 +33,10 @@ import GitHubIcon from '@/assets/service_icons/github.svg';
 import GoogleIcon from '@/assets/service_icons/google.svg';
 import traQIcon from '@/assets/service_icons/traq.svg';
 
+import checkIcon from '@/assets/status_icons/check.svg';
+import profileIcon from '@/assets/status_icons/profile.svg';
+import accountIcon from '@/assets/status_icons/account.svg';
+
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
   { name: 'Google', linked: false, ID: '', icon: GoogleIcon },
@@ -58,43 +62,45 @@ function changePassword() {
 </script>
 
 <template>
-  <div class="flex gap-12 px-6 py-8">
+  <div class="flex gap-12 px-6 py-8" style="font-family: 'Open Sans', 'Noto Sans', sans-serif;">
     <aside class="gap-3 p-3" style="min-width: 250px;">
       <h2 class="h-10 pb-3 text-xl font-medium">設定</h2>
       <ul>
         <li class="mb-3">
           <a 
             href="/settings/account" 
-            class="block rounded px-4 py-1"
-            style="font-weight: 500; background-color: #FFE5E5; color: #8E3535;"
+            class="flex rounded px-4 py-1"
+            style="font-weight: 500; background-color: #FFE5E5; color: #8E3535; gap: 5px;"
             @click.prevent="selectItem('account')"
           >
-            アカウント
+            <img :src="accountIcon" alt="" width="20" height="20" />
+            <p>アカウント</p>
           </a>
         </li>
         <li class="mb-3">
           <a 
             href="/settings/profile" 
-            class="block rounded px-4 py-1"
-            style="font-weight: 500; background-color: white; color: #5F5F5F;"
+            class="flex rounded px-4 py-1"
+            style="font-weight: 500; background-color: white; color: #5F5F5F; gap: 5px;"
             @click.prevent="selectItem('profile')"
           >
-            プロフィール
+            <img :src="profileIcon" alt="" width="20" height="20" style="filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(95%) contrast(85%);" />
+            <p>プロフィール</p>
           </a>
         </li>
       </ul>
     </aside>
     <div class="flex flex-col gap-6 p-3" style="width: 800px;">
-      <div class="flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium">基本情報</h2>
-        <div class="mb-3 flex-col">
+      <div class="flex flex-col gap-3 pb-3">
+        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">基本情報</h2>
+        <div class="flex-col">
           <label class="text-sm font-medium" for="username">ユーザー名</label>
           <div class="flex items-center gap-2">
             <input id="username" v-model="username" type="text" class="h-8 w-48 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
             <button class="h-10 w-20 rounded-lg" style="background-color: #AC004B; color: white;" @click="changeUsername">変更</button>
           </div>
         </div>
-        <div class="mb-3 flex-col">
+        <div class="flex-col">
           <label class="text-sm font-medium" for="email">メールアドレス</label>
           <div class="flex items-center gap-2">
             <input id="email" v-model="email" type="email" class="h-8 w-96 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
@@ -103,7 +109,7 @@ function changePassword() {
         </div>
       </div>
       <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium">パスワードの変更</h2>
+        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">パスワードの変更</h2>
         <div class="flex flex-col gap-2">
           <div class="flex-col">
             <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
@@ -130,10 +136,10 @@ function changePassword() {
           </div>
         </div>
       </div>
-      <div class="flex flex-col pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium">外部サービスとの連携</h2>
+      <div class="flex flex-col gap-3 pb-3">
+        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">外部サービスとの連携</h2>
         <div>
-          <div v-for="service in services" :key="service.name" class="flex-col">
+          <div v-for="service in services" :key="service.name" class="flex-col border-b-2" style="border-color: #D8D8D8B2;">
             <div class="flex h-12 items-center gap-2.5">
               <div class="flex items-center gap-2">
                 <img :src="service.icon" alt="" width="20" height="20" />
@@ -141,9 +147,9 @@ function changePassword() {
                   {{ service.name }}
                 </label>
               </div>
-              <span :style="[service.linked ? 'color: #16B179;' : 'color: #5F5F5F;']" class="w-32">
+              <span :style="[service.linked ? 'color: #16B179;' : 'color: #5F5F5F;']" class="flex w-32 gap-1">
                 {{ service.linked ? '連携済' : '未連携' }}
-                <span v-if="service.linked">✔</span>
+                <img v-if="service.linked" :src="checkIcon" alt="" width="16" height="16" />
               </span>
               <span class="h-12 min-w-72 content-around text-base font-normal" style="color: #5F5F5F;">
                 {{ service.ID }}

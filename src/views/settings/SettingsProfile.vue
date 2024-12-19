@@ -21,39 +21,43 @@ const words = ref<string>('');
 function changeWords() {
   console.log('TODO: ひとことの変更を反映する');
 }
+
+import profileIcon from '@/assets/status_icons/profile.svg';
+import accountIcon from '@/assets/status_icons/account.svg';
 </script>
 
 <template>
-  <div class="flex px-24">
-    <aside class="w-64 p-3" style="min-width: 250px;">
+  <div class="flex gap-12 px-6 py-8" style="font-family: 'Open Sans', 'Noto Sans', sans-serif;">
+    <aside class="gap-3 p-3" style="min-width: 250px;">
       <h2 class="pb-3 text-xl font-medium">設定</h2>
       <ul>
         <li class="mb-3">
           <a 
             href="/settings/account" 
-            class="block rounded px-4 py-1"
-            style="font-weight: 500; background-color: white; color: #5F5F5F;"
+            class="flex rounded px-4 py-1"
+            style="font-weight: 500; background-color: white; color: #5F5F5F; gap: 5px;"
             @click.prevent="selectItem('account')"
           >
-            アカウント
+            <img :src="accountIcon" alt="" width="20" height="20" style="filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(95%) contrast(85%);" />
+            <p>アカウント</p>
           </a>
         </li>
         <li class="mb-3">
           <a 
             href="/settings/profile" 
-            class="block rounded px-4 py-1"
-            style="font-weight: 500; background-color: #FFE5E5; color: #8E3535;"
+            class="flex rounded px-4 py-1"
+            style="font-weight: 500; background-color: #FFE5E5; color: #8E3535; gap: 5px;"
             @click.prevent="selectItem('profile')"
           >
-            プロフィール
+            <img :src="profileIcon" alt="" width="20" height="20" />
+            <p>プロフィール</p>
           </a>
         </li>
       </ul>
     </aside>
-    <div class="flex-col p-3" style="width: 800px;">
-      <h2 class="text-xl font-medium">プロフィール</h2>
-      <hr>
-      <div class="flex-col">
+    <div class="flex flex-col gap-3 p-3" style="width: 800px;">
+      <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">プロフィール</h2>
+      <div class="mb-3 flex-col">
         <label class="text-sm font-medium" for="word">ひとこと</label>
         <div class="flex flex-col gap-3">
           <textarea id="word" v-model="words" class="rounded border px-3 py-1" style="height: 256px; width: 600px;"></textarea>
