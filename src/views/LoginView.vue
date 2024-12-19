@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
+import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 </script>
 
 <template>
@@ -14,21 +16,21 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
         <div class="flex w-82 flex-col p-2.5">
           <button class="service_button">
             <img src="@/assets/service_icons/github.svg" class="mr-2.5 h-5" />
-            <p class="service_text">GitHub でログイン</p>
+            <span class="service_text">GitHub でログイン</span>
           </button>
           <button class="service_button">
             <img src="@/assets/service_icons/google.svg" class="mr-2.5 h-5" />
-            <p class="service_text">Google でログイン</p>
+            <span class="service_text">Google でログイン</span>
           </button>
           <button class="service_button">
             <img src="@/assets/service_icons/traq.svg" class="mr-2.5 h-5" />
-            <p class="service_text">traQ でログイン</p>
+            <span class="service_text">traQ でログイン</span>
           </button>
         </div>
         <div class="mx-4 h-full border-r border-border-secondary"></div>
         <div class="flex w-82 flex-col p-2.5">
-          <input placeholder="メールアドレス" class="input" />
-          <input placeholder="パスワード" class="input" />
+          <EmailTextbox class="mb-3 h-8" />
+          <PasswordTextbox class="mb-3 h-8" />
           <div class="mb-3 flex h-10">
             <PrimaryButton class="mr-3 h-full w-37 rounded-lg" text="ログイン" />
             <BorderedButton class="h-full w-37 rounded-lg" text="新規登録" />
@@ -53,9 +55,6 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
   }
   .service_text {
     @apply font-primary text-14px font-medium text-[#3A3A3A];
-  }
-  .input {
-    @apply mb-3 flex h-8 w-full items-center justify-center rounded-sm border border-border-secondary pl-3;
   }
 }
 </style>
