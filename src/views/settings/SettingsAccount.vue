@@ -31,11 +31,12 @@ interface Service {
 
 import GitHubIcon from '@/assets/service_icons/github.svg';
 import GoogleIcon from '@/assets/service_icons/google.svg';
+import traQIcon from '@/assets/service_icons/traq.svg';
 
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
   { name: 'Google', linked: false, ID: '', icon: GoogleIcon },
-  { name: 'traQ', linked: false, ID: '@test_user', icon: '' }
+  { name: 'traQ', linked: false, ID: '@test_user', icon: traQIcon },
 ]);
 
 function toggleLink(service: Service) {
