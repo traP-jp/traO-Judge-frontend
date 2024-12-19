@@ -14,17 +14,23 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
       <h1 class="mb-5 h-9 font-primary text-28px font-medium text-[#1E1E1E]">ログイン</h1>
       <div class="flex h-44 items-start">
         <div class="flex w-82 flex-col p-2.5">
-          <button class="service_button">
+          <button
+            class="mb-3 flex h-10 w-full items-center justify-center rounded-lg border border-border-secondary"
+          >
             <img src="@/assets/service_icons/github.svg" class="mr-2.5 h-5" />
-            <span class="service_text">GitHub でログイン</span>
+            <span class="font-primary text-14px font-medium text-[#3A3A3A]">GitHub でログイン</span>
           </button>
-          <button class="service_button">
+          <button
+            class="mb-3 flex h-10 w-full items-center justify-center rounded-lg border border-border-secondary"
+          >
             <img src="@/assets/service_icons/google.svg" class="mr-2.5 h-5" />
-            <span class="service_text">Google でログイン</span>
+            <span class="font-primary text-14px font-medium text-[#3A3A3A]">Google でログイン</span>
           </button>
-          <button class="service_button">
+          <button
+            class="mb-3 flex h-10 w-full items-center justify-center rounded-lg border border-border-secondary"
+          >
             <img src="@/assets/service_icons/traq.svg" class="mr-2.5 h-5" />
-            <span class="service_text">traQ でログイン</span>
+            <span class="font-primary text-14px font-medium text-[#3A3A3A]">traQ でログイン</span>
           </button>
         </div>
         <div class="mx-4 h-full border-r border-border-secondary"></div>
@@ -44,17 +50,4 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
   </div>
 </template>
 
-<style scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer components {
-  .service_button {
-    @apply mb-3 flex h-10 w-full items-center justify-center rounded-lg border border-border-secondary;
-  }
-  .service_text {
-    @apply font-primary text-14px font-medium text-[#3A3A3A];
-  }
-}
-</style>
+<style scoped></style>
