@@ -42,8 +42,8 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
             <BorderedButton class="h-full w-37 rounded-lg" text="新規登録" />
           </div>
           <router-link to="" class="fontstyle-ui-caption h-4 text-[#3A3A3A] underline">
-            パスワードを忘れた場合</router-link
-          >
+            パスワードを忘れた場合
+          </router-link>
         </div>
       </div>
     </div>

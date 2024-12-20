@@ -21,7 +21,7 @@ export default {
       white: '#ffffff'
     },
     fontFamily: {
-      primary: ['Noto Sans JP', 'Open Sans', 'sans-serif']
+      primary: ['Open Sans', 'Noto Sans JP', 'sans-serif']
     },
     extend: {
       spacing: {
@@ -39,11 +39,6 @@ export default {
         78: '19.5rem',
         172: '43rem',
         200: '50rem'
-      },
-      fontSize: {
-        '12px': '12px',
-        '14px': '14px',
-        '28px': '28px'
       }
     }
   },
