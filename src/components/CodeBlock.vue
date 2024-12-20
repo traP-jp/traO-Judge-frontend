@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, useTemplateRef, watch } from 'vue'
+import { onBeforeUnmount, onMounted, onUpdated, useTemplateRef, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import { shikiToMonaco } from '@shikijs/monaco'
-import { type BundledLanguage, createHighlighter } from 'shiki'
+import { type BundledLanguage, createHighlighter, type Highlighter } from 'shiki'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
@@ -19,10 +19,7 @@ const model = defineModel<string>({ required: true })
 let editor: monaco.editor.IStandaloneCodeEditor | undefined
 const element = useTemplateRef<HTMLElement>('codeBlock')
 
-let highlighter = await createHighlighter({
-  themes: ['github-light'],
-  langs: []
-})
+let highlighter: Highlighter
 
 // APIより得られる言語名と、それに対応したフォーマットの対応
 const syntaxMapping: Map<string, BundledLanguage> = new Map(
@@ -73,6 +70,7 @@ const configureMonacoEditor = () => {
   monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
 }
 
+let initialized: boolean = false
 onMounted(async () => {
   if (import.meta.env.SSR) return
 
@@ -83,16 +81,27 @@ onMounted(async () => {
     automaticLayout: true
   })
 
+  highlighter = await createHighlighter({
+    themes: ['github-light'],
+    langs: []
+  })
+
   shikiToMonaco(highlighter, monaco)
 
   await setLanguage(language)
   editor.getModel()?.onDidChangeContent(() => {
     model.value = editor!.getValue()
   })
+  initialized = true
 })
 
 onUpdated(async () => {
+  if (!initialized) return
   await setLanguage(language)
+})
+
+onBeforeUnmount(() => {
+  editor?.dispose()
 })
 
 watch(model, () => {
