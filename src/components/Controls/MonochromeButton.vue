@@ -14,7 +14,7 @@ function onClick() {
   <button
     :disabled="disabled"
     class="fontstyle-ui-control-strong inline-block h-9 rounded border border-text-primary px-6 text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
-    :style="{paddingLeft: padding, paddingRight: padding}"
+    :style="{ paddingLeft: padding, paddingRight: padding }"
     @click="onClick"
   >
     {{ text }}
