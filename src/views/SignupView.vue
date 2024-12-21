@@ -20,8 +20,7 @@ async function onEmailSignup() {
       router.push('/signup/after-mail')
     } else if (response.status === 400) {
       alert('不正なリクエストです　メールアドレスの形式を確認してください')
-    }
-    else {
+    } else {
       alert(response.status)
     }
   } catch (error) {
@@ -40,17 +39,17 @@ async function onEmailSignup() {
       <div class="fontstyle-ui-title text-left">新規登録</div>
       <div class="flex divide-x divide-border-secondary">
         <div class="flex-1 space-y-3 p-2.5 pr-4">
-            <OAuthButton app="Github" mode="signup" class="w-full" />
-            <OAuthButton app="Google" mode="signup" class="w-full" />
-            <OAuthButton app="traQ" mode="signup" class="w-full" />
+          <OAuthButton app="Github" mode="signup" class="w-full" />
+          <OAuthButton app="Google" mode="signup" class="w-full" />
+          <OAuthButton app="traQ" mode="signup" class="w-full" />
         </div>
         <div class="flex-1 space-y-3 p-2.5 pl-4">
-            <div class="fontstyle-ui-body-strong text-left">メールアドレスで新規登録</div>
-            <EmailTextbox v-model="emailAddress" placeholder="メールアドレス" />
-            <PrimaryButton text="次へ" class="w-full" @click="onEmailSignup" />
-            <div class="fontstyle-ui-caption-link text-left">
-              <a href="login">すでにアカウントをお持ちの場合</a>
-            </div>
+          <div class="fontstyle-ui-body-strong text-left">メールアドレスで新規登録</div>
+          <EmailTextbox v-model="emailAddress" placeholder="メールアドレス" />
+          <PrimaryButton text="次へ" class="w-full" @click="onEmailSignup" />
+          <div class="fontstyle-ui-caption-link text-left">
+            <a href="login">すでにアカウントをお持ちの場合</a>
+          </div>
         </div>
       </div>
     </div>
