@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
