@@ -1,6 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import router from '@/router'
+import { AuthenticationApi } from '@/api/generated'
+import type { Email } from '@/api/generated'
+
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+
+const emailAddress = ref<Email>({
+  email: ''
+})
+
+const requestResetPassword = async () => {
+  const authApi = new AuthenticationApi()
+  await authApi.postRequestResetPassword({ email: emailAddress.value })
+  router.push('/reset-password/after-mail')
+}
 </script>
 
 <template>
@@ -19,12 +34,14 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
         <div class="h-[100px] w-px bg-border-secondary"></div>
         <div class="flex shrink-0 grow basis-0 flex-col items-start gap-3 p-2">
           <EmailTextbox
+            v-model="emailAddress.email"
             placeholder="メールアドレス"
             class="flex items-center gap-2.5 self-stretch"
           />
           <PrimaryButton
             text="送信"
             class="flex items-center justify-center gap-2.5 self-stretch px-5 py-2"
+            @click="requestResetPassword"
           />
         </div>
       </div>

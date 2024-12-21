@@ -1,6 +1,22 @@
 <script setup lang="ts">
+import router from '@/router'
+import { AuthenticationApi } from '@/api/generated'
+import type { Email } from '@/api/generated'
+
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+
+const emailAddress: Email = { email: '' } // TODO:前の画面からメアドを取ってくる
+
+const closeWindow = () => {
+  router.push('/')
+}
+
+const requestResetPassword = async () => {
+  const authApi = new AuthenticationApi()
+  await authApi.postRequestResetPassword({ email: emailAddress })
+  router.push('/reset-password/after-mail')
+}
 </script>
 
 <template>
@@ -21,10 +37,12 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
         <PrimaryButton
           text="この画面を閉じる"
           class="flex shrink-0 grow basis-0 items-center justify-center gap-2.5 px-5 py-2"
+          @click="closeWindow"
         />
         <BorderedButton
           text="メールを再送信する"
           class="flex shrink-0 grow basis-0 items-end justify-center gap-2.5 px-5 py-2"
+          @click="requestResetPassword"
         />
       </div>
     </div>
