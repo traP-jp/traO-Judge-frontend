@@ -17,22 +17,28 @@ export default {
       'text-tertiary': '#9a9a9a',
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
-      'red': '#ff0000',
-      'white': '#ffffff',
+      red: '#ff0000',
+      white: '#ffffff'
     },
     fontFamily: {
       primary: ['Open Sans', 'Noto Sans JP', 'sans-serif']
     },
     extend: {
       spacing: {
-        '1.625': '0.40625rem',
-        '1.75': '0.4375rem',
-        '4.5': '1.125rem',
-        '7.5': '1.875rem',
-        '11.5': '2.875rem',
-        '27': '6.75rem',
-        '50': '12.5rem',
-        '62.5': '15.625rem'
+        1.625: '0.40625rem',
+        1.75: '0.4375rem',
+        4.5: '1.125rem',
+        7.5: '1.875rem',
+        11.5: '2.875rem',
+        27: '6.75rem',
+        37: '9.25rem',
+        50: '12.5rem',
+        58: '14.5rem',
+        62.5: '15.625rem',
+        82: '20.5rem',
+        78: '19.5rem',
+        172: '43rem',
+        200: '50rem'
       }
     }
   },
