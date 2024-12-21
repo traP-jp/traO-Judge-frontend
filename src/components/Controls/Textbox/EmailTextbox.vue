@@ -4,6 +4,9 @@ import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 import { computed } from 'vue'
 import isEmail from 'validator/lib/isEmail'
 
+defineOptions({
+  inheritAttrs: false
+})
 const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
   errorMessage?: string
@@ -22,6 +25,7 @@ const isError = computed(() => errorMessage != '' || isEmailError.value)
     <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" />
     <input
       v-model="value"
+      v-bind="$attrs"
       :autocomplete="autocomplete"
       :class="[
         {
