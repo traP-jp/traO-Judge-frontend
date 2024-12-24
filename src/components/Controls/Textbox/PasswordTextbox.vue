@@ -3,6 +3,9 @@ import MaterialIcon from '@/components/MaterialIcon.vue'
 import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 import { computed, ref } from 'vue'
 
+defineOptions({
+  inheritAttrs: false
+})
 const { errorMessage = '', label = '' } = defineProps<{
   disabled?: boolean
   errorMessage?: string
@@ -22,6 +25,7 @@ const passwordShown = ref<boolean>(false)
     <span class="relative">
       <input
         v-model="value"
+        v-bind="$attrs"
         :class="[
           {
             'border-border-secondary outline-text-primary focus:border-text-primary': !isError

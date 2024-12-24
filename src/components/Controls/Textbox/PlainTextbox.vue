@@ -3,13 +3,17 @@ import MaterialIcon from '@/components/MaterialIcon.vue'
 import TextboxLabel from '@/components/Controls/Textbox/TextboxLabel.vue'
 import { computed } from 'vue'
 
-const { errorMessage = '', label = '' } = defineProps<{
-  disabled?: boolean
+defineOptions({
+  inheritAttrs: false
+})
+const {
+  errorMessage = '',
+  label = '',
+  isRequired
+} = defineProps<{
   errorMessage?: string
-  isRequired?: boolean
   label?: string
-  placeholder?: string
-  autocomplete?: string
+  isRequired?: boolean
 }>()
 const value = defineModel<string>()
 const isError = computed(() => errorMessage != '')
@@ -17,10 +21,10 @@ const isError = computed(() => errorMessage != '')
 
 <template>
   <div class="flex flex-col gap-2">
-    <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" />
+    <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" :for="$attrs.id" />
     <input
       v-model="value"
-      :autocomplete="autocomplete"
+      v-bind="$attrs"
       :class="[
         {
           'border-border-secondary outline-text-primary focus:border-text-primary': !isError
@@ -28,9 +32,6 @@ const isError = computed(() => errorMessage != '')
         { 'border-status-error outline outline-1 outline-status-error': isError },
         'fontstyle-ui-body w-full rounded border bg-background-primary py-1 pl-4 text-text-primary placeholder:text-text-tertiary focus:outline focus:outline-1 disabled:bg-background-secondary'
       ]"
-      :disabled="disabled"
-      :placeholder="placeholder"
-      type="text"
     />
     <div v-if="isError" class="flex items-start gap-2 pl-1 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" />

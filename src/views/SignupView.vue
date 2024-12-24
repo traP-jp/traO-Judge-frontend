@@ -44,8 +44,10 @@ async function onEmailSignup() {
           <OAuthButton app="traQ" mode="signup" class="w-full" />
         </div>
         <div class="flex-1 space-y-3 p-2.5 pl-4">
-          <div class="fontstyle-ui-body-strong text-left">メールアドレスで新規登録</div>
-          <EmailTextbox v-model="emailAddress" placeholder="メールアドレス" />
+          <label class="fontstyle-ui-body-strong text-left" for="email"
+            >メールアドレスで新規登録</label
+          >
+          <EmailTextbox id="email" v-model="emailAddress" placeholder="メールアドレス" />
           <PrimaryButton text="次へ" class="w-full" @click="onEmailSignup" />
           <div class="fontstyle-ui-caption-link text-left">
             <a href="login">すでにアカウントをお持ちの場合</a>
