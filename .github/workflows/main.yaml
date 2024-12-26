@@ -28,5 +28,5 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: ./scripts/gen-api.sh
+      - run: ./scripts/gen-api.sh development
       - run: npm run build
