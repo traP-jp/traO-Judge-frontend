@@ -9,9 +9,10 @@ const username = route.params.id
 // TODO: Fetch user data
 </script>
 
+<!-- TODO: Fix the layout on mobile -->
 <template>
-  <div class="flex gap-[10vw] px-[10vw]">
-    <nav class="sticky top-14 h-[calc(100vh-3.5rem)]">
+  <div class="flex gap-[max(2rem,calc(25dvw-15rem))] px-[max(2rem,calc(25dvw-15rem))]">
+    <nav class="sticky top-14 h-[calc(100dvh-3.5rem)]">
       <SideMenuUserPage :username="username" />
     </nav>
     <main class="flex-auto py-10">

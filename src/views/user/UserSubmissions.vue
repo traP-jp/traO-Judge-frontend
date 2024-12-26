@@ -2,14 +2,14 @@
 import PagedTable from '@/components/PagedTable.vue'
 import type { JudgeStatus } from '@/api/generated'
 
-const colIds = [
-  'submittedAt',
-  'userName',
-  'totalScore',
-  'codeLength',
-  'judgeStatus',
-  'maxTime',
-  'maxMemory'
+const cols: Column[] = [
+  { id: 'submittedAt', textAlign: 'start' },
+  { id: 'userName', textAlign: 'start' },
+  { id: 'totalScore', textAlign: 'end' },
+  { id: 'codeLength', textAlign: 'end' },
+  { id: 'judgeStatus', textAlign: 'center' },
+  { id: 'maxTime', textAlign: 'end' },
+  { id: 'maxMemory', textAlign: 'end' }
 ]
 
 const submissions: {
@@ -76,10 +76,10 @@ const submissions: {
 </script>
 
 <template>
-  <div class="rounded-lg border border-solid border-[#D8D8D8] pt-28 text-center">
+  <div class="rounded-lg border border-solid border-border-secondary pt-28 text-center">
     <h2 class="fontstyle-ui-title-large">提出一覧<br />テーブル</h2>
     <section class="p-10">
-      <PagedTable :col-ids="colIds" :row-ids="submissions.map(({ id }) => id)">
+      <PagedTable :cols="cols" :row-ids="submissions.map(({ id }) => id)">
         <template #head="{ colId }">
           {{
             {
