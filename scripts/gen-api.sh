@@ -17,5 +17,5 @@ docker run --rm -v "$(dirname $0)/../:/local" -u $(id -u):$(id -g) openapitools/
     -o /local/src/api/generated
 
 # 生成されたファイルの中でBASE_PATHを置換
-GENERATED_FILE_PATH="./src/api/generated/runtime.ts"
+GENERATED_FILE_PATH="$(dirname $0)/../src/api/generated/runtime.ts"
 sed -i '' "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" $GENERATED_FILE_PATH
