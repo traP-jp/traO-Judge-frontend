@@ -18,4 +18,12 @@ docker run --rm -v "$(dirname $0)/../:/local" -u $(id -u):$(id -g) openapitools/
 
 # 生成されたファイルの中でBASE_PATHを置換
 GENERATED_FILE_PATH="$(dirname $0)/../src/api/generated/runtime.ts"
-sed -i '' "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" $GENERATED_FILE_PATH
+
+# OSに応じてsedコマンドのオプションを切り替え
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOSの場合
+  sed -i '' "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" $GENERATED_FILE_PATH
+else
+  # Linuxの場合
+  sed -i "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" $GENERATED_FILE_PATH
+fi
