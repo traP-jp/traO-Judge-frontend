@@ -3,7 +3,7 @@
 # 引数で書き込むBASE_PATHを切り替える
 if [ "$1" = "production" ]; then
   BASE_PATH="https://trao-judge-backend.trap.show/v0"
-else if [ "$1" = "development" ]; then
+elif [ "$1" = "development" ]; then
   BASE_PATH="http://localhost:4010"
 else
   echo "Invalid argument: $1"
