@@ -6,16 +6,18 @@ import type { Email } from '@/api/generated'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
-const emailAddress: Email = { email: '' } // TODO:前の画面からメアドを取ってくる
+const email: string = history.state.email ?? ''
+const emailAddress: Email = { email: email }
 
 const closeWindow = () => {
   router.push('/')
 }
 
 const requestResetPassword = async () => {
+  console.log(email)
   const authApi = new AuthenticationApi()
   await authApi.postRequestResetPassword({ email: emailAddress })
-  router.push('/reset-password/after-mail')
+  router.push({ path: '/reset-password/after-mail', state: { email: email } })
 }
 </script>
 

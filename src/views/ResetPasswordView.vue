@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import router from '@/router'
 import { AuthenticationApi } from '@/api/generated'
 import type { Email } from '@/api/generated'
+import isEmail from 'validator/lib/isEmail'
 
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -12,9 +13,10 @@ const emailAddress = ref<Email>({
 })
 
 const requestResetPassword = async () => {
+  if (!isEmail(emailAddress.value.email)) return
   const authApi = new AuthenticationApi()
   await authApi.postRequestResetPassword({ email: emailAddress.value })
-  router.push('/reset-password/after-mail')
+  router.push({ path: '/reset-password/after-mail', state: { email: emailAddress.value.email } })
 }
 </script>
 
@@ -40,6 +42,7 @@ const requestResetPassword = async () => {
           />
           <PrimaryButton
             text="送信"
+            :disabled="!isEmail(emailAddress.email)"
             class="flex items-center justify-center gap-2.5 self-stretch px-5 py-2"
             @click="requestResetPassword"
           />
