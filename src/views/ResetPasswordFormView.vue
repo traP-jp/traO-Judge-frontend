@@ -1,6 +1,30 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { AuthenticationApi } from '@/api/generated'
+
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
+import { passwordValidator } from '@/utils/validator'
+
+const route = useRoute()
+const token = Array.isArray(route.query.token) ? undefined : route.query.token
+
+const password = ref<string>('')
+const confirmation = ref<string>('')
+const isValid = computed(() => passwordValidator(password.value))
+const isConfirmed = computed(() => password.value === confirmation.value)
+
+const submit = async () => {
+  const authApi = new AuthenticationApi()
+  await authApi.postResetPassword({
+    tokenWithUserid: token ?? undefined,
+    resetPasswordRequest: {
+      password: password.value,
+      token: token ?? ''
+    }
+  })
+}
 </script>
 
 <template>
@@ -17,7 +41,13 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
           <div class="flex w-50 items-center justify-end gap-2.5">
             <span class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード</span>
           </div>
-          <PasswordTextbox class="grow gap-1" />
+          <PasswordTextbox
+            v-model="password"
+            :error-message="
+              isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
+            "
+            class="grow gap-1"
+          />
         </div>
         <div class="flex items-center justify-center gap-6 self-stretch pb-5">
           <div class="h-4 w-50"></div>
@@ -34,10 +64,21 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
           <div class="flex w-50 items-center justify-end gap-2.5">
             <span class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード (確認)</span>
           </div>
-          <PasswordTextbox class="grow gap-1" />
+          <PasswordTextbox
+            v-model="confirmation"
+            :error-message="
+              isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
+            "
+            class="grow gap-1"
+          />
         </div>
         <div class="flex items-center justify-center gap-4 self-stretch">
-          <PrimaryButton text="再設定" class="flex items-end justify-center gap-2.5 px-8 py-2" />
+          <PrimaryButton
+            text="再設定"
+            :disabled="!(isValid && isConfirmed)"
+            class="flex items-end justify-center gap-2.5 px-8 py-2"
+            @click="submit"
+          />
         </div>
       </div>
     </div>
