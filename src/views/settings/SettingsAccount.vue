@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue';
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue';
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue';
@@ -28,11 +29,10 @@ interface Service {
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
   { name: 'Google', linked: false, ID: '', icon: GoogleIcon },
-  { name: 'traQ', linked: false, ID: '@test_user', icon: traQIcon },
+  { name: 'traQ', linked: false, ID: '', icon: traQIcon },
 ]);
 
 function toggleLink(service: Service) {
-  service.linked = !service.linked;
   console.log(`TODO: ${service.name} との連携を${service.linked ? '開始' : '解除'}する`);
 }
 
@@ -47,6 +47,37 @@ function changeEmail() {
 function changePassword() {
   console.log('TODO: パスワードの変更を反映する');
 }
+
+async function fetchUserData() {
+  try {
+    const response = await axios.get('/users/me');
+    const user = response.data;
+    services.value = services.value.map(service => {
+      switch (service.name) {
+        case 'GitHub':
+          console.log(user.github_id);
+          service.linked = user.github_id !== null;
+          break;
+        case 'traQ':
+          console.log(user.traq_id);
+          service.linked = user.traq_id !== null;
+          break;
+        case 'Google':
+          console.log('TODO: Google との連携状況を取得する');
+          break;
+        default:
+          break;
+      }
+      return service;
+    });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+}
+
+onMounted(() => {
+  fetchUserData();
+});
 </script>
 
 <template>
@@ -125,6 +156,4 @@ function changePassword() {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
