@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue';
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue';
+import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue';
+import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue';
+import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue';
 
-const router = useRouter();
-const selectedItem = ref<string>(window.location.pathname.split('/').pop() || 'account');
+import GitHubIcon from '@/assets/service_icons/github.svg';
+import GoogleIcon from '@/assets/service_icons/google.svg';
+import traQIcon from '@/assets/service_icons/traq.svg';
 
-function selectItem(item: string) {
-  selectedItem.value = item;
-  router.push(`/settings/${item}`);
-}
-
-onMounted(() => {
-  window.addEventListener('popstate', () => {
-    selectedItem.value = window.location.pathname.split('/').pop() || 'account';
-  });
-});
+import checkIcon from '@/assets/status_icons/check.svg';
 
 const username = ref<string>('');
 const email = ref<string>('');
@@ -28,14 +24,6 @@ interface Service {
   ID: string;
   icon: string;
 }
-
-import GitHubIcon from '@/assets/service_icons/github.svg';
-import GoogleIcon from '@/assets/service_icons/google.svg';
-import traQIcon from '@/assets/service_icons/traq.svg';
-
-import checkIcon from '@/assets/status_icons/check.svg';
-import profileIcon from '@/assets/status_icons/profile.svg';
-import accountIcon from '@/assets/status_icons/account.svg';
 
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
@@ -63,48 +51,22 @@ function changePassword() {
 
 <template>
   <div class="flex gap-12 px-6 py-8" style="font-family: 'Open Sans', 'Noto Sans', sans-serif;">
-    <aside class="gap-3 p-3" style="min-width: 250px;">
-      <h2 class="h-10 pb-3 text-xl font-medium">設定</h2>
-      <ul>
-        <li class="mb-3">
-          <a 
-            href="/settings/account" 
-            class="flex rounded px-4 py-1"
-            style="font-weight: 500; background-color: #FFE5E5; color: #8E3535; gap: 5px;"
-            @click.prevent="selectItem('account')"
-          >
-            <img :src="accountIcon" alt="" width="20" height="20" />
-            <p>アカウント</p>
-          </a>
-        </li>
-        <li class="mb-3">
-          <a 
-            href="/settings/profile" 
-            class="flex rounded px-4 py-1"
-            style="font-weight: 500; background-color: white; color: #5F5F5F; gap: 5px;"
-            @click.prevent="selectItem('profile')"
-          >
-            <img :src="profileIcon" alt="" width="20" height="20" style="filter: invert(33%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(95%) contrast(85%);" />
-            <p>プロフィール</p>
-          </a>
-        </li>
-      </ul>
-    </aside>
+    <SideMenuUserSetting />
     <div class="flex flex-col gap-6 p-3" style="width: 800px;">
       <div class="flex flex-col gap-3 pb-3">
         <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">基本情報</h2>
         <div class="flex-col">
           <label class="text-sm font-medium" for="username">ユーザー名</label>
           <div class="flex items-center gap-2">
-            <input id="username" v-model="username" type="text" class="h-8 w-48 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
-            <button class="h-10 w-20 rounded-lg" style="background-color: #AC004B; color: white;" @click="changeUsername">変更</button>
+            <PlainTextbox v-model="username" />
+            <PrimaryButton text="変更" @click="changeUsername" />
           </div>
         </div>
         <div class="flex-col">
           <label class="text-sm font-medium" for="email">メールアドレス</label>
           <div class="flex items-center gap-2">
-            <input id="email" v-model="email" type="email" class="h-8 w-96 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
-            <button class="h-10 w-20 rounded-lg" style="background-color: #AC004B; color: white;" @click="changeEmail">変更</button>
+            <EmailTextbox v-model="email" />
+            <PrimaryButton text="変更" @click="changeEmail" />
           </div>
         </div>
       </div>
@@ -114,25 +76,23 @@ function changePassword() {
           <div class="flex-col">
             <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
             <div class="flex items-center ">
-              <input id="current-password" v-model="currentPassword" type="password" class="h-8 w-72 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
+              <PasswordTextbox v-model="currentPassword" />
             </div>
           </div>
           <div class="flex-col">
             <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
             <div class="flex items-center ">
-              <input id="new-password" v-model="newPassword" type="password" class="h-8 w-72 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
+              <PasswordTextbox v-model="newPassword" />
             </div>
           </div>
           <div class="flex-col">
             <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
             <div class="flex items-center ">
-              <input id="confirm-password" v-model="confirmPassword" type="password" class="h-8 w-72 rounded border" style="border-color: #D8D8D8; padding-left: 10px; color: #3A3A3A;" />
+              <PasswordTextbox v-model="confirmPassword" />
             </div>
           </div>
           <div>
-            <button class="h-10 w-20 rounded-lg" style="background-color: #AC004B; color: white;" @click="changePassword">
-              変更
-            </button>
+            <PrimaryButton text="変更" @click="changePassword" />
           </div>
         </div>
       </div>
