@@ -33,7 +33,7 @@ const services = ref<Service[]>([
 ]);
 
 function toggleLink(service: Service) {
-  console.log(`TODO: ${service.name} との連携を${service.linked ? '開始' : '解除'}する`);
+  console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`);
 }
 
 function changeUsername() {
@@ -50,17 +50,20 @@ function changePassword() {
 
 async function fetchUserData() {
   try {
-    const response = await axios.get('/users/me');
+    const response = await axios.get('/api/users/me');
+    console.log(response);
     const user = response.data;
     services.value = services.value.map(service => {
       switch (service.name) {
         case 'GitHub':
-          console.log(user.github_id);
-          service.linked = user.github_id !== null;
+          console.log(user.githubId);
+          service.linked = user.githubId !== null;
+          service.ID = user.githubId;
           break;
         case 'traQ':
-          console.log(user.traq_id);
-          service.linked = user.traq_id !== null;
+          console.log(user.traqId);
+          service.linked = user.traqId !== null;
+          service.ID = user.traqId;
           break;
         case 'Google':
           console.log('TODO: Google との連携状況を取得する');
@@ -103,29 +106,30 @@ onMounted(() => {
       </div>
       <div class="flex flex-col gap-3 pb-3">
         <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">パスワードの変更</h2>
-        <div class="flex flex-col gap-2">
+        <form class="flex flex-col gap-2" @submit.prevent="changePassword">
+          <input v-model="username" type="text" autocomplete="username" hidden />
           <div class="flex-col">
             <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
             <div class="flex items-center ">
-              <PasswordTextbox v-model="currentPassword" />
+              <PasswordTextbox v-model="currentPassword" autocomplete="current-password" />
             </div>
           </div>
           <div class="flex-col">
             <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
             <div class="flex items-center ">
-              <PasswordTextbox v-model="newPassword" />
+              <PasswordTextbox v-model="newPassword" autocomplete="new-password" />
             </div>
           </div>
           <div class="flex-col">
             <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
             <div class="flex items-center ">
-              <PasswordTextbox v-model="confirmPassword" />
+              <PasswordTextbox v-model="confirmPassword" autocomplete="new-password" />
             </div>
           </div>
           <div>
-            <PrimaryButton text="変更" @click="changePassword" />
+            <PrimaryButton text="変更" type="submit" />
           </div>
-        </div>
+        </form>
       </div>
       <div class="flex flex-col gap-3 pb-3">
         <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">外部サービスとの連携</h2>
