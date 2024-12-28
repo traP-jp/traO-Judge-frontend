@@ -11,12 +11,12 @@ const username = route.params.id
 
 <!-- TODO: Fix the layout on mobile -->
 <template>
-  <div class="flex gap-[max(2rem,calc(25dvw-15rem))] px-[max(2rem,calc(25dvw-15rem))]">
+  <div class="flex gap-[max(2rem,calc(25dvw-16rem))] px-[max(2rem,calc(25dvw-16rem))]">
     <nav class="sticky top-14 h-[calc(100dvh-3.5rem)]">
       <SideMenuUserPage :username="username" />
     </nav>
     <main class="flex-auto py-10">
-      <RouterView />
+      <RouterView :username="username" />
     </main>
   </div>
 </template>

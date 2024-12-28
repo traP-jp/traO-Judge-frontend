@@ -1,6 +1,44 @@
 <script setup lang="ts">
-import PagedTable from '@/components/PagedTable.vue'
-import type { JudgeStatus } from '@/api/generated'
+import PagedTable, { type Column } from '@/components/PagedTable.vue'
+import { type GetSubmissionsRequest, SubmissionsApi, type SubmissionSummary } from '@/api/generated'
+import { onMounted, ref } from 'vue'
+
+const { username } = defineProps<{ username: string }>()
+
+// submissions data
+
+const submissionIds = ref<string[] | null>(null)
+const submissions = ref<Map<string, SubmissionSummary>>(new Map())
+
+/**
+ * Fetch submissions from the API and store them in the `submissionsIds` and `submissions` refs
+ * @param filter filter for the submissions
+ */
+const fetchSubmissions = async (filter: GetSubmissionsRequest) => {
+  try {
+    const response = await new SubmissionsApi().getSubmissionsRaw({
+      orderBy: 'submittedAtDesc',
+      ...filter,
+      username
+    })
+
+    submissionIds.value = []
+    submissions.value = new Map()
+    for (const submission of (await response.value()).submissions!) {
+      submissionIds.value.push(submission.id)
+      submissions.value.set(submission.id, submission)
+    }
+  } catch (error) {
+    submissionIds.value = null
+
+    console.error('API Error:', error)
+    alert(`API Error: ${error}`)
+  }
+}
+
+onMounted(fetchSubmissions)
+
+// submissions table
 
 const cols: Column[] = [
   { id: 'submittedAt', textAlign: 'start' },
@@ -10,103 +48,68 @@ const cols: Column[] = [
   { id: 'judgeStatus', textAlign: 'center' },
   { id: 'maxTime', textAlign: 'end' },
   { id: 'maxMemory', textAlign: 'end' }
-]
+] as const
 
-const submissions: {
-  id: string
-  submittedAt: string
-  userName: string
-  totalScore: number
-  codeLength: number
-  judgeStatus: JudgeStatus
-  maxTime: number
-  maxMemory: number
-}[] = [
-  {
-    id: '000011',
-    submittedAt: '1234/56/78 90:56:78',
-    userName: 'test_user',
-    totalScore: 400,
-    codeLength: 2048,
-    judgeStatus: 'AC',
-    maxTime: 123,
-    maxMemory: 12345
-  },
-  {
-    id: '000007',
-    submittedAt: '1234/56/78 90:45:67',
-    userName: 'test_user',
-    totalScore: 0,
-    codeLength: 2048,
-    judgeStatus: 'WA',
-    maxTime: 123,
-    maxMemory: 12345
-  },
-  {
-    id: '000005',
-    submittedAt: '1234/56/78 90:34:56',
-    userName: 'test_user',
-    totalScore: 300,
-    codeLength: 1024,
-    judgeStatus: 'AC',
-    maxTime: 12,
-    maxMemory: 12345
-  },
-  {
-    id: '000003',
-    submittedAt: '1234/56/78 90:23:45',
-    userName: 'test_user',
-    totalScore: 200,
-    codeLength: 512,
-    judgeStatus: 'AC',
-    maxTime: 12,
-    maxMemory: 12345
-  },
-  {
-    id: '000002',
-    submittedAt: '1234/56/78 90:12:34',
-    userName: 'test_user',
-    totalScore: 100,
-    codeLength: 256,
-    judgeStatus: 'AC',
-    maxTime: 1,
-    maxMemory: 1234
+const columnLabels: Record<string, string> = {
+  submittedAt: '提出日時',
+  userName: 'ユーザー名',
+  totalScore: '得点',
+  codeLength: 'コード長',
+  judgeStatus: 'ジャッジ結果',
+  maxTime: '実行時間',
+  maxMemory: 'メモリ'
+}
+
+/**
+ * Format a submission value for display in the table
+ * @param submission submission data
+ * @param colId column ID
+ * @returns formatted value
+ */
+const formatSubmission = (submission: SubmissionSummary, colId: string): string => {
+  switch (colId) {
+    case 'submittedAt':
+      return submission.submittedAt.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      })
+    case 'userName':
+      return submission.userName
+    case 'totalScore':
+      return `${submission.totalScore}`
+    case 'codeLength':
+      return `${Math.ceil(submission.codeLength)} Byte`
+    case 'judgeStatus':
+      return submission.judgeStatus
+    case 'maxTime':
+      return `${submission.maxTime} ms`
+    case 'maxMemory':
+      return `${submission.maxMemory.toFixed(3)} MiB`
+    default:
+      console.error('Unknown column:', colId)
+      return `Unknown column: ${colId}`
   }
-]
+}
 </script>
 
 <template>
   <div class="rounded-lg border border-solid border-border-secondary pt-28 text-center">
     <h2 class="fontstyle-ui-title-large">提出一覧<br />テーブル</h2>
     <section class="p-10">
-      <PagedTable :cols="cols" :row-ids="submissions.map(({ id }) => id)">
+      <!-- TODO: add pagination, sorting and filtering features -->
+      <PagedTable v-if="submissionIds" :cols="cols" :row-ids="submissionIds">
         <template #head="{ colId }">
-          {{
-            {
-              submittedAt: '提出日時',
-              userName: 'ユーザー名',
-              totalScore: '得点',
-              codeLength: 'コード長',
-              judgeStatus: 'ジャッジ結果',
-              maxTime: '実行時間',
-              maxMemory: 'メモリ'
-            }[colId]
-          }}
+          {{ columnLabels[colId] }}
         </template>
         <template #cell="{ rowId, colId }">
-          {{
-            {
-              submittedAt: submissions.find(({ id }) => id === rowId)?.submittedAt,
-              userName: submissions.find(({ id }) => id === rowId)?.userName,
-              totalScore: submissions.find(({ id }) => id === rowId)?.totalScore,
-              codeLength: `${submissions.find(({ id }) => id === rowId)?.codeLength} Byte`,
-              judgeStatus: submissions.find(({ id }) => id === rowId)?.judgeStatus,
-              maxTime: `${submissions.find(({ id }) => id === rowId)?.maxTime} ms`,
-              maxMemory: `${submissions.find(({ id }) => id === rowId)?.maxMemory} KB`
-            }[colId]
-          }}
+          {{ formatSubmission(submissions.get(rowId)!, colId) }}
         </template>
       </PagedTable>
+      <div v-else>読み込み中...</div>
     </section>
   </div>
 </template>

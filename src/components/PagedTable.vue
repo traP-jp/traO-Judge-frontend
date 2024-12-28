@@ -1,6 +1,7 @@
 <script setup lang="ts">
 export type Column = { id: string; textAlign?: 'start' | 'end' | 'center' }
 
+// TODO: add pagination, sorting and filtering features
 const { cols, rowIds } = defineProps<{
   cols: Column[]
   rowIds: string[]
