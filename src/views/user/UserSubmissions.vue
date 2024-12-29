@@ -2,10 +2,9 @@
 import PagedTable, { type Column } from '@/components/PagedTable.vue'
 import { type GetSubmissionsRequest, SubmissionsApi, type SubmissionSummary } from '@/api/generated'
 import { onMounted, ref } from 'vue'
+import { dateToString } from '@/utils/date'
 
 const { username } = defineProps<{ username: string }>()
-
-// submissions data
 
 const submissionIds = ref<string[] | null>(null)
 const submissions = ref<Map<string, SubmissionSummary>>(new Map())
@@ -38,62 +37,15 @@ const fetchSubmissions = async (filter: GetSubmissionsRequest) => {
 
 onMounted(fetchSubmissions)
 
-// submissions table
-
-const cols: Column[] = [
-  { id: 'submittedAt', textAlign: 'start' },
-  { id: 'userName', textAlign: 'start' },
-  { id: 'totalScore', textAlign: 'end' },
-  { id: 'codeLength', textAlign: 'end' },
-  { id: 'judgeStatus', textAlign: 'center' },
-  { id: 'maxTime', textAlign: 'end' },
-  { id: 'maxMemory', textAlign: 'end' }
+const cols: (Column & { name: string })[] = [
+  { id: 'submittedAt', textAlign: 'start', name: '提出日時' },
+  { id: 'userName', textAlign: 'start', name: 'ユーザー名' },
+  { id: 'totalScore', textAlign: 'end', name: '得点' },
+  { id: 'codeLength', textAlign: 'end', name: 'コード長' },
+  { id: 'judgeStatus', textAlign: 'center', name: 'ジャッジ結果' },
+  { id: 'maxTime', textAlign: 'end', name: '実行時間' },
+  { id: 'maxMemory', textAlign: 'end', name: 'メモリ' }
 ] as const
-
-const columnLabels: Record<string, string> = {
-  submittedAt: '提出日時',
-  userName: 'ユーザー名',
-  totalScore: '得点',
-  codeLength: 'コード長',
-  judgeStatus: 'ジャッジ結果',
-  maxTime: '実行時間',
-  maxMemory: 'メモリ'
-}
-
-/**
- * Format a submission value for display in the table
- * @param submission submission data
- * @param colId column ID
- * @returns formatted value
- */
-const formatSubmission = (submission: SubmissionSummary, colId: string): string => {
-  switch (colId) {
-    case 'submittedAt':
-      return submission.submittedAt.toLocaleString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-    case 'userName':
-      return submission.userName
-    case 'totalScore':
-      return `${submission.totalScore}`
-    case 'codeLength':
-      return `${Math.ceil(submission.codeLength)} Byte`
-    case 'judgeStatus':
-      return submission.judgeStatus
-    case 'maxTime':
-      return `${submission.maxTime} ms`
-    case 'maxMemory':
-      return `${submission.maxMemory.toFixed(3)} MiB`
-    default:
-      console.error('Unknown column:', colId)
-      return `Unknown column: ${colId}`
-  }
-}
 </script>
 
 <template>
@@ -103,10 +55,31 @@ const formatSubmission = (submission: SubmissionSummary, colId: string): string 
       <!-- TODO: add pagination, sorting and filtering features -->
       <PagedTable v-if="submissionIds" :cols="cols" :row-ids="submissionIds">
         <template #head="{ colId }">
-          {{ columnLabels[colId] }}
+          {{ cols.find(({ id }) => id === colId)!.name }}
         </template>
         <template #cell="{ rowId, colId }">
-          {{ formatSubmission(submissions.get(rowId)!, colId) }}
+          <template v-if="colId === 'submittedAt'">
+            {{ dateToString(submissions.get(rowId)!.submittedAt) }}
+          </template>
+          <template v-else-if="colId === 'userName'">
+            {{ submissions.get(rowId)!.userName }}
+          </template>
+          <template v-else-if="colId === 'totalScore'">
+            {{ submissions.get(rowId)!.totalScore }}
+          </template>
+          <template v-else-if="colId === 'codeLength'">
+            {{ Math.ceil(submissions.get(rowId)!.codeLength) }} Byte
+          </template>
+          <template v-else-if="colId === 'judgeStatus'">
+            {{ submissions.get(rowId)!.judgeStatus }}
+          </template>
+          <template v-else-if="colId === 'maxTime'">
+            {{ submissions.get(rowId)!.maxTime }} ms
+          </template>
+          <template v-else-if="colId === 'maxMemory'">
+            {{ submissions.get(rowId)!.maxMemory.toFixed(3) }} MiB
+          </template>
+          <template v-else>Unknown column: {{ colId }}</template>
         </template>
       </PagedTable>
       <div v-else>読み込み中...</div>
