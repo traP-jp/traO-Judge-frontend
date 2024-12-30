@@ -24,7 +24,7 @@ const isError = computed(() => errorMessage != '' || isEmailError.value)
   <div class="flex flex-col gap-2">
     <TextboxLabel v-if="label != ''" :is-required="isRequired" :label="label" />
     <input
-      v-model="value"
+      v-model.lazy="value"
       v-bind="$attrs"
       :autocomplete="autocomplete"
       :class="[
