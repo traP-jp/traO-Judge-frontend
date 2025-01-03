@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import PagedTable, { type Column } from '@/components/PagedTable.vue'
+import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import { type GetSubmissionsRequest, SubmissionsApi, type SubmissionSummary } from '@/api/generated'
 import { onMounted, ref } from 'vue'
 import { dateToString } from '@/utils/date'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const rowPerPage = 20
 
 const { username } = defineProps<{ username: string }>()
+const page = Math.max(parseInt(String(route.query.page)) || 0, 0)
 
 const submissionIds = ref<string[] | null>(null)
 const submissions = ref<Map<string, SubmissionSummary>>(new Map())
@@ -35,7 +41,7 @@ const fetchSubmissions = async (filter: GetSubmissionsRequest) => {
   }
 }
 
-onMounted(fetchSubmissions)
+onMounted(() => fetchSubmissions({ offset: page * rowPerPage, limit: rowPerPage }))
 
 const cols: (Column & { name: string })[] = [
   { id: 'submittedAt', textAlign: 'start', name: '提出日時' },
@@ -52,8 +58,8 @@ const cols: (Column & { name: string })[] = [
   <div class="rounded-lg border border-solid border-border-secondary pt-28 text-center">
     <h2 class="fontstyle-ui-title-large">提出一覧<br />テーブル</h2>
     <section class="p-10">
-      <!-- TODO: add pagination, sorting and filtering features -->
-      <PagedTable v-if="submissionIds" :cols="cols" :row-ids="submissionIds">
+      <!-- TODO: add sorting and filtering features -->
+      <ListingTable v-if="submissionIds" :cols="cols" :row-ids="submissionIds">
         <template #head="{ colId }">
           {{ cols.find(({ id }) => id === colId)!.name }}
         </template>
@@ -81,7 +87,7 @@ const cols: (Column & { name: string })[] = [
           </template>
           <template v-else>Unknown column: {{ colId }}</template>
         </template>
-      </PagedTable>
+      </ListingTable>
       <div v-else>読み込み中...</div>
     </section>
   </div>
