@@ -34,7 +34,7 @@ const requestResetPassword = async () => {
           </p>
         </div>
         <div class="h-[100px] w-px bg-border-secondary"></div>
-        <div class="flex shrink-0 grow basis-0 flex-col items-start gap-3 p-2">
+        <form class="flex shrink-0 grow basis-0 flex-col items-start gap-3 p-2">
           <EmailTextbox
             v-model="emailAddress.email"
             placeholder="メールアドレス"
@@ -46,7 +46,7 @@ const requestResetPassword = async () => {
             class="flex items-center justify-center gap-2.5 self-stretch px-5 py-2"
             @click="requestResetPassword"
           />
-        </div>
+        </form>
       </div>
     </div>
   </div>

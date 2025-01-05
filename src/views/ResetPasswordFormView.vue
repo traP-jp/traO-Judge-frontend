@@ -36,35 +36,36 @@ const submit = async () => {
       <div class="flex flex-col items-start gap-2 self-stretch">
         <p class="fontstyle-ui-body text-right text-[#3A3A3A]">パスワードを再設定します。</p>
       </div>
-      <div class="flex flex-col items-start self-stretch p-2.5">
+      <form class="flex flex-col items-start self-stretch p-2.5">
         <div class="flex items-center justify-center gap-6 self-stretch">
           <div class="flex w-50 items-center justify-end gap-2.5">
-            <span class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード</span>
+            <label for="password" class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード</label>
           </div>
-          <PasswordTextbox
-            v-model="password"
-            :error-message="
-              isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
-            "
-            class="grow gap-1"
-          />
-        </div>
-        <div class="flex items-center justify-center gap-6 self-stretch pb-5">
-          <div class="h-4 w-50"></div>
-          <div class="flex shrink-0 grow basis-0 flex-col items-start justify-center">
-            <p class="fontstyle-ui-caption-strong text-text-secondary">
-              文字数は〇以上〇以下で、半角英数字と記号が使用できます。
-            </p>
-            <p class="fontstyle-ui-caption-strong text-text-secondary">
-              英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
-            </p>
+          <div class="flex grow flex-col gap-1">
+            <PasswordTextbox
+              id="password"
+              v-model="password"
+              :error-message="
+                isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
+              "
+              class="grow gap-1"
+            />
+            <div class="flex shrink-0 grow basis-0 flex-col items-start justify-center">
+              <p class="fontstyle-ui-caption-strong text-text-secondary">
+                文字数は〇以上〇以下で、半角英数字と記号が使用できます。
+              </p>
+              <p class="fontstyle-ui-caption-strong text-text-secondary">
+                英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
+              </p>
+            </div>
           </div>
         </div>
         <div class="flex items-center justify-center gap-6 self-stretch pb-5">
           <div class="flex w-50 items-center justify-end gap-2.5">
-            <span class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード (確認)</span>
+            <label for="confirmation" class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード (確認)</label>
           </div>
           <PasswordTextbox
+            id="confirmation"
             v-model="confirmation"
             :error-message="
               isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
@@ -80,7 +81,7 @@ const submit = async () => {
             @click="submit"
           />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
