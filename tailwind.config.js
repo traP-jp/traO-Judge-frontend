@@ -18,7 +18,8 @@ export default {
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
       red: '#ff0000',
-      white: '#ffffff'
+      white: '#ffffff',
+      transparent: 'transparent',
     },
     fontFamily: {
       primary: ['Open Sans', 'Noto Sans JP', 'sans-serif']
