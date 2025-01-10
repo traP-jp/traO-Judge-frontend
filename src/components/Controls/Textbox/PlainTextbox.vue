@@ -22,7 +22,7 @@ const {
   rightIcon?: Icon
   supportingText?: string
 }>()
-const emit = defineEmits(['clickLeft', 'clickRight'])
+const emit = defineEmits(['clickRight'])
 const value = defineModel<string>()
 const displaysError = computed(() => errorMessage != '')
 const displaysLeftIcon = computed(() => leftIcon != null)
@@ -32,12 +32,24 @@ const input = useTemplateRef('input')
 const isFocused = ref<boolean>(false)
 onMounted(() => {
   input.value?.addEventListener('focusin', () => (isFocused.value = true))
-  input.value?.addEventListener('focusout', () => (isFocused.value = false))
+  input.value?.addEventListener('blur', () => (isFocused.value = false))
 })
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
+  <div
+    ref="plain-textbox"
+    class="flex flex-col gap-1"
+    @mousedown="
+      (e) => {
+        input?.focus()
+        if (isFocused) {
+          e.stopPropagation()
+          e.preventDefault()
+        }
+      }
+    "
+  >
     <span v-if="label != ''" class="flex items-center gap-2">
       <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
       <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
@@ -52,12 +64,7 @@ onMounted(() => {
         { 'bg-background-secondary': disabled }
       ]"
     >
-      <MaterialIcon
-        v-if="displaysLeftIcon"
-        :icon="leftIcon!"
-        size="1.25rem"
-        @click="emit('clickLeft')"
-      />
+      <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
       <input
         v-bind="$attrs"
         :id="id"
