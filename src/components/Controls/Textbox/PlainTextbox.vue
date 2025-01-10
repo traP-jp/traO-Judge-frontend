@@ -15,7 +15,7 @@ const {
   disabled?: boolean
   displaysLength?: boolean
   errorMessage?: string
-  id: string
+  id?: string
   label?: string
   leftIcon?: Icon
   required?: boolean

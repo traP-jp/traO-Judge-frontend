@@ -4,7 +4,6 @@ import isEmail from 'validator/lib/isEmail'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 
 defineProps<{
-  id: string
   errorMessage?: string
 }>()
 const value = defineModel<string>()
@@ -13,7 +12,7 @@ const isEmailError = computed(() => (value.value?.length ?? 0) > 0 && !isEmail(v
 
 <template>
   <PlainTextbox
-    :id="id"
+    v-bind="$attrs"
     v-model="value"
     :error-message="isEmailError ? 'メールアドレスの形式が正しくありません。' : errorMessage"
   />

@@ -3,10 +3,6 @@ import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { computed, ref } from 'vue'
 import type { Icon } from '@/components/MaterialIcon.vue'
 
-defineProps<{
-  id: string
-}>()
-
 const visible = ref<boolean>(false)
 const rightIcon = computed<Icon>(() => (visible.value ? 'visibility_off' : 'visibility'))
 const toggleVisibility = () => (visible.value = !visible.value)
@@ -14,7 +10,6 @@ const toggleVisibility = () => (visible.value = !visible.value)
 
 <template>
   <PlainTextbox
-    :id="id"
     displays-length
     :right-icon="rightIcon"
     :type="visible ? 'text' : 'password'"
