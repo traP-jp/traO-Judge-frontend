@@ -22,7 +22,7 @@ const {
   rightIcon?: Icon
   supportingText?: string
 }>()
-const emit = defineEmits(['clickRight'])
+const emit = defineEmits(['clickRight', 'focusin', 'blur'])
 const value = defineModel<string>()
 const displaysError = computed(() => errorMessage != '')
 const displaysLeftIcon = computed(() => leftIcon != null)
@@ -30,10 +30,14 @@ const displaysRightIcon = computed(() => rightIcon != null)
 const displaysSupportingText = computed(() => supportingText != null)
 const input = useTemplateRef('input')
 const isFocused = ref<boolean>(false)
-onMounted(() => {
-  input.value?.addEventListener('focusin', () => (isFocused.value = true))
-  input.value?.addEventListener('blur', () => (isFocused.value = false))
-})
+const onFocusin = (): void => {
+  isFocused.value = true
+  emit('focusin')
+}
+const onBlur = (): void => {
+  isFocused.value = false
+  emit('blur')
+}
 const onClickInnerBorder = (e: MouseEvent) => {
   e.stopPropagation()
   e.preventDefault()
@@ -63,9 +67,11 @@ const onClickInnerBorder = (e: MouseEvent) => {
         v-bind="$attrs"
         :id="id"
         ref="input"
-        v-model.lazy="value"
+        v-model="value"
         :disabled="disabled"
         class="fontstyle-ui-body h-5 w-full min-w-0 bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
+        @focusin="onFocusin"
+        @blur="onBlur"
       />
       <span class="inline-flex items-center gap-2">
         <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
