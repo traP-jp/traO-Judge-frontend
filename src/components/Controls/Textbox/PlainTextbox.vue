@@ -34,22 +34,15 @@ onMounted(() => {
   input.value?.addEventListener('focusin', () => (isFocused.value = true))
   input.value?.addEventListener('blur', () => (isFocused.value = false))
 })
+const onClickInnerBorder = (e: MouseEvent) => {
+  e.stopPropagation()
+  e.preventDefault()
+  if (!isFocused.value) input.value?.focus()
+}
 </script>
 
 <template>
-  <div
-    ref="plain-textbox"
-    class="flex flex-col gap-1"
-    @mousedown="
-      (e) => {
-        input?.focus()
-        if (isFocused) {
-          e.stopPropagation()
-          e.preventDefault()
-        }
-      }
-    "
-  >
+  <div class="flex flex-col gap-1">
     <span v-if="label != ''" class="flex items-center gap-2">
       <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
       <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
@@ -63,6 +56,7 @@ onMounted(() => {
         { 'border-text-primary': isFocused && !displaysError },
         { 'bg-background-secondary': disabled }
       ]"
+      @mousedown="onClickInnerBorder"
     >
       <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
       <input
