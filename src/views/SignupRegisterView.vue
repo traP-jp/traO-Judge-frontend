@@ -88,44 +88,32 @@ async function onSignupRegister() {
     <div class="w-120 space-y-6 rounded-2xl bg-white px-8 py-6">
       <div class="fontstyle-ui-title text-left text-text-primary">新規登録</div>
       <div class="flex flex-col space-y-4">
-        <div class="flex flex-col space-y-1">
-          <label for="username" class="flex items-center gap-2">
-            <span class="fontstyle-ui-control text-left text-text-primary">ユーザー名</span
-            ><span class="fontstyle-ui-caption-strong text-left text-status-error">必須</span>
-          </label>
-          <PlainTextbox id="username" v-model="username" :error-message="usernameErrorMessage" />
-          <div class="fontstyle-ui-caption text-text-secondary">
-            <p>
-              半角英数字とアンダースコア、ハイフンを用いた32文字以下のユーザー名が利用できます。
-            </p>
-            <p>アンダースコアまたはハイフンを最初と最後に使うことはできません。</p>
-          </div>
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="password" class="flex items-center gap-2">
-            <span class="fontstyle-ui-control text-left text-text-primary">パスワード</span
-            ><span class="fontstyle-ui-caption-strong text-left text-status-error">必須</span>
-          </label>
-          <PasswordTextbox id="password" v-model="password" :error-message="passwordErrorMessage" />
-          <div class="fontstyle-ui-caption text-text-secondary">
-            <p>
-              半角英数字と記号(@, $, !, %, *, ?,
-              &)を用いた8文字以上64文字以下のパスワードが利用できます。
-            </p>
-            <p>大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。</p>
-          </div>
-        </div>
-        <div class="flex flex-col space-y-1">
-          <label for="confirmPassword" class="flex items-center gap-2">
-            <span class="fontstyle-ui-control text-left text-text-primary">パスワード（確認）</span
-            ><span class="fontstyle-ui-caption-strong text-left text-status-error">必須</span>
-          </label>
-          <PasswordTextbox
-            id="confirmPassword"
-            v-model="confirmPassword"
-            :error-message="confirmPasswordErrorMessage"
-          />
-        </div>
+        <PlainTextbox
+          id="username"
+          v-model="username"
+          label="ユーザー名"
+          :required="true"
+          :displays-length="true"
+          supporting-text='半角英数字とアンダースコア、ハイフンを用いた32文字以下のユーザー名が利用できます。
+          アンダースコアまたはハイフンを最初と最後に使うことはできません。'
+          :error-message="usernameErrorMessage"
+        />
+        <PasswordTextbox
+          id="password"
+          v-model="password"
+          label="パスワード"
+          :required="true"
+          supporting-text="半角英数字と記号(@, $, !, %, *, ?, &)を用いた8文字以上64文字以下のパスワードが利用できます。
+          大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。"
+          :error-message="passwordErrorMessage"
+        />
+        <PasswordTextbox
+          id="confirmPassword"
+          v-model="confirmPassword"
+          label="パスワード（確認）"
+          :required="true"
+          :error-message="confirmPasswordErrorMessage"
+        />
         <div class="flex justify-center">
           <PrimaryButton text="次へ" @click="onSignupRegister" />
         </div>

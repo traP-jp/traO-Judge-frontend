@@ -85,7 +85,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
         />
       </span>
     </span>
-    <span v-if="displaysSupportingText" class="fontstyle-ui-caption text-text-secondary">{{
+    <span v-if="displaysSupportingText" class="fontstyle-ui-caption whitespace-pre-line text-text-secondary">{{
       supportingText
     }}</span>
   </div>
