@@ -1,7 +1,8 @@
 #!/bin/bash -eux
 
 # 引数で書き込むBASE_PATHを切り替える
-if [ "$#" -ne 1 ]; then
+# TODO:　あとで見直す
+if [ "$#" -ne 2 ]; then
   echo "Error: Incorrect number of arguments."
   echo "Usage: $0 <environment>"
   echo "Please specify the environment as 'production' or 'development', and provide a second argument."
@@ -29,7 +30,7 @@ npx @openapitools/openapi-generator-cli generate \
   -o "$ROOT_DIR/src/api/generated"
 
 # 生成されたファイルの中で BASE_PATH を置換
-GENERATED_FILE_PATH="$ROOT_DIR/src/api/generated/runtime.ts"
+GENERATED_FILE_PATH="$2"
 
 sed -i.bak "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" "$GENERATED_FILE_PATH"
 
