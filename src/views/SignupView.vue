@@ -33,7 +33,7 @@ async function onEmailSignup() {
 <template>
   <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
     <div class="w-90 space-y-6 rounded-2xl bg-white px-8 py-6">
-      <div class="fontstyle-ui-subtitle text-left text-text-primary">新規登録</div>
+      <div class="fontstyle-ui-subtitle text-text-primary">新規登録</div>
       <div class="divide-y divide-border-primary">
         <div class="space-y-2 pb-6">
           <OAuthButton app="Github" mode="signup" class="w-full" />
@@ -45,7 +45,7 @@ async function onEmailSignup() {
           <PrimaryButton text="メールアドレスで新規登録" class="w-full" @click="onEmailSignup" />
         </div>
       </div>
-      <div class="fontstyle-ui-caption-link text-left text-text-secondary">
+      <div class="fontstyle-ui-caption-link text-text-secondary">
         <a href="login">すでにアカウントをお持ちの場合</a>
       </div>
     </div>

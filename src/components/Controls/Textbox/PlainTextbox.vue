@@ -85,9 +85,11 @@ const onClickInnerBorder = (e: MouseEvent) => {
         />
       </span>
     </span>
-    <span v-if="displaysSupportingText" class="fontstyle-ui-caption whitespace-pre-line text-text-secondary">{{
-      supportingText
-    }}</span>
+    <span
+      v-if="displaysSupportingText"
+      class="fontstyle-ui-caption whitespace-pre-line text-text-secondary"
+      >{{ supportingText }}</span
+    >
   </div>
   <div v-if="displaysError" class="mt-2 flex items-start gap-2 text-status-error">
     <MaterialIcon icon="error" size="1.25rem" is-filled />
