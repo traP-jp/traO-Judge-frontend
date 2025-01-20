@@ -14,22 +14,20 @@ function onResendEmail() {
 </script>
 
 <template>
-  <div
-    class="flex items-center justify-center bg-background-tertiary px-8 py-6"
-    style="height: calc(100vh - 56px)"
-  >
-    <div class="max-w-xl space-y-5 rounded-2xl bg-white px-14 py-10">
-      <div class="fontstyle-ui-title text-left">確認メールを送信しました</div>
-      <div class="fontstyle-ui-body text-left text-text-secondary">
+  <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
+    <div class="w-90 space-y-6 rounded-2xl bg-background-primary px-8 py-6">
+      <div class="fontstyle-ui-subtitle text-text-primary">確認メールを送信しました</div>
+      <div class="fontstyle-ui-body text-text-primary">
         60分以内に、メールに記載されたリンクから登録フォームにアクセスしてください。
       </div>
-      <div class="flex gap-3">
-        <div class="flex-1">
-          <PrimaryButton text="この画面を閉じる" class="w-full" @click="onClose" />
-        </div>
-        <div class="flex-1">
-          <BorderedButton text="メールを再送信する" class="w-full" @click="onResendEmail" />
-        </div>
+      <div class="space-y-2">
+        <PrimaryButton text="この画面を閉じる" class="w-full" @click="onClose" />
+        <BorderedButton text="メールを再送信する" class="w-full" @click="onResendEmail" />
+      </div>
+      <div class="fontstyle-ui-caption text-text-secondary">
+        メールアドレスを間違えた場合は、<a href="/signup" class="fontstyle-ui-caption-link"
+          >新規登録ページ</a
+        >からメールアドレスを入力しなおしてください。
       </div>
     </div>
   </div>
