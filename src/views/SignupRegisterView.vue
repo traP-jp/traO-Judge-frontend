@@ -85,7 +85,7 @@ async function onSignupRegister() {
 
 <template>
   <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
-    <div class="w-120 space-y-6 rounded-2xl bg-white px-8 py-6">
+    <div class="w-120 space-y-6 rounded-2xl bg-background-primary px-8 py-6">
       <div class="fontstyle-ui-title text-text-primary">新規登録</div>
       <div class="flex flex-col space-y-4">
         <PlainTextbox
