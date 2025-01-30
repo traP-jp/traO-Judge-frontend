@@ -33,32 +33,25 @@ const router = useRouter()
 async function onSignupRegister() {
   try {
     let error = false
-    // check user name
-    if (!username.value) {
-      usernameErrorMessage.value = 'ユーザー名を入力してください'
-      error = true
-    } else if (!usernameValidator(username.value)) {
-      usernameErrorMessage.value = '無効なユーザー名'
+    const [isUsernameValid, usernameError] = usernameValidator(username.value)
+    if (!isUsernameValid) {
+      usernameErrorMessage.value = usernameError
       error = true
     } else {
       usernameErrorMessage.value = ''
     }
-    // check password
-    if (!password.value) {
-      passwordErrorMessage.value = 'パスワードを入力してください'
-      error = true
-    } else if (!passwordValidator(password.value)) {
-      passwordErrorMessage.value = '無効なパスワード'
+    const [isPasswordValid, passwordError] = passwordValidator(password.value)
+    if (!isPasswordValid) {
+      passwordErrorMessage.value = passwordError
       error = true
     } else {
       passwordErrorMessage.value = ''
     }
-    // check confirm password
     if (!confirmPassword.value) {
-      confirmPasswordErrorMessage.value = 'パスワード（確認）を入力してください'
+      confirmPasswordErrorMessage.value = '必須項目です。'
       error = true
     } else if (password.value !== confirmPassword.value) {
-      confirmPasswordErrorMessage.value = 'パスワードが一致しません'
+      confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
       error = true
     } else {
       confirmPasswordErrorMessage.value = ''
@@ -91,71 +84,36 @@ async function onSignupRegister() {
 </script>
 
 <template>
-  <div
-    class="flex items-center justify-center bg-background-tertiary px-8 py-6"
-    style="height: calc(100vh - 56px)"
-  >
-    <div class="max-w-3xl space-y-5 rounded-2xl bg-white px-14 py-10">
-      <div class="fontstyle-ui-title text-left">新規登録</div>
-      <div>
-        <span class="fontstyle-ui-body text-status-error">*</span>
-        <span class="fontstyle-ui-body text-text-primary">がついた項目は必須です。</span>
-      </div>
-      <div class="flex flex-col space-y-5 p-2.5">
-        <div class="flex gap-6">
-          <label for="username" class="w-50 text-right">
-            <span class="fontstyle-ui-body-strong text-text-primary">ユーザー名</span>
-            <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </label>
-          <div class="flex-1">
-            <PlainTextbox id="username" v-model="username" :error-message="usernameErrorMessage" />
-            <div class="fontstyle-ui-caption-strong text-nowrap pt-1 text-text-secondary">
-              文字数は5以上10以下で、半角英数字とアンダースコアのみが使用できます。
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-6">
-          <div class="w-50 text-right">
-            <span class="fontstyle-ui-body-strong text-text-primary">メールアドレス</span>
-          </div>
-          <div class="flex-1">
-            <span class="fontstyle-ui-body w-full px-1 text-text-primary">
-              {{ emailAddress }}
-            </span>
-          </div>
-        </div>
-        <div class="flex gap-6">
-          <label for="password" class="w-50 text-right">
-            <span class="fontstyle-ui-body-strong text-text-primary">パスワード</span>
-            <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </label>
-          <div class="flex-1">
-            <PasswordTextbox
-              id="password"
-              v-model="password"
-              :error-message="passwordErrorMessage"
-            />
-            <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
-              文字数は10以上64以下で、半角英数字と記号が使用できます。
-            </div>
-            <div class="fontstyle-ui-caption-strong pt-1 text-text-secondary">
-              英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-6">
-          <label for="confirPassword" class="w-50 text-right">
-            <span class="fontstyle-ui-body-strong text-text-primary">パスワード（確認）</span>
-            <span class="fontstyle-ui-body-strong text-status-error">*</span>
-          </label>
-          <div class="flex-1">
-            <PasswordTextbox
-              id="confirmPassword"
-              v-model="confirmPassword"
-              :error-message="confirmPasswordErrorMessage"
-            />
-          </div>
-        </div>
+  <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
+    <div class="w-120 space-y-6 rounded-2xl bg-background-primary px-8 py-6">
+      <div class="fontstyle-ui-title text-text-primary">新規登録</div>
+      <div class="flex flex-col space-y-4">
+        <PlainTextbox
+          id="username"
+          v-model="username"
+          label="ユーザー名"
+          :required="true"
+          :displays-length="true"
+          supporting-text="半角英数字とアンダースコア、ハイフンを用いた32文字以下のユーザー名が利用できます。
+          アンダースコアまたはハイフンを最初と最後に使うことはできません。"
+          :error-message="usernameErrorMessage"
+        />
+        <PasswordTextbox
+          id="password"
+          v-model="password"
+          label="パスワード"
+          :required="true"
+          supporting-text="半角英数字と記号(@, $, !, %, *, ?, &)を用いた8文字以上64文字以下のパスワードが利用できます。
+          大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。"
+          :error-message="passwordErrorMessage"
+        />
+        <PasswordTextbox
+          id="confirmPassword"
+          v-model="confirmPassword"
+          label="パスワード（確認）"
+          :required="true"
+          :error-message="confirmPasswordErrorMessage"
+        />
         <div class="flex justify-center">
           <PrimaryButton text="次へ" @click="onSignupRegister" />
         </div>
