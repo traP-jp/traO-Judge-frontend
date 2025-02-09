@@ -1,47 +1,66 @@
 <script setup lang="ts">
-import ListingTable, { type Column } from '@/components/ListingTable.vue'
-import { type GetSubmissionsRequest, SubmissionsApi, type SubmissionSummary } from '@/api/generated'
 import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { dateToString } from '@/utils/date'
-import { useRoute } from 'vue-router'
+import { SubmissionsApi, type SubmissionSummaries, type SubmissionSummary } from '@/api/generated'
+import ListingTable, { type Column } from '@/components/ListingTable.vue'
+import PageSwitcher from '@/components/PageSwitcher.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const rowPerPage = 20
 
 const { username } = defineProps<{ username: string }>()
-const page = Math.max(parseInt(String(route.query.page)) || 0, 0)
+const page = ref<number>(Math.max(parseInt(String(route.query.page)) || 0, 0))
 
-const submissionIds = ref<string[] | null>(null)
+const isLoaded = ref<boolean>(false)
+const totalSubmissions = ref<number>(0)
+const totalPage = ref<number>(0)
+const submissionIds = ref<string[]>([])
 const submissions = ref<Map<string, SubmissionSummary>>(new Map())
 
 /**
- * Fetch submissions from the API and store them in the `submissionsIds` and `submissions` refs
- * @param filter filter for the submissions
+ * Fetch the submissions with the current state and update the state
  */
-const fetchSubmissions = async (filter: GetSubmissionsRequest) => {
+const loadSubmissions = async () => {
+  isLoaded.value = false
   try {
     const response = await new SubmissionsApi().getSubmissionsRaw({
       orderBy: 'submittedAtDesc',
-      ...filter,
-      username
+      username,
+      limit: rowPerPage,
+      offset: page.value * rowPerPage
     })
+    const summaries: SubmissionSummaries = await response.value()
 
-    submissionIds.value = []
-    submissions.value = new Map()
-    for (const submission of (await response.value()).submissions!) {
-      submissionIds.value.push(submission.id)
-      submissions.value.set(submission.id, submission)
-    }
+    totalSubmissions.value = summaries.total!
+    totalPage.value = Math.ceil(summaries.total! / rowPerPage)
+    if (page.value >= totalPage.value) page.value = totalPage.value - 1
+
+    submissionIds.value = summaries.submissions!.map(({ id }) => id)
+    submissions.value = new Map(
+      summaries.submissions!.map((submission) => [submission.id, submission])
+    )
   } catch (error) {
-    submissionIds.value = null
-
     console.error('API Error:', error)
     alert(`API Error: ${error}`)
+  } finally {
+    isLoaded.value = true
   }
 }
 
-onMounted(() => fetchSubmissions({ offset: page * rowPerPage, limit: rowPerPage }))
+onMounted(() => loadSubmissions())
+
+/**
+ * Switch the page and fetch the submissions
+ * @param newPage the new page number
+ */
+const switchPage = async (newPage: number) => {
+  page.value = newPage
+  await router.push({ query: { page: newPage.toString() } })
+  await loadSubmissions()
+}
 
 const cols: (Column & { name: string })[] = [
   { id: 'submittedAt', textAlign: 'start', name: '提出日時' },
@@ -52,43 +71,50 @@ const cols: (Column & { name: string })[] = [
   { id: 'maxTime', textAlign: 'end', name: '実行時間' },
   { id: 'maxMemory', textAlign: 'end', name: 'メモリ' }
 ] as const
+
+const getSubmission = (rowId: string): SubmissionSummary => submissions.value.get(rowId)!
 </script>
 
 <template>
   <div class="rounded-lg border border-solid border-border-secondary pt-28 text-center">
     <h2 class="fontstyle-ui-title-large">提出一覧<br />テーブル</h2>
     <section class="p-10">
-      <!-- TODO: add sorting and filtering features -->
-      <ListingTable v-if="submissionIds" :cols="cols" :row-ids="submissionIds">
-        <template #head="{ colId }">
-          {{ cols.find(({ id }) => id === colId)!.name }}
-        </template>
-        <template #cell="{ rowId, colId }">
-          <template v-if="colId === 'submittedAt'">
-            {{ dateToString(submissions.get(rowId)!.submittedAt) }}
+      <PageSwitcher :begin="0" :current="page" :end="totalPage" @switch="switchPage" />
+      <div class="my-6">
+        <!-- TODO: add sorting and filtering features -->
+        <ListingTable v-if="isLoaded" :cols="cols" :row-ids="submissionIds">
+          <template #head="{ colId }">
+            {{ cols.find(({ id }) => id === colId)!.name }}
           </template>
-          <template v-else-if="colId === 'userName'">
-            {{ submissions.get(rowId)!.userName }}
+          <template #cell="{ rowId, colId }">
+            <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
+            <template v-if="colId === 'submittedAt'">
+              {{ dateToString(getSubmission(rowId).submittedAt) }}
+            </template>
+            <template v-else-if="colId === 'userName'">
+              {{ getSubmission(rowId).userName }}
+            </template>
+            <template v-else-if="colId === 'totalScore'">
+              {{ getSubmission(rowId).totalScore }}
+            </template>
+            <template v-else-if="colId === 'codeLength'">
+              {{ Math.ceil(getSubmission(rowId).codeLength) }} Byte
+            </template>
+            <template v-else-if="colId === 'judgeStatus'">
+              {{ getSubmission(rowId).judgeStatus }}
+            </template>
+            <template v-else-if="colId === 'maxTime'">
+              {{ getSubmission(rowId).maxTime }} ms
+            </template>
+            <template v-else-if="colId === 'maxMemory'">
+              {{ getSubmission(rowId).maxMemory.toFixed(3) }} MiB
+            </template>
+            <template v-else>Unknown column: {{ colId }}</template>
           </template>
-          <template v-else-if="colId === 'totalScore'">
-            {{ submissions.get(rowId)!.totalScore }}
-          </template>
-          <template v-else-if="colId === 'codeLength'">
-            {{ Math.ceil(submissions.get(rowId)!.codeLength) }} Byte
-          </template>
-          <template v-else-if="colId === 'judgeStatus'">
-            {{ submissions.get(rowId)!.judgeStatus }}
-          </template>
-          <template v-else-if="colId === 'maxTime'">
-            {{ submissions.get(rowId)!.maxTime }} ms
-          </template>
-          <template v-else-if="colId === 'maxMemory'">
-            {{ submissions.get(rowId)!.maxMemory.toFixed(3) }} MiB
-          </template>
-          <template v-else>Unknown column: {{ colId }}</template>
-        </template>
-      </ListingTable>
-      <div v-else>読み込み中...</div>
+        </ListingTable>
+        <div v-else>読み込み中...</div>
+      </div>
+      <PageSwitcher :begin="0" :current="page" :end="totalPage" @switch="switchPage" />
     </section>
   </div>
 </template>
