@@ -36,12 +36,15 @@ const submit = async () => {
       <div class="flex flex-col items-start gap-2 self-stretch">
         <p class="fontstyle-ui-body text-right text-[#3A3A3A]">パスワードを再設定します。</p>
       </div>
-      <form class="flex flex-col items-start self-stretch p-2.5">
-        <div class="flex items-center justify-center gap-6 self-stretch">
-          <div class="flex w-50 items-center justify-end gap-2.5">
-            <label for="password" class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード</label>
-          </div>
-          <div class="flex grow flex-col gap-1">
+      <form class="flex flex-col items-center gap-5 p-2.5">
+        <div class="grid grid-cols-[200px_1fr] items-center gap-x-6 self-stretch">
+          <label
+            for="password"
+            class="fontstyle-ui-body-strong col-start-1 row-start-1 text-right text-[#3A3A3A]"
+          >
+            パスワード
+          </label>
+          <div class="col-start-2 row-start-1 grow">
             <PasswordTextbox
               id="password"
               v-model="password"
@@ -50,14 +53,16 @@ const submit = async () => {
               "
               class="grow gap-1"
             />
-            <div class="flex shrink-0 grow basis-0 flex-col items-start justify-center">
-              <p class="fontstyle-ui-caption-strong text-text-secondary">
-                文字数は〇以上〇以下で、半角英数字と記号が使用できます。
-              </p>
-              <p class="fontstyle-ui-caption-strong text-text-secondary">
-                英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
-              </p>
-            </div>
+          </div>
+          <div
+            class="col-start-2 row-start-2 flex shrink-0 grow basis-0 flex-col items-start justify-center"
+          >
+            <p class="fontstyle-ui-caption-strong text-text-secondary">
+              文字数は〇以上〇以下で、半角英数字と記号が使用できます。
+            </p>
+            <p class="fontstyle-ui-caption-strong text-text-secondary">
+              英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
+            </p>
           </div>
         </div>
         <div class="flex items-center justify-center gap-6 self-stretch pb-5">
