@@ -29,13 +29,11 @@ const submit = async () => {
 
 <template>
   <div class="flex h-[calc(100vh-56px)] items-center justify-center bg-background-secondary">
-    <div
-      class="flex w-[800px] flex-col items-start justify-center gap-5 rounded-[15px] bg-background-primary px-14 py-10"
-    >
+    <div class="flex w-[800px] flex-col gap-5 rounded-[15px] bg-background-primary px-14 py-10">
       <h1 class="fontstyle-ui-title text-[#1E1E1E]">パスワードの再設定</h1>
-      <div class="flex flex-col items-start gap-2 self-stretch">
-        <p class="fontstyle-ui-body text-right text-[#3A3A3A]">パスワードを再設定します。</p>
-      </div>
+
+      <p class="fontstyle-ui-body text-[#3A3A3A]">パスワードを再設定します。</p>
+
       <form class="flex flex-col items-center gap-5 p-2.5">
         <div class="grid grid-cols-[200px_1fr] items-center gap-x-6 self-stretch">
           <label
@@ -65,27 +63,28 @@ const submit = async () => {
             </p>
           </div>
         </div>
-        <div class="flex items-center justify-center gap-6 self-stretch pb-5">
-          <div class="flex w-50 items-center justify-end gap-2.5">
-            <label for="confirmation" class="fontstyle-ui-body-strong text-[#3A3A3A]">パスワード (確認)</label>
+
+        <div class="flex items-center gap-6 self-stretch">
+          <label for="confirmation" class="fontstyle-ui-body-strong w-50 text-right text-[#3A3A3A]">
+            パスワード (確認)
+          </label>
+          <div class="grow">
+            <PasswordTextbox
+              id="confirmation"
+              v-model="confirmation"
+              :error-message="
+                isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
+              "
+            />
           </div>
-          <PasswordTextbox
-            id="confirmation"
-            v-model="confirmation"
-            :error-message="
-              isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
-            "
-            class="grow gap-1"
-          />
         </div>
-        <div class="flex items-center justify-center gap-4 self-stretch">
-          <PrimaryButton
-            text="再設定"
-            :disabled="!(isValid && isConfirmed)"
-            class="flex items-end justify-center gap-2.5 px-8 py-2"
-            @click="submit"
-          />
-        </div>
+
+        <PrimaryButton
+          text="再設定"
+          :disabled="!(isValid && isConfirmed)"
+          class="px-8"
+          @click="submit"
+        />
       </form>
     </div>
   </div>
