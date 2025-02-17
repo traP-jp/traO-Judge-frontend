@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { dateToString } from '@/utils/date'
 import { SubmissionsApi, type SubmissionSummaries, type SubmissionSummary } from '@/api/generated'
@@ -12,7 +12,14 @@ const router = useRouter()
 const rowPerPage = 20
 
 const { username } = defineProps<{ username: string }>()
-const page = ref<number>(Math.max(parseInt(String(route.query.page)) || 0, 0))
+
+const page = ref<number>(0)
+watch(
+  () => route.query,
+  (query) => {
+    page.value = Math.max(parseInt(String(query.page)) || 0, 0)
+  }
+)
 
 const isLoaded = ref<boolean>(false)
 const totalSubmissions = ref<number>(0)
@@ -50,16 +57,10 @@ const loadSubmissions = async () => {
   }
 }
 
-onMounted(() => loadSubmissions())
+watch(page, () => loadSubmissions(), { immediate: true })
 
-/**
- * Switch the page and fetch the submissions
- * @param newPage the new page number
- */
 const switchPage = async (newPage: number) => {
-  page.value = newPage
   await router.push({ query: { page: newPage.toString() } })
-  await loadSubmissions()
 }
 
 const cols: (Column & { name: string })[] = [
