@@ -1,4 +1,3 @@
-
 #!/bin/bash -eux
 
 # 引数で書き込むBASE_PATHを切り替える
@@ -19,17 +18,20 @@ else
   exit 1
 fi
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$SCRIPT_DIR/.."
+cd "$ROOT_DIR"
+
 # APIクライアントの生成
-docker run --rm -v "$(dirname $0)/../:/local" -u $(id -u):$(id -g) openapitools/openapi-generator-cli generate \
-    -i https://raw.githubusercontent.com/traP-jp/traO-Judge-docs/refs/tags/1.1.0/api/backend/frontend-backend.yaml \
-    -g typescript-fetch \
-    -o /local/src/api/generated
+npx @openapitools/openapi-generator-cli generate \
+  -i https://raw.githubusercontent.com/traP-jp/traO-Judge-docs/refs/tags/1.1.0/api/backend/frontend-backend.yaml \
+  -g typescript-fetch \
+  -o "$ROOT_DIR/src/api/generated"
 
-# 生成されたファイルの中でBASE_PATHを置換
-GENERATED_FILE_PATH="$(dirname $0)/../src/api/generated/runtime.ts"
+# 生成されたファイルの中で BASE_PATH を置換
+GENERATED_FILE_PATH="$ROOT_DIR/src/api/generated/runtime.ts"
 
-# sedコマンドでBASE_PATHを置換し，バックアップファイルを作成
-sed -i.bak "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" $GENERATED_FILE_PATH
+sed -i.bak "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" "$GENERATED_FILE_PATH"
 
 # バックアップファイルを削除
 rm "${GENERATED_FILE_PATH}.bak"
