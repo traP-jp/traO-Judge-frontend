@@ -7,8 +7,8 @@ export default {
       'background-secondary': '#f0f0f0',
       'background-tertiary': '#f5f5f5',
       'background-inv-primary': '#252525',
-      'border-primary': '#bfbfbf',
-      'border-secondary': '#d8d8d8',
+      'border-primary': '#d4d4d4',
+      'border-secondary': '#eaeaea',
       'brand-primary': '#ac004b',
       'brand-secondary': '#79083a',
       'brand-light-primary': '#fff3f3',
@@ -18,7 +18,8 @@ export default {
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
       red: '#ff0000',
-      white: '#ffffff'
+      white: '#ffffff',
+      transparent: 'transparent',
     },
     fontFamily: {
       primary: ['Open Sans', 'Noto Sans JP', 'sans-serif']
@@ -37,6 +38,8 @@ export default {
         62.5: '15.625rem',
         82: '20.5rem',
         78: '19.5rem',
+        90: '22.5rem',
+        120: '30rem',
         172: '43rem',
         200: '50rem'
       }
