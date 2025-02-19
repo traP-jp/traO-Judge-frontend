@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { MeApi } from '@/api/generated/apis/MeApi';
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue';
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue';
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue';
@@ -50,20 +50,20 @@ function changePassword() {
 
 async function fetchUserData() {
   try {
-    const response = await axios.get('/api/users/me');
-    console.log(response);
-    const user = response.data;
+    const meApi = new MeApi();
+    const user = await meApi.getMe();
+    console.log(user);
     services.value = services.value.map(service => {
       switch (service.name) {
         case 'GitHub':
           console.log(user.githubId);
           service.linked = user.githubId !== null;
-          service.ID = user.githubId;
+          service.ID = user.githubId ?? '';
           break;
         case 'traQ':
           console.log(user.traqId);
           service.linked = user.traqId !== null;
-          service.ID = user.traqId;
+          service.ID = user.traqId ?? '';
           break;
         case 'Google':
           console.log('TODO: Google との連携状況を取得する');
@@ -84,11 +84,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex gap-12 px-6 py-8" style="font-family: 'Open Sans', 'Noto Sans', sans-serif;">
+  <div class="flex gap-12 px-6 py-8 font-primary">
     <SideMenuUserSetting />
     <div class="flex flex-col gap-6 p-3" style="width: 800px;">
       <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">基本情報</h2>
+        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">基本情報</h2>
         <div class="flex-col">
           <label class="text-sm font-medium" for="username">ユーザー名</label>
           <div class="flex items-center gap-2">
@@ -105,26 +105,20 @@ onMounted(() => {
         </div>
       </div>
       <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">パスワードの変更</h2>
+        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">パスワードの変更</h2>
         <form class="flex flex-col gap-2" @submit.prevent="changePassword">
           <input v-model="username" type="text" autocomplete="username" hidden />
-          <div class="flex-col">
+          <div class="flex w-64 flex-col">
             <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
-            <div class="flex items-center ">
-              <PasswordTextbox v-model="currentPassword" autocomplete="current-password" />
-            </div>
+            <PasswordTextbox id="current-password" v-model="currentPassword" autocomplete="current-password"/>
           </div>
-          <div class="flex-col">
+          <div class="flex w-64 flex-col">
             <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
-            <div class="flex items-center ">
-              <PasswordTextbox v-model="newPassword" autocomplete="new-password" />
-            </div>
+            <PasswordTextbox v-model="newPassword" autocomplete="new-password" />
           </div>
-          <div class="flex-col">
+          <div class="flex w-64 flex-col">
             <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
-            <div class="flex items-center ">
-              <PasswordTextbox v-model="confirmPassword" autocomplete="new-password" />
-            </div>
+            <PasswordTextbox v-model="confirmPassword" autocomplete="new-password" />
           </div>
           <div>
             <PrimaryButton text="変更" type="submit" />
@@ -132,9 +126,9 @@ onMounted(() => {
         </form>
       </div>
       <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 pb-2 text-xl font-medium" style="border-color: #D8D8D8B2;">外部サービスとの連携</h2>
+        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">外部サービスとの連携</h2>
         <div>
-          <div v-for="service in services" :key="service.name" class="flex-col border-b-2" style="border-color: #D8D8D8B2;">
+          <div v-for="service in services" :key="service.name" class="flex-col border-b-2 border-border-secondary">
             <div class="flex h-12 items-center gap-2.5">
               <div class="flex items-center gap-2">
                 <img :src="service.icon" alt="" width="20" height="20" />
@@ -146,10 +140,10 @@ onMounted(() => {
                 {{ service.linked ? '連携済' : '未連携' }}
                 <img v-if="service.linked" :src="checkIcon" alt="" width="16" height="16" />
               </span>
-              <span class="h-12 min-w-72 content-around text-base font-normal" style="color: #5F5F5F;">
+              <span class="h-12 min-w-72 content-around text-base font-normal text-text-secondary">
                 {{ service.ID }}
               </span>
-              <button class="mr-10 h-8 rounded border px-4 py-1 text-sm" style="border-color: #D8D8D8; color: #5F5F5F;" @click="toggleLink(service)">
+              <button class="mr-10 h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary" @click="toggleLink(service)">
                 {{ service.linked ? '連携解除' : '連携' }}
               </button>
             </div>
