@@ -3,23 +3,18 @@ import { computed } from 'vue'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
-const {
-  current,
-  begin = 0,
-  end
-} = defineProps<{
-  current: number
+const { begin = 0, end } = defineProps<{
   begin: number
   end: number
 }>()
-const emit = defineEmits<{ switch: [page: number] }>()
+const current = defineModel<number>({ required: true })
 
 // previous pages (begin, ..., -32, -16, -8, -4, -3, -2, -1)
 const prevPages = computed(() => {
   const pages: number[] = []
 
   // Add up to 3 previous pages
-  for (let page = current - 1; page >= current - 3; --page) {
+  for (let page = current.value - 1; page >= current.value - 3; --page) {
     if (page < begin) return pages
     pages.unshift(page)
   }
@@ -38,7 +33,7 @@ const nextPages = computed(() => {
   const pages: number[] = []
 
   // Add up to 3 next pages
-  for (let page = current + 1; page <= current + 3; ++page) {
+  for (let page = current.value + 1; page <= current.value + 3; ++page) {
     if (page >= end) return pages
     pages.push(page)
   }
@@ -56,11 +51,11 @@ const nextPages = computed(() => {
 <template>
   <div class="flex justify-center gap-1">
     <template v-for="page in prevPages" :key="page">
-      <BorderedButton :text="`${page}`" @click="emit('switch', page)" />
+      <BorderedButton :text="`${page}`" @click="current = page" />
     </template>
     <PrimaryButton :text="`${current}`" />
     <template v-for="page in nextPages" :key="page">
-      <BorderedButton :text="`${page}`" @click="emit('switch', page)" />
+      <BorderedButton :text="`${page}`" @click="current = page" />
     </template>
   </div>
 </template>

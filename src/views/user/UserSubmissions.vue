@@ -18,8 +18,10 @@ watch(
   () => route.query,
   (query) => {
     page.value = Math.max(parseInt(String(query.page)) || 0, 0)
-  }
+  },
+  { immediate: true }
 )
+watch(page, () => router.push({ query: { page: page.value.toString() } }))
 
 const isLoaded = ref<boolean>(false)
 const totalSubmissions = ref<number>(0)
@@ -46,7 +48,7 @@ const loadSubmissions = async () => {
     )
 
     totalSubmissions.value = summaries.total ?? submissionIds.value.length
-    totalPage.value = Math.ceil(totalSubmissions.value / rowPerPage)
+    totalPage.value = Math.ceil(totalSubmissions.value / rowPerPage) + 100
     if (page.value >= totalPage.value) page.value = totalPage.value - 1
   } catch (error) {
     console.error('API Error:', error)
@@ -57,10 +59,6 @@ const loadSubmissions = async () => {
 }
 
 watch(page, () => loadSubmissions(), { immediate: true })
-
-const switchPage = async (newPage: number) => {
-  await router.push({ query: { page: newPage.toString() } })
-}
 
 const cols: (Column & { name: string })[] = [
   { id: 'submittedAt', textAlign: 'start', name: '提出日時' },
@@ -77,7 +75,7 @@ const cols: (Column & { name: string })[] = [
   <div class="rounded-lg border border-solid border-border-secondary pt-28 text-center">
     <h2 class="fontstyle-ui-title-large">提出一覧<br />テーブル</h2>
     <section class="p-10">
-      <PageSwitcher :begin="0" :current="page" :end="totalPage" @switch="switchPage" />
+      <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
       <div class="my-6">
         <!-- TODO: add sorting and filtering features -->
         <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
@@ -113,7 +111,7 @@ const cols: (Column & { name: string })[] = [
         </ListingTable>
         <div v-else>読み込み中...</div>
       </div>
-      <PageSwitcher :begin="0" :current="page" :end="totalPage" @switch="switchPage" />
+      <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
     </section>
   </div>
 </template>
