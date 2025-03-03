@@ -33,22 +33,21 @@ const submissions = ref<Map<string, SubmissionSummary>>(new Map())
 const loadSubmissions = async () => {
   isLoaded.value = false
   try {
-    const response = await new SubmissionsApi().getSubmissionsRaw({
+    const summaries: SubmissionSummaries = await new SubmissionsApi().getSubmissions({
       orderBy: 'submittedAtDesc',
       username,
       limit: rowPerPage,
       offset: page.value * rowPerPage
     })
-    const summaries: SubmissionSummaries = await response.value()
 
-    totalSubmissions.value = summaries.total!
-    totalPage.value = Math.ceil(summaries.total! / rowPerPage)
-    if (page.value >= totalPage.value) page.value = totalPage.value - 1
-
-    submissionIds.value = summaries.submissions!.map(({ id }) => id)
+    submissionIds.value = summaries.submissions?.map(({ id }) => id) ?? []
     submissions.value = new Map(
-      summaries.submissions!.map((submission) => [submission.id, submission])
+      summaries.submissions?.map((submission) => [submission.id, submission])
     )
+
+    totalSubmissions.value = summaries.total ?? submissionIds.value.length
+    totalPage.value = Math.ceil(totalSubmissions.value / rowPerPage)
+    if (page.value >= totalPage.value) page.value = totalPage.value - 1
   } catch (error) {
     console.error('API Error:', error)
     alert(`API Error: ${error}`)
@@ -72,8 +71,6 @@ const cols: (Column & { name: string })[] = [
   { id: 'maxTime', textAlign: 'end', name: '実行時間' },
   { id: 'maxMemory', textAlign: 'end', name: 'メモリ' }
 ] as const
-
-const getSubmission = (rowId: string): SubmissionSummary => submissions.value.get(rowId)!
 </script>
 
 <template>
@@ -83,32 +80,33 @@ const getSubmission = (rowId: string): SubmissionSummary => submissions.value.ge
       <PageSwitcher :begin="0" :current="page" :end="totalPage" @switch="switchPage" />
       <div class="my-6">
         <!-- TODO: add sorting and filtering features -->
+        <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
         <ListingTable v-if="isLoaded" :cols="cols" :row-ids="submissionIds">
           <template #head="{ colId }">
-            {{ cols.find(({ id }) => id === colId)!.name }}
+            {{ cols.find(({ id }) => id === colId)?.name }}
           </template>
           <template #cell="{ rowId, colId }">
             <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
             <template v-if="colId === 'submittedAt'">
-              {{ dateToString(getSubmission(rowId).submittedAt) }}
+              {{ dateToString(submissions.get(rowId)?.submittedAt) }}
             </template>
             <template v-else-if="colId === 'userName'">
-              {{ getSubmission(rowId).userName }}
+              {{ submissions.get(rowId)?.userName }}
             </template>
             <template v-else-if="colId === 'totalScore'">
-              {{ getSubmission(rowId).totalScore }}
+              {{ submissions.get(rowId)?.totalScore }}
             </template>
             <template v-else-if="colId === 'codeLength'">
-              {{ Math.ceil(getSubmission(rowId).codeLength) }} Byte
+              {{ Math.ceil(submissions.get(rowId)?.codeLength ?? -1) }} Byte
             </template>
             <template v-else-if="colId === 'judgeStatus'">
-              {{ getSubmission(rowId).judgeStatus }}
+              {{ submissions.get(rowId)?.judgeStatus }}
             </template>
             <template v-else-if="colId === 'maxTime'">
-              {{ getSubmission(rowId).maxTime }} ms
+              {{ submissions.get(rowId)?.maxTime }} ms
             </template>
             <template v-else-if="colId === 'maxMemory'">
-              {{ getSubmission(rowId).maxMemory.toFixed(3) }} MiB
+              {{ submissions.get(rowId)?.maxMemory.toFixed(3) }} MiB
             </template>
             <template v-else>Unknown column: {{ colId }}</template>
           </template>
