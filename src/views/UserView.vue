@@ -9,7 +9,6 @@ const username = route.params.id
 // TODO: Fetch user data
 </script>
 
-<!-- TODO: Fix the layout on mobile -->
 <template>
   <div class="flex gap-[max(2rem,calc(25dvw-16rem))] px-[max(2rem,calc(25dvw-16rem))]">
     <nav class="sticky top-14 h-[calc(100dvh-3.5rem)]">
