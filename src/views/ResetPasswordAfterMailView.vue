@@ -43,10 +43,11 @@ const requestResetPassword = async () => {
           この画面を閉じる
         </PrimaryButton>
         <BorderedButton
-          text="メールを再送信する"
           class="flex shrink-0 grow basis-0 items-end justify-center gap-2.5 px-5 py-2"
           @click="requestResetPassword"
-        />
+        >
+          メールを再送信する
+        </BorderedButton>
       </div>
     </div>
   </div>

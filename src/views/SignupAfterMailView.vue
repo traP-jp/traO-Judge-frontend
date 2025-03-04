@@ -22,7 +22,7 @@ function onResendEmail() {
       </div>
       <div class="space-y-2">
         <PrimaryButton class="w-full" @click="onClose">この画面を閉じる</PrimaryButton>
-        <BorderedButton text="メールを再送信する" class="w-full" @click="onResendEmail" />
+        <BorderedButton class="w-full" @click="onResendEmail">メールを再送信する</BorderedButton>
       </div>
       <div class="fontstyle-ui-caption text-text-secondary">
         メールアドレスを間違えた場合は、<a href="/signup" class="fontstyle-ui-caption-link"
