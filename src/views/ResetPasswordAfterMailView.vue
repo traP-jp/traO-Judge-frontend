@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import router from '@/router'
-import { AuthenticationApi } from '@/api/generated'
 import type { Email } from '@/api/generated'
+import { AuthenticationApi } from '@/api/generated'
 
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -37,10 +37,11 @@ const requestResetPassword = async () => {
       </div>
       <div class="flex items-center justify-center gap-3 self-stretch">
         <PrimaryButton
-          text="この画面を閉じる"
           class="flex shrink-0 grow basis-0 items-center justify-center gap-2.5 px-5 py-2"
           @click="closeWindow"
-        />
+        >
+          この画面を閉じる
+        </PrimaryButton>
         <BorderedButton
           text="メールを再送信する"
           class="flex shrink-0 grow basis-0 items-end justify-center gap-2.5 px-5 py-2"

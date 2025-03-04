@@ -38,7 +38,7 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
           <EmailTextbox class="mb-3 h-8" />
           <PasswordTextbox class="mb-3 h-8" />
           <div class="mb-3 flex h-10">
-            <PrimaryButton class="mr-3 h-full w-37 rounded-lg" text="ログイン" />
+            <PrimaryButton class="mr-3 h-full w-37 rounded-lg">ログイン</PrimaryButton>
             <BorderedButton class="h-full w-37 rounded-lg" text="新規登録" />
           </div>
           <router-link to="" class="fontstyle-ui-caption h-4 text-[#3A3A3A] underline">

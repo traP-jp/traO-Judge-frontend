@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import router from '@/router'
-import { AuthenticationApi } from '@/api/generated'
 import type { Email } from '@/api/generated'
+import { AuthenticationApi } from '@/api/generated'
 import isEmail from 'validator/lib/isEmail'
 
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
@@ -41,11 +41,12 @@ const requestResetPassword = async () => {
             class="flex items-center gap-2.5 self-stretch"
           />
           <PrimaryButton
-            text="送信"
             :disabled="!isEmail(emailAddress.email)"
             class="flex items-center justify-center gap-2.5 self-stretch px-5 py-2"
             @click="requestResetPassword"
-          />
+          >
+            送信
+          </PrimaryButton>
         </form>
       </div>
     </div>

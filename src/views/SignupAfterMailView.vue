@@ -21,7 +21,7 @@ function onResendEmail() {
         60分以内に、メールに記載されたリンクから登録フォームにアクセスしてください。
       </div>
       <div class="space-y-2">
-        <PrimaryButton text="この画面を閉じる" class="w-full" @click="onClose" />
+        <PrimaryButton class="w-full" @click="onClose">この画面を閉じる</PrimaryButton>
         <BorderedButton text="メールを再送信する" class="w-full" @click="onResendEmail" />
       </div>
       <div class="fontstyle-ui-caption text-text-secondary">

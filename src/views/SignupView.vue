@@ -42,7 +42,9 @@ async function onEmailSignup() {
         </div>
         <div class="space-y-4 pt-6">
           <EmailTextbox id="email" v-model="emailAddress" placeholder="メールアドレス" />
-          <PrimaryButton text="メールアドレスで新規登録" class="w-full" @click="onEmailSignup" />
+          <PrimaryButton class="w-full" @click="onEmailSignup">
+            メールアドレスで新規登録
+          </PrimaryButton>
         </div>
       </div>
       <div class="fontstyle-ui-caption-link text-text-secondary">

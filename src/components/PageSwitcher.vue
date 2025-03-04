@@ -53,7 +53,7 @@ const nextPages = computed(() => {
     <template v-for="page in prevPages" :key="page">
       <BorderedButton :text="`${page}`" @click="current = page" />
     </template>
-    <PrimaryButton :text="`${current}`" />
+    <PrimaryButton>{{ current }}</PrimaryButton>
     <template v-for="page in nextPages" :key="page">
       <BorderedButton :text="`${page}`" @click="current = page" />
     </template>

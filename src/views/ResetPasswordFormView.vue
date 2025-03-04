@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { AuthenticationApi } from '@/api/generated'
 
@@ -79,12 +79,9 @@ const submit = async () => {
           </div>
         </div>
 
-        <PrimaryButton
-          text="再設定"
-          :disabled="!(isValid && isConfirmed)"
-          class="px-8"
-          @click="submit"
-        />
+        <PrimaryButton :disabled="!(isValid && isConfirmed)" class="px-8" @click="submit">
+          再設定
+        </PrimaryButton>
       </form>
     </div>
   </div>

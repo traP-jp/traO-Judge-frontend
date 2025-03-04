@@ -41,13 +41,14 @@ const setMenuState = (state: boolean) => {
       <PrimaryButton
         v-if="!isLoggedIn"
         padding="1rem"
-        text="ログイン"
         @click="
           () => {
             console.log('TODO: login')
           }
         "
-      />
+      >
+        ログイン
+      </PrimaryButton>
       <div id="top-navbar-menu" class="relative">
         <button v-if="isLoggedIn" class="flex items-center gap-1" @click="toggleMenu">
           <span class="inline-block">{{ username }}</span>
