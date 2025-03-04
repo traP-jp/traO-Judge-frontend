@@ -52,34 +52,32 @@ const cols: (Column & { name: string })[] = [
 </script>
 
 <template>
-  <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
-  <div class="my-6">
-    <!-- TODO: add sorting and filtering features -->
-    <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
-    <ListingTable v-if="isLoaded" :cols="cols" :row-ids="problemIds">
-      <template #head="{ colId }">
-        {{ cols.find(({ id }) => id === colId)?.name }}
+  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mb-6" />
+  <!-- TODO: add sorting and filtering features -->
+  <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
+  <ListingTable v-if="isLoaded" :cols="cols" :row-ids="problemIds">
+    <template #head="{ colId }">
+      {{ cols.find(({ id }) => id === colId)?.name }}
+    </template>
+    <template #cell="{ rowId, colId }">
+      <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
+      <template v-if="colId === 'createdAt'">
+        {{ dateToString(problems.get(rowId)?.createdAt) }}
       </template>
-      <template #cell="{ rowId, colId }">
-        <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
-        <template v-if="colId === 'createdAt'">
-          {{ dateToString(problems.get(rowId)?.createdAt) }}
-        </template>
-        <template v-else-if="colId === 'title'">
-          {{ problems.get(rowId)?.title }}
-        </template>
-        <template v-else-if="colId === 'difficulty'">
-          {{ problems.get(rowId)?.difficulty }}
-        </template>
-        <template v-else-if="colId === 'solvedCount'">
-          {{ problems.get(rowId)?.solvedCount }}
-        </template>
-        <template v-else>Unknown column: {{ colId }}</template>
+      <template v-else-if="colId === 'title'">
+        {{ problems.get(rowId)?.title }}
       </template>
-    </ListingTable>
-    <div v-else>読み込み中...</div>
-  </div>
-  <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
+      <template v-else-if="colId === 'difficulty'">
+        {{ problems.get(rowId)?.difficulty }}
+      </template>
+      <template v-else-if="colId === 'solvedCount'">
+        {{ problems.get(rowId)?.solvedCount }}
+      </template>
+      <template v-else>Unknown column: {{ colId }}</template>
+    </template>
+  </ListingTable>
+  <div v-else>読み込み中...</div>
+  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mt-6" />
 </template>
 
 <style scoped></style>
