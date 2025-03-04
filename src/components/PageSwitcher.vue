@@ -51,11 +51,11 @@ const nextPages = computed(() => {
 <template>
   <div class="flex justify-center gap-1">
     <template v-for="page in prevPages" :key="page">
-      <BorderedButton :text="`${page}`" @click="current = page" />
+      <BorderedButton @click="current = page">{{ page }}</BorderedButton>
     </template>
-    <PrimaryButton :text="`${current}`" />
+    <PrimaryButton>{{ current }}</PrimaryButton>
     <template v-for="page in nextPages" :key="page">
-      <BorderedButton :text="`${page}`" @click="current = page" />
+      <BorderedButton @click="current = page">{{ page }}</BorderedButton>
     </template>
   </div>
 </template>

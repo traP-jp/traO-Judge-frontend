@@ -4,7 +4,7 @@ import type { Icon } from '@/components/MaterialIcon.vue'
 import { ref } from 'vue'
 
 export type SideMenuProps = {
-  icon: Icon
+  icon?: Icon
   text: string
   onClick: () => void
 }
@@ -19,14 +19,13 @@ const currentTab = ref(0)
 <template>
   <nav class="flex h-full w-62.5 flex-col">
     <div class="py-6">
-      <slot></slot>
+      <slot />
     </div>
     <div class="flex grow flex-col">
       <ul class="flex flex-col gap-1">
         <li v-for="content in mainContents" :key="content.text">
           <MenuButton
             :icon="content.icon"
-            :text="content.text"
             :selected="mainContents.indexOf(content) === currentTab"
             @click="
               () => {
@@ -34,14 +33,15 @@ const currentTab = ref(0)
                 content.onClick()
               }
             "
-          />
+          >
+            {{ content.text }}
+          </MenuButton>
         </li>
       </ul>
       <ul class="mt-auto flex flex-col gap-1 pb-6">
         <li v-for="content in bottomContents" :key="content.text">
           <MenuButton
             :icon="content.icon"
-            :text="content.text"
             :selected="mainContents.length + bottomContents.indexOf(content) === currentTab"
             @click="
               () => {
@@ -49,7 +49,9 @@ const currentTab = ref(0)
                 content.onClick()
               }
             "
-          />
+          >
+            {{ content.text }}
+          </MenuButton>
         </li>
       </ul>
     </div>
