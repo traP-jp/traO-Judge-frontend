@@ -1,27 +1,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import { dateToString } from '@/utils/date'
+import { useQueryParamInt } from '@/composables/useQueryParam'
 import { SubmissionsApi, type SubmissionSummaries, type SubmissionSummary } from '@/api/generated'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import PageSwitcher from '@/components/PageSwitcher.vue'
-
-const route = useRoute()
-const router = useRouter()
 
 const rowPerPage = 20
 
 const { username } = defineProps<{ username: string }>()
 
-const page = ref<number>(0)
-watch(
-  () => route.query,
-  (query) => {
-    page.value = Math.max(parseInt(String(query.page)) || 0, 0)
-  },
-  { immediate: true }
-)
-watch(page, () => router.push({ query: { page: page.value.toString() } }))
+const page = useQueryParamInt('page', 0, true)
 
 const isLoaded = ref<boolean>(false)
 const totalSubmissions = ref<number>(0)
