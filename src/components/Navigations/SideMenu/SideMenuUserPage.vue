@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import SideMenuBase, {
   type SideMenuProps
 } from '@/components/Navigations/SideMenu/SideMenuBase.vue'
-import { computed } from 'vue'
 
-const { isMe = false } = defineProps<{
+const route = useRoute()
+
+const { isMe = false, username } = defineProps<{
   isMe?: boolean
   username: string
 }>()
@@ -21,16 +24,12 @@ const mainContents: SideMenuProps[] = [
   {
     text: '提出一覧',
     icon: 'format_list_bulleted',
-    onClick: () => {
-      console.log('TODO: 提出一覧')
-    }
+    href: `/users/${username}/submissions`
   },
   {
     text: '問題一覧',
     icon: 'library_books',
-    onClick: () => {
-      console.log('TODO: 問題一覧')
-    }
+    href: `/users/${username}/problems`
   }
 ]
 const bottomContents = computed((): SideMenuProps[] => {
@@ -45,10 +44,24 @@ const bottomContents = computed((): SideMenuProps[] => {
     }
   ]
 })
+
+const currentTab = ref<number>(0)
+watch(
+  () => route.path,
+  (path) => {
+    const index = mainContents.findIndex((content) => content.href === path)
+    if (index >= 0) currentTab.value = index
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
-  <SideMenuBase :main-contents="mainContents" :bottom-contents="bottomContents">
+  <SideMenuBase
+    v-model="currentTab"
+    :bottom-contents="bottomContents"
+    :main-contents="mainContents"
+  >
     <div class="flex w-full flex-col items-center justify-center">
       <img src="" alt="user-icon" class="size-40 rounded-full" />
       <span class="mt-2 font-primary text-xl font-semibold text-text-primary">{{ username }}</span>
