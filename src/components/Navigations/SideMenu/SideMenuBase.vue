@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
 import type { Icon } from '@/components/MaterialIcon.vue'
-import router from '@/router'
+
+const router = useRouter()
 
 export type SideMenuProps = {
   icon: Icon
