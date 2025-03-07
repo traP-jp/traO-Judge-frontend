@@ -57,43 +57,41 @@ const cols: (Column & { name: string })[] = [
 </script>
 
 <template>
-  <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
-  <div class="my-6">
-    <!-- TODO: add sorting and filtering features -->
-    <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
-    <ListingTable v-if="isLoaded" :cols="cols" :row-ids="submissionIds">
-      <template #head="{ colId }">
-        {{ cols.find(({ id }) => id === colId)?.name }}
+  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mb-6" />
+  <!-- TODO: add sorting and filtering features -->
+  <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
+  <ListingTable v-if="isLoaded" :cols="cols" :row-ids="submissionIds">
+    <template #head="{ colId }">
+      {{ cols.find(({ id }) => id === colId)?.name }}
+    </template>
+    <template #cell="{ rowId, colId }">
+      <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
+      <template v-if="colId === 'submittedAt'">
+        {{ dateToString(submissions.get(rowId)?.submittedAt) }}
       </template>
-      <template #cell="{ rowId, colId }">
-        <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
-        <template v-if="colId === 'submittedAt'">
-          {{ dateToString(submissions.get(rowId)?.submittedAt) }}
-        </template>
-        <template v-else-if="colId === 'userName'">
-          {{ submissions.get(rowId)?.userName }}
-        </template>
-        <template v-else-if="colId === 'totalScore'">
-          {{ submissions.get(rowId)?.totalScore }}
-        </template>
-        <template v-else-if="colId === 'codeLength'">
-          {{ Math.ceil(submissions.get(rowId)?.codeLength ?? -1) }} Byte
-        </template>
-        <template v-else-if="colId === 'judgeStatus'">
-          {{ submissions.get(rowId)?.judgeStatus }}
-        </template>
-        <template v-else-if="colId === 'maxTime'">
-          {{ submissions.get(rowId)?.maxTime }} ms
-        </template>
-        <template v-else-if="colId === 'maxMemory'">
-          {{ submissions.get(rowId)?.maxMemory.toFixed(3) }} MiB
-        </template>
-        <template v-else>Unknown column: {{ colId }}</template>
+      <template v-else-if="colId === 'userName'">
+        {{ submissions.get(rowId)?.userName }}
       </template>
-    </ListingTable>
-    <div v-else>読み込み中...</div>
-  </div>
-  <PageSwitcher v-model="page" :begin="0" :end="totalPage" />
+      <template v-else-if="colId === 'totalScore'">
+        {{ submissions.get(rowId)?.totalScore }}
+      </template>
+      <template v-else-if="colId === 'codeLength'">
+        {{ Math.ceil(submissions.get(rowId)?.codeLength ?? -1) }} Byte
+      </template>
+      <template v-else-if="colId === 'judgeStatus'">
+        {{ submissions.get(rowId)?.judgeStatus }}
+      </template>
+      <template v-else-if="colId === 'maxTime'">
+        {{ submissions.get(rowId)?.maxTime }} ms
+      </template>
+      <template v-else-if="colId === 'maxMemory'">
+        {{ submissions.get(rowId)?.maxMemory.toFixed(3) }} MiB
+      </template>
+      <template v-else>Unknown column: {{ colId }}</template>
+    </template>
+  </ListingTable>
+  <div v-else>読み込み中...</div>
+  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mt-6" />
 </template>
 
 <style scoped></style>

@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import SideMenuUserPage from '@/components/Navigations/SideMenu/SideMenuUserPage.vue'
+import { ref, watch } from 'vue'
 
 const route = useRoute()
 
 if (typeof route.params.id !== 'string') throw new Error('Invalid route')
-const username = route.params.id
+const username = ref<string>('')
+watch(
+  () => route.params.id,
+  (id) => {
+    username.value = `${id}`
+  },
+  { immediate: true }
+)
 // TODO: Fetch user data
 </script>
 

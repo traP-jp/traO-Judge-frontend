@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import router from '@/router'
-import { AuthenticationApi } from '@/api/generated'
+import { useRouter } from 'vue-router'
 import type { Email } from '@/api/generated'
+import { AuthenticationApi } from '@/api/generated'
 
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+
+const router = useRouter()
 
 const email: string = history.state.email ?? ''
 const emailAddress: Email = { email: email }
@@ -17,7 +19,7 @@ const requestResetPassword = async () => {
   console.log(email)
   const authApi = new AuthenticationApi()
   await authApi.postRequestResetPassword({ email: emailAddress })
-  router.push({ path: '/reset-password/after-mail', state: { email: email } })
+  await router.push({ path: '/reset-password/after-mail', state: { email: email } })
 }
 </script>
 
