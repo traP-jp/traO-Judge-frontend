@@ -52,7 +52,8 @@ async function fetchUserData() {
   try {
     const meApi = new MeApi();
     const user = await meApi.getMe();
-    console.log(user);
+    username.value = user.name;
+    
     services.value = services.value.map(service => {
       switch (service.name) {
         case 'GitHub':
@@ -87,48 +88,52 @@ onMounted(() => {
   <div class="flex gap-12 px-6 py-8 font-primary">
     <SideMenuUserSetting />
     <div class="flex flex-col gap-6 p-3" style="width: 800px;">
-      <div class="flex flex-col gap-3 pb-3">
+      <div class="flex flex-col pb-3">
         <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">基本情報</h2>
-        <div class="flex-col">
-          <label class="text-sm font-medium" for="username">ユーザー名</label>
-          <div class="flex items-center gap-2">
-            <PlainTextbox v-model="username" />
-            <PrimaryButton text="変更" @click="changeUsername" />
-          </div>
+        
+        <label class="pt-3 text-sm font-medium" for="username">ユーザー名</label>
+        <div class="flex items-center gap-2">
+          <PlainTextbox id="username" v-model="username" />
+          <PrimaryButton text="変更" @click="changeUsername" />
         </div>
-        <div class="flex-col">
-          <label class="text-sm font-medium" for="email">メールアドレス</label>
-          <div class="flex items-center gap-2">
-            <EmailTextbox v-model="email" />
-            <PrimaryButton text="変更" @click="changeEmail" />
-          </div>
+        
+        <label class="pt-3 text-sm font-medium" for="email">メールアドレス</label>
+        <div class="flex items-center gap-2">
+          <EmailTextbox id="email" v-model="email" />
+          <PrimaryButton text="変更" @click="changeEmail" />
         </div>
       </div>
+      
       <div class="flex flex-col gap-3 pb-3">
         <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">パスワードの変更</h2>
         <form class="flex flex-col gap-2" @submit.prevent="changePassword">
           <input v-model="username" type="text" autocomplete="username" hidden />
-          <div class="flex w-64 flex-col">
-            <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
+          
+          <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
+          <div class="w-64">
             <PasswordTextbox id="current-password" v-model="currentPassword" autocomplete="current-password"/>
           </div>
-          <div class="flex w-64 flex-col">
-            <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
-            <PasswordTextbox v-model="newPassword" autocomplete="new-password" />
+          
+          <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
+          <div class="w-64">
+            <PasswordTextbox id="new-password" v-model="newPassword" autocomplete="new-password" />
           </div>
-          <div class="flex w-64 flex-col">
-            <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
-            <PasswordTextbox v-model="confirmPassword" autocomplete="new-password" />
+          
+          <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
+          <div class="w-64">
+            <PasswordTextbox id="confirm-password" v-model="confirmPassword" autocomplete="new-password" />
           </div>
+          
           <div>
             <PrimaryButton text="変更" type="submit" />
           </div>
         </form>
       </div>
+      
       <div class="flex flex-col gap-3 pb-3">
         <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">外部サービスとの連携</h2>
         <div>
-          <div v-for="service in services" :key="service.name" class="flex-col border-b-2 border-border-secondary">
+          <div v-for="service in services" :key="service.name" class="border-b-2 border-border-secondary">
             <div class="flex h-12 items-center gap-2.5">
               <div class="flex items-center gap-2">
                 <img :src="service.icon" alt="" width="20" height="20" />
@@ -136,7 +141,7 @@ onMounted(() => {
                   {{ service.name }}
                 </label>
               </div>
-              <span :style="[service.linked ? 'color: #16B179;' : 'color: #5F5F5F;']" class="flex w-32 gap-1">
+              <span :style="service.linked ? 'color: #16B179;' : 'text-text-tertiary'" class="flex w-32 gap-1">
                 {{ service.linked ? '連携済' : '未連携' }}
                 <img v-if="service.linked" :src="checkIcon" alt="" width="16" height="16" />
               </span>

@@ -18,10 +18,8 @@ function changeWords() {
       <div class="flex flex-col gap-3 p-3">
         <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">プロフィール</h2>
         <div class="flex flex-col gap-3">
-          <div class="flex flex-col gap-0.5">
-            <label class="text-sm font-medium" for="word">ひとこと</label>
-            <textarea v-model="words" class="rounded border border-border-primary px-3 py-1" style="height: 256px; width: 600px;"></textarea>
-          </div>
+          <label class="text-sm font-medium" for="profile-words">ひとこと</label>
+          <textarea id="profile-words" v-model="words" class="rounded border border-border-primary px-3 py-1" style="height: 256px; width: 600px;"></textarea>
           <div>
             <PrimaryButton text="保存" @click="changeWords" />
           </div>
