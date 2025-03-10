@@ -24,7 +24,7 @@ cd "$ROOT_DIR"
 
 # APIクライアントの生成
 npx @openapitools/openapi-generator-cli generate \
-  -i https://raw.githubusercontent.com/traP-jp/traO-Judge-docs/refs/tags/1.1.0/api/backend/frontend-backend.yaml \
+  -i https://raw.githubusercontent.com/traP-jp/traO-Judge-docs/refs/heads/develop/api/backend/frontend-backend.yaml \
   -g typescript-fetch \
   -o "$ROOT_DIR/src/api/generated"
 
