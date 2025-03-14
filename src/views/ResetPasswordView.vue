@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 import type { Email } from '@/api/generated'
 import { AuthenticationApi } from '@/api/generated'
 import isEmail from 'validator/lib/isEmail'
 
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+
+const router = useRouter()
 
 const emailAddress = ref<Email>({
   email: ''
@@ -16,7 +18,10 @@ const requestResetPassword = async () => {
   if (!isEmail(emailAddress.value.email)) return
   const authApi = new AuthenticationApi()
   await authApi.postRequestResetPassword({ email: emailAddress.value })
-  router.push({ path: '/reset-password/after-mail', state: { email: emailAddress.value.email } })
+  await router.push({
+    path: '/reset-password/after-mail',
+    state: { email: emailAddress.value.email }
+  })
 }
 </script>
 

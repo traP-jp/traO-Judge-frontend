@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import CodeBlock from '@/components/CodeBlock.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import { type Language, LanguageApi, SubmissionsApi } from '@/api/generated'
-import { onMounted, ref } from 'vue'
-import router from '@/router'
+
+const router = useRouter()
 
 const { problemId } = defineProps<{
   problemId: number
