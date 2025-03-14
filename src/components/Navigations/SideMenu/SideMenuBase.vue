@@ -44,7 +44,7 @@ const currentTab = defineModel<number>({ default: 0 })
                 }
               "
             >
-              {{ context.text }}
+              {{ content.text }}
             </MenuButton>
           </li>
         </component>
