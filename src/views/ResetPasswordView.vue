@@ -19,7 +19,7 @@ const requestResetPassword = async () => {
   const authApi = new AuthenticationApi()
   await authApi.postRequestResetPassword({ email: emailAddress.value })
   await router.push({
-    path: '/reset-password/after-mail',
+    path: '/reset-password/mail-send',
     state: { email: emailAddress.value.email }
   })
 }

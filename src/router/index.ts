@@ -38,7 +38,7 @@ const router = createRouter({
           component: () => import('@/views/ResetPasswordFormView.vue')
         },
         {
-          path: 'after-mail',
+          path: 'mail-send',
           component: () => import('@/views/ResetPasswordAfterMailView.vue')
         },
         {
