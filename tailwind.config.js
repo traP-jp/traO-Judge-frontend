@@ -46,6 +46,9 @@ export default {
       },
       borderRadius: {
         15: '15px'
+      },
+      height: {
+        'header-offset': 'calc(100vh - 56px)'
       }
     }
   },
