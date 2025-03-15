@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import TopView from '@/views/TopView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +40,10 @@ const router = createRouter({
         {
           path: 'after-mail',
           component: () => import('@/views/ResetPasswordAfterMailView.vue')
+        },
+        {
+          path: 'success',
+          component: () => import('@/views/ResetPasswordSuccessView.vue')
         }
       ]
     },

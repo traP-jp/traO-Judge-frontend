@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { AuthenticationApi } from '@/api/generated'
 import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import { passwordValidator } from '@/utils/validator'
 
 const route = useRoute()
+const router = useRouter()
 const token = Array.isArray(route.query.token) ? undefined : route.query.token
 
 const password = ref<string>('')
@@ -17,13 +18,19 @@ const isConfirmed = computed(() => password.value === confirmation.value)
 
 const submit = async () => {
   const authApi = new AuthenticationApi()
-  await authApi.postResetPassword({
-    tokenWithUserid: token ?? undefined,
-    resetPasswordRequest: {
-      password: password.value,
-      token: token ?? ''
-    }
-  })
+  try {
+    await authApi.postResetPassword({
+      tokenWithUserid: token ?? undefined,
+      resetPasswordRequest: {
+        password: password.value,
+        token: token ?? ''
+      }
+    })
+    router.push('/reset-password/success')
+  } catch (error) {
+    alert('パスワードの再設定に失敗しました。もう一度お試しください。')
+    console.error('パスワード再設定エラー:', error)
+  }
 }
 </script>
 
@@ -38,9 +45,7 @@ const submit = async () => {
             v-model="password"
             label="パスワード"
             required
-            :error-message="
-              isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
-            "
+            :error-message="isValid[0] || password.length === 0 ? '' : isValid[1]"
             class="h-6.5 grow gap-1"
           />
           <div
@@ -68,7 +73,7 @@ const submit = async () => {
         />
       </div>
 
-      <form class="flex flex-col items-center gap-5 p-2.5">
+      <form class="flex flex-col items-center gap-5 p-2.5" @submit.prevent="submit">
         <PrimaryButton
           :disabled="!(isValid && isConfirmed)"
           class="h-10 w-5/12 px-8"
@@ -80,5 +85,3 @@ const submit = async () => {
     </div>
   </div>
 </template>
-
-<style scoped></style>
