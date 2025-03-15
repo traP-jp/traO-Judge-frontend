@@ -46,16 +46,15 @@ const submit = async () => {
             label="パスワード"
             required
             :error-message="isValid[0] || password.length === 0 ? '' : isValid[1]"
-            class="h-6.5 grow gap-1"
           />
           <div
             class="col-start-2 row-start-2 flex shrink-0 grow basis-0 flex-col items-start justify-center"
           >
-            <p class="fontstyle-ui-caption-strong text-text-secondary">
+            <p class="fontstyle-ui-caption text-text-secondary">
               半角英数字と記号(@, $, !, %, *, ?,
               &)を用いた8文字以上64文字以下のパスワードが利用できます。
             </p>
-            <p class="fontstyle-ui-caption-strong text-text-secondary">
+            <p class="fontstyle-ui-caption text-text-secondary">
               大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。
             </p>
           </div>
@@ -69,7 +68,6 @@ const submit = async () => {
           :error-message="
             isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
           "
-          class="h-6.5 grow gap-1"
         />
       </div>
 

@@ -38,13 +38,8 @@ const requestResetPassword = async () => {
         </p>
       </div>
       <div class="flex flex-col items-stretch justify-center gap-4 self-stretch">
-        <PrimaryButton class="flex h-10 items-center justify-center px-5 py-2" @click="closeWindow">
-          この画面を閉じる
-        </PrimaryButton>
-        <BorderedButton
-          class="flex h-10 items-center justify-center px-5 py-2"
-          @click="requestResetPassword"
-        >
+        <PrimaryButton class="h-10" @click="closeWindow"> この画面を閉じる </PrimaryButton>
+        <BorderedButton class="h-10" @click="requestResetPassword">
           メールを再送信する
         </BorderedButton>
       </div>

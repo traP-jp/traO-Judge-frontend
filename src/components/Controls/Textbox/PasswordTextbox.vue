@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import { computed, ref } from 'vue'
 import type { Icon } from '@/components/MaterialIcon.vue'
+import { computed, ref } from 'vue'
 
 const visible = ref<boolean>(false)
 const rightIcon = computed<Icon>(() => (visible.value ? 'visibility_off' : 'visibility'))
@@ -13,6 +13,7 @@ const toggleVisibility = () => (visible.value = !visible.value)
     displays-length
     :right-icon="rightIcon"
     :type="visible ? 'text' : 'password'"
+    class="h-6.5 grow gap-1"
     @click-right="toggleVisibility"
   />
 </template>
