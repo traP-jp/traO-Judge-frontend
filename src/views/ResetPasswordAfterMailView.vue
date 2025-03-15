@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import type { Email } from '@/api/generated'
 import { AuthenticationApi } from '@/api/generated'
+import { useRouter } from 'vue-router'
 
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -24,28 +24,25 @@ const requestResetPassword = async () => {
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)] items-center justify-center bg-background-secondary">
+  <div class="flex h-header-offset items-center justify-center bg-background-secondary">
     <div
-      class="flex w-[600px] flex-col items-start justify-center gap-6 rounded-[15px] bg-background-primary px-14 py-10"
+      class="flex w-1/4 flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-14 py-10"
     >
-      <h1 class="fontstyle-ui-title text-[#1E1E1E]">メールを送信しました</h1>
+      <h1 class="fontstyle-ui-title text-text-primary">メールを送信しました</h1>
       <div class="flex flex-col items-start gap-2 self-stretch">
-        <p class="fontstyle-ui-body text-[#3A3A3A]">
+        <p class="fontstyle-ui-body text-text-primary">
           60分以内に、メールに記載されたリンクからパスワードの再設定を行ってください。
         </p>
-        <p class="fontstyle-ui-body text-[#3A3A3A]">
+        <p class="fontstyle-ui-body text-text-primary">
           入力されたメールアドレスがお使いのアカウントに登録されていない場合、メールは送信されません。
         </p>
       </div>
-      <div class="flex items-center justify-center gap-3 self-stretch">
-        <PrimaryButton
-          class="flex shrink-0 grow basis-0 items-center justify-center gap-2.5 px-5 py-2"
-          @click="closeWindow"
-        >
+      <div class="flex flex-col items-stretch justify-center gap-4 self-stretch">
+        <PrimaryButton class="flex h-10 items-center justify-center px-5 py-2" @click="closeWindow">
           この画面を閉じる
         </PrimaryButton>
         <BorderedButton
-          class="flex shrink-0 grow basis-0 items-end justify-center gap-2.5 px-5 py-2"
+          class="flex h-10 items-center justify-center px-5 py-2"
           @click="requestResetPassword"
         >
           メールを再送信する
