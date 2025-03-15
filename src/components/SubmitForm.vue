@@ -58,7 +58,7 @@ const submit = async () => {
     <div class="fontstyle-ui-body-strong py-1">ソースコード</div>
     <CodeBlock v-model="source" class="size-full" :language="language" />
     <div class="py-2">
-      <PrimaryButton text="提出" @click="submit" />
+      <PrimaryButton @click="submit">提出</PrimaryButton>
     </div>
   </div>
 </template>

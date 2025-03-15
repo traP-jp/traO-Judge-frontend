@@ -46,11 +46,12 @@ const requestResetPassword = async () => {
             class="flex items-center gap-2.5 self-stretch"
           />
           <PrimaryButton
-            text="送信"
             :disabled="!isEmail(emailAddress.email)"
             class="flex items-center justify-center gap-2.5 self-stretch px-5 py-2"
             @click="requestResetPassword"
-          />
+          >
+            送信
+          </PrimaryButton>
         </form>
       </div>
     </div>

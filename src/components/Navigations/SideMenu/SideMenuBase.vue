@@ -6,7 +6,7 @@ import type { Icon } from '@/components/MaterialIcon.vue'
 const router = useRouter()
 
 export type SideMenuProps = {
-  icon: Icon
+  icon?: Icon
   text: string
   href?: string
   onClick?: () => void
@@ -21,7 +21,7 @@ const currentTab = defineModel<number>({ default: 0 })
 <template>
   <nav class="flex h-full w-62.5 flex-col">
     <div class="py-6">
-      <slot></slot>
+      <slot />
     </div>
     <div class="flex grow flex-col">
       <ul class="flex flex-col gap-1">
@@ -36,7 +36,6 @@ const currentTab = defineModel<number>({ default: 0 })
             <MenuButton
               :icon="content.icon"
               :selected="mainContents.indexOf(content) === currentTab"
-              :text="content.text"
               @click="
                 () => {
                   currentTab = mainContents.indexOf(content)
@@ -44,7 +43,9 @@ const currentTab = defineModel<number>({ default: 0 })
                   if (content.href != null) router.push(content.href)
                 }
               "
-            />
+            >
+              {{ content.text }}
+            </MenuButton>
           </li>
         </component>
       </ul>
@@ -60,7 +61,6 @@ const currentTab = defineModel<number>({ default: 0 })
             <MenuButton
               :icon="content.icon"
               :selected="mainContents.length + bottomContents.indexOf(content) === currentTab"
-              :text="content.text"
               @click="
                 () => {
                   currentTab = mainContents.length + bottomContents.indexOf(content)
@@ -68,7 +68,9 @@ const currentTab = defineModel<number>({ default: 0 })
                   if (content.href != null) router.push(content.href)
                 }
               "
-            />
+            >
+              {{ content.text }}
+            </MenuButton>
           </li>
         </component>
       </ul>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
-import { usernameValidator, passwordValidator } from '@/utils/validator'
+import { passwordValidator, usernameValidator } from '@/utils/validator'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -115,7 +115,7 @@ async function onSignupRegister() {
           :error-message="confirmPasswordErrorMessage"
         />
         <div class="flex justify-center">
-          <PrimaryButton text="次へ" @click="onSignupRegister" />
+          <PrimaryButton @click="onSignupRegister">次へ</PrimaryButton>
         </div>
       </div>
     </div>
