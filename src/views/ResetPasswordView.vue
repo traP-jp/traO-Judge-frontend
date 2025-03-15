@@ -26,7 +26,7 @@ const requestResetPassword = async () => {
 </script>
 
 <template>
-  <div class="flex h-header-offset items-start justify-center bg-background-secondary pt-6">
+  <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
     <div
       class="flex w-1/4 max-w-md flex-col items-start justify-center gap-6 rounded-15 bg-white px-8 py-6"
     >
