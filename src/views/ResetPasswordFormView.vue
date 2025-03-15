@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { AuthenticationApi } from '@/api/generated'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { AuthenticationApi } from '@/api/generated'
 
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
@@ -28,58 +28,52 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)] items-center justify-center bg-background-secondary">
-    <div class="flex w-[800px] flex-col gap-5 rounded-[15px] bg-background-primary px-14 py-10">
-      <h1 class="fontstyle-ui-title text-[#1E1E1E]">パスワードの再設定</h1>
-
-      <p class="fontstyle-ui-body text-[#3A3A3A]">パスワードを再設定します。</p>
-
-      <form class="flex flex-col items-center gap-5 p-2.5">
-        <div class="grid grid-cols-[200px_1fr] items-center gap-x-6 self-stretch">
-          <label
-            for="password"
-            class="fontstyle-ui-body-strong col-start-1 row-start-1 text-right text-[#3A3A3A]"
-          >
-            パスワード
-          </label>
-          <div class="col-start-2 row-start-1 grow">
-            <PasswordTextbox
-              id="password"
-              v-model="password"
-              :error-message="
-                isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
-              "
-              class="grow gap-1"
-            />
-          </div>
+  <div class="flex h-header-offset items-center justify-center bg-background-secondary">
+    <div class="flex w-1/3 flex-col gap-6 rounded-15 bg-background-primary px-14 py-10">
+      <h1 class="fontstyle-ui-title text-text-primary">パスワードの再設定</h1>
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <PasswordTextbox
+            id="password"
+            v-model="password"
+            label="パスワード"
+            required
+            :error-message="
+              isValid || password.length === 0 ? '' : 'このパスワードは使用できません'
+            "
+            class="h-6.5 grow gap-1"
+          />
           <div
             class="col-start-2 row-start-2 flex shrink-0 grow basis-0 flex-col items-start justify-center"
           >
             <p class="fontstyle-ui-caption-strong text-text-secondary">
-              文字数は〇以上〇以下で、半角英数字と記号が使用できます。
+              半角英数字と記号(@, $, !, %, *, ?,
+              &)を用いた8文字以上64文字以下のパスワードが利用できます。
             </p>
             <p class="fontstyle-ui-caption-strong text-text-secondary">
-              英字、数字、記号がそれぞれ1文字以上含まれている必要があります。
+              大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。
             </p>
           </div>
         </div>
 
-        <div class="flex items-center gap-6 self-stretch">
-          <label for="confirmation" class="fontstyle-ui-body-strong w-50 text-right text-[#3A3A3A]">
-            パスワード (確認)
-          </label>
-          <div class="grow">
-            <PasswordTextbox
-              id="confirmation"
-              v-model="confirmation"
-              :error-message="
-                isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
-              "
-            />
-          </div>
-        </div>
+        <PasswordTextbox
+          id="confirmation"
+          v-model="confirmation"
+          label="パスワード (確認)"
+          required
+          :error-message="
+            isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
+          "
+          class="h-6.5 grow gap-1"
+        />
+      </div>
 
-        <PrimaryButton :disabled="!(isValid && isConfirmed)" class="px-8" @click="submit">
+      <form class="flex flex-col items-center gap-5 p-2.5">
+        <PrimaryButton
+          :disabled="!(isValid && isConfirmed)"
+          class="h-10 w-5/12 px-8"
+          @click="submit"
+        >
           再設定
         </PrimaryButton>
       </form>
