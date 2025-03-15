@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MaterialIcon, { type Icon } from '@/components/MaterialIcon.vue'
-import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 
 defineOptions({
   inheritAttrs: false
