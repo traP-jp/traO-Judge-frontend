@@ -28,16 +28,14 @@ const requestResetPassword = async () => {
 <template>
   <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
     <div
-      class="flex w-1/4 max-w-md flex-col items-start justify-center gap-6 rounded-15 bg-white px-8 py-6"
+      class="flex w-1/4 max-w-md flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
     >
-      <div class="flex w-full items-start gap-2.5">
-        <h1 class="text-xl font-medium leading-7 text-text-primary">パスワードの再設定</h1>
-      </div>
+      <h1 class="text-xl font-medium leading-7 text-text-primary">パスワードの再設定</h1>
       <div class="flex w-full flex-col items-start justify-center gap-2">
-        <p class="w-full max-w-xs text-base font-normal leading-6 text-text-primary">
+        <p class="w-full text-base font-normal leading-6 text-text-primary">
           再設定用のリンクをメールで送信します。
         </p>
-        <p class="w-full max-w-sm text-base font-normal leading-6 text-text-primary">
+        <p class="w-full text-base font-normal leading-6 text-text-primary">
           60分以内に、メールに記載されたリンクから再設定を行ってください。
         </p>
       </div>
