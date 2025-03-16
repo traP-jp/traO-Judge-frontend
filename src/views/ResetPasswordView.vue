@@ -46,7 +46,6 @@ const requestResetPassword = async () => {
             label="メールアドレス"
             required
             placeholder="メールアドレス"
-            class="h-6.5"
           />
         </div>
         <PrimaryButton

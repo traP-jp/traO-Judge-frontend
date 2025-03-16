@@ -46,6 +46,7 @@ const submit = async () => {
             label="パスワード"
             required
             :error-message="isValid[0] || password.length === 0 ? '' : isValid[1]"
+            class="grow"
           />
           <div
             class="col-start-2 row-start-2 flex shrink-0 grow basis-0 flex-col items-start justify-center"
@@ -68,6 +69,7 @@ const submit = async () => {
           :error-message="
             isConfirmed || confirmation.length === 0 ? '' : 'パスワードが一致しません'
           "
+          class="grow"
         />
       </div>
 
