@@ -4,6 +4,7 @@ import { dateToString } from '@/utils/date'
 import { ProblemsApi, type ProblemSummaries, type ProblemSummary } from '@/api/generated'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import PageSwitcher from '@/components/PageSwitcher.vue'
+import DifficultyStar from '@/components/DifficultyStar.vue'
 
 const { username, rowPerPage = 20 } = defineProps<{ username: string; rowPerPage?: number }>()
 const page = defineModel<number>('page', { default: 0 })
@@ -68,7 +69,10 @@ const cols: (Column & { name: string })[] = [
         {{ problems.get(rowId)?.title }}
       </template>
       <template v-else-if="colId === 'difficulty'">
-        {{ problems.get(rowId)?.difficulty }}
+        <div class="flex">
+          <DifficultyStar class="grow" :difficulty="problems.get(rowId)?.difficulty ?? 1" />
+          <div>{{ problems.get(rowId)?.difficulty }}</div>
+        </div>
       </template>
       <template v-else-if="colId === 'solvedCount'">
         {{ problems.get(rowId)?.solvedCount }}

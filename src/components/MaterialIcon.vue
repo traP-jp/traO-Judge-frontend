@@ -14,6 +14,8 @@ export type Icon =
   | 'open_in_new'
   | 'person'
   | 'settings'
+  | 'star_half'
+  | 'star_rate'
   | 'visibility'
   | 'visibility_off'
 const { size = '1.5rem', isFilled = false } = defineProps<{
