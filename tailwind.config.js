@@ -49,6 +49,9 @@ export default {
       },
       height: {
         'header-offset': 'calc(100vh - 56px)'
+      },
+      maxWidth: {
+        'form-max': '600px'
       }
     }
   },

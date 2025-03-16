@@ -26,7 +26,7 @@ const requestResetPassword = async () => {
 <template>
   <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
     <div
-      class="flex w-1/4 flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-14 py-10"
+      class="flex max-w-form-max flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-14 py-10"
     >
       <h1 class="fontstyle-ui-title text-text-primary">メールを送信しました</h1>
       <div class="flex flex-col items-start gap-2 self-stretch">
