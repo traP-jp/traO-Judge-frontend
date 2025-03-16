@@ -44,10 +44,10 @@ const loadProblems = async () => {
 watch(page, () => loadProblems(), { immediate: true })
 
 const cols: (Column & { name: string })[] = [
-  { id: 'createdAt', textAlign: 'start', name: '投稿日時' },
-  { id: 'title', textAlign: 'start', name: '問題名' },
-  { id: 'difficulty', textAlign: 'end', name: '難易度' },
-  { id: 'solvedCount', textAlign: 'end', name: 'Solve 数' }
+  { id: 'createdAt', textAlign: 'start', name: '投稿日時', width: '176px' },
+  { id: 'title', textAlign: 'start', name: '問題' },
+  { id: 'difficulty', textAlign: 'start', name: '難易度', width: '160px' },
+  { id: 'solvedCount', textAlign: 'end', name: 'Solves', width: '112px' }
 ] as const
 </script>
 
