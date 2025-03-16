@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AuthenticationApi } from '@/api/generated'
+import isEmail from 'validator/lib/isEmail'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -15,16 +16,16 @@ const passwordErrorMessage = ref<string | undefined>('')
 const router = useRouter()
 
 const handleLogin = async () => {
-  // バリデーション
   if (!email.value || !password.value) {
-    emailErrorMessage.value = !email.value ? 'メールアドレスを入力してください' : ''
-    passwordErrorMessage.value = !password.value ? 'パスワードを入力してください' : ''
+    emailErrorMessage.value = !email.value ? 'メールアドレスが入力されていません。' : ''
+    passwordErrorMessage.value = !password.value ? 'パスワードが入力されていません。' : ''
     return
   }
 
-  // エラーメッセージをリセット
-  emailErrorMessage.value = ''
-  passwordErrorMessage.value = ''
+  if (!isEmail(email.value)) {
+    emailErrorMessage.value = 'メールアドレスの形式が正しくありません。'
+    return
+  }
 
   const authApi = new AuthenticationApi()
   try {
@@ -34,11 +35,8 @@ const handleLogin = async () => {
         password: password.value
       }
     })
-    // router.push('/') // ログイン成功時のリダイレクト
-    emailErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'
-    passwordErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'
+    router.push('/')
   } catch (error) {
-    // エラー時のみメッセージを表示
     emailErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'
     passwordErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'
     email.value = ''
@@ -78,11 +76,7 @@ const handleLogin = async () => {
           :error-message="passwordErrorMessage"
         />
 
-        <PrimaryButton
-          class="h-10 w-full rounded px-6 py-2"
-          :disabled="!email || !password"
-          @click="handleLogin"
-        >
+        <PrimaryButton class="h-10 w-full rounded px-6 py-2" @click="handleLogin">
           ログイン
         </PrimaryButton>
       </div>

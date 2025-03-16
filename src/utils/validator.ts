@@ -1,3 +1,5 @@
+import isEmail from 'validator/lib/isEmail'
+
 export const usernameValidator = (username: string): [boolean, string] => {
   if (username.length < 1) {
     return [false, '必須項目です。']
@@ -41,6 +43,16 @@ export const passwordValidator = (password: string): [boolean, string] => {
   }
   if (!/[a-z]/.test(password)) {
     return [false, '英小文字を1字以上使用してください。']
+  }
+  return [true, '']
+}
+
+export const emailValidator = (email: string): [boolean, string] => {
+  if (email.length < 1) {
+    return [false, 'メールアドレスが入力されていません。']
+  }
+  if (!isEmail(email)) {
+    return [false, 'メールアドレスの形式が正しくありません。']
   }
   return [true, '']
 }
