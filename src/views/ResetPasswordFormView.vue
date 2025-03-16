@@ -71,12 +71,8 @@ const submit = async () => {
         />
       </div>
 
-      <form class="flex flex-col items-center gap-5 p-2.5" @submit.prevent="submit">
-        <PrimaryButton
-          :disabled="!(isValid && isConfirmed)"
-          class="h-10 w-5/12 px-8"
-          @click="submit"
-        >
+      <form class="flex flex-col items-center" @submit.prevent="submit">
+        <PrimaryButton :disabled="!(isValid && isConfirmed)" class="h-10 w-5/12" @click="submit">
           再設定
         </PrimaryButton>
       </form>
