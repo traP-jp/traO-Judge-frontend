@@ -5,7 +5,6 @@ import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import { ref } from 'vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import { JudgeStatus } from '@/api/generated'
 
 const { username } = defineProps<{ username: string }>()
 const page = useQueryParamInt('page', 0, true)
@@ -29,7 +28,7 @@ const toggleFilterMenu = () => {
       </MonochromeButton>
       <div v-if="filterMenuShown" class="absolute right-0 top-full pt-2">
         <div
-          class="flex flex-col gap-4 rounded-lg border border-border-secondary bg-background-primary p-4 shadow-lg text-text-secondary"
+          class="flex flex-col gap-4 rounded-lg border border-border-secondary bg-background-primary p-4 text-text-secondary shadow-lg"
         >
           <div class="flex flex-col gap-2">
             <span class="fontstyle-ui-control-strong">問題名</span>
