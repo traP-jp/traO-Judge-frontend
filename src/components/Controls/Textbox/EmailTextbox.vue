@@ -29,6 +29,7 @@ const updateError = () => {
     v-bind="$attrs"
     v-model="value"
     :error-message="shownErrorMessage"
+    class="h-6.5"
     @blur="updateError"
   />
 </template>

@@ -54,9 +54,9 @@ const handleLogin = async () => {
       <h1 class="fontstyle-ui-title leading-7 text-text-primary">ログイン</h1>
 
       <div class="flex w-full flex-col items-start gap-2">
-        <OAuthButton app="Github" class="w-full" mode="login" />
-        <OAuthButton app="Google" class="w-full" mode="login" />
-        <OAuthButton app="traQ" class="w-full" mode="login" />
+        <OAuthButton app="Github" class="h-10 w-full" mode="login" />
+        <OAuthButton app="Google" class="h-10 w-full" mode="login" />
+        <OAuthButton app="traQ" class="h-10 w-full" mode="login" />
       </div>
 
       <div class="h-px w-full border-t border-border-secondary"></div>
@@ -64,14 +64,14 @@ const handleLogin = async () => {
       <div class="flex w-full flex-col gap-4">
         <EmailTextbox
           v-model="email"
-          class="h-8 w-full"
+          class="w-full"
           placeholder="メールアドレス"
           :error-message="emailErrorMessage"
         />
 
         <PasswordTextbox
           v-model="password"
-          class="h-8 w-full"
+          class="w-full"
           placeholder="パスワード"
           :error-message="passwordErrorMessage"
         />
