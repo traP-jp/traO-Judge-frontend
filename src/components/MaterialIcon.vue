@@ -2,6 +2,7 @@
 export type Icon =
   | 'assignment'
   | 'assignment_turned_in'
+  | 'close'
   | 'code'
   | 'edit'
   | 'edit_note'
@@ -13,6 +14,7 @@ export type Icon =
   | 'logout'
   | 'open_in_new'
   | 'person'
+  | 'search'
   | 'settings'
   | 'star_half'
   | 'star_rate'
