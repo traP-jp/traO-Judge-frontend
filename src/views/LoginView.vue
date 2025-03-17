@@ -51,7 +51,7 @@ const handleLogin = async () => {
     <div
       class="flex w-full max-w-form-max flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
     >
-      <h1 class="fontstyle-ui-title leading-7 text-text-primary">ログイン</h1>
+      <h1 class="fontstyle-ui-subtitle leading-7 text-text-primary">ログイン</h1>
 
       <div class="flex w-full flex-col items-start gap-2">
         <OAuthButton app="Github" class="h-10 w-full" mode="login" />
