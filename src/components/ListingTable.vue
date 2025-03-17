@@ -31,7 +31,7 @@ const { cols, rowIds } = defineProps<{
         <th
           v-for="col in cols"
           :key="col.id"
-          class="fontstyle-ui-body p-3"
+          class="fontstyle-ui-body h-12 px-3"
           :style="{ textAlign: col.textAlign, width: col.width }"
         >
           <slot name="cell" :row-id="rowId" :col-id="col.id" />

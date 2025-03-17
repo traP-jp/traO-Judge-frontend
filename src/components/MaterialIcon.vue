@@ -16,6 +16,7 @@ export type Icon =
   | 'settings'
   | 'star_half'
   | 'star_rate'
+  | 'tune'
   | 'visibility'
   | 'visibility_off'
 const { size = '1.5rem', isFilled = false } = defineProps<{

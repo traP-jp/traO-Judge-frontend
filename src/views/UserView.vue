@@ -18,8 +18,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex gap-[max(2rem,calc(25dvw-16rem))] px-[max(2rem,calc(25dvw-16rem))]">
-    <nav class="sticky top-14 h-[calc(100dvh-3.5rem)]">
+  <div class="flex gap-8 px-[120px]">
+    <nav class="sticky top-14 h-header-offset">
       <SideMenuUserPage :username="username" />
     </nav>
     <main class="flex-auto py-10">
