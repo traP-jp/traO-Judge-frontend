@@ -5,6 +5,7 @@ import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import { ref } from 'vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
+import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
 
 const { username } = defineProps<{ username: string }>()
 const page = useQueryParamInt('page', 0, true)
@@ -58,6 +59,7 @@ const toggleFilterMenu = () => {
     <section class="">
       <ProblemsList v-model:page="page" :username="username" />
     </section>
+    <SimplePagenation />
   </div>
 </template>
 

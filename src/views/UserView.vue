@@ -22,7 +22,7 @@ watch(
     <nav class="sticky top-14 h-header-offset">
       <SideMenuUserPage :username="username" />
     </nav>
-    <main class="flex-auto py-10">
+    <main class="flex-auto py-6">
       <RouterView :username="username" />
     </main>
   </div>
