@@ -3,9 +3,10 @@ import { useQueryParamInt } from '@/composables/useQueryParam'
 import ProblemsList from '@/components/ProblemsList.vue'
 import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
+import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
 
 const { username } = defineProps<{ username: string }>()
 const page = useQueryParamInt('page', 0, true)
@@ -14,6 +15,18 @@ let filterMenuShown = ref(false)
 const toggleFilterMenu = () => {
   filterMenuShown.value = !filterMenuShown.value
 }
+
+let filterDifficultyBegin = ref(1)
+let filterDifficultyEnd = ref(10)
+
+let filterDifficultyRangeError = computed(
+  () =>
+    filterDifficultyBegin.value > filterDifficultyEnd.value ||
+    filterDifficultyBegin.value < 1 ||
+    10 < filterDifficultyBegin.value ||
+    filterDifficultyEnd.value < 1 ||
+    10 < filterDifficultyEnd.value
+)
 </script>
 
 <template>
@@ -40,16 +53,30 @@ const toggleFilterMenu = () => {
             <div class="fontstyle-ui-control flex gap-6">
               <span class="flex items-center gap-2">
                 <span class="w-16">
-                  <PlainTextbox />
+                  <NumberTextbox
+                    v-model="filterDifficultyBegin"
+                    min="1"
+                    max="10"
+                    :error="filterDifficultyRangeError"
+                  />
                 </span>
                 <span>以上</span>
               </span>
               <span class="flex items-center gap-2">
                 <span class="w-16">
-                  <PlainTextbox />
+                  <NumberTextbox
+                    v-model="filterDifficultyEnd"
+                    min="1"
+                    max="10"
+                    :error="filterDifficultyRangeError"
+                  />
                 </span>
                 <span>以下</span>
               </span>
+            </div>
+            <div v-if="filterDifficultyRangeError" class="flex items-start gap-2 text-status-error">
+              <MaterialIcon icon="error" size="1.25rem" is-filled />
+              <span class="fontstyle-ui-control min-w-0 break-words">範囲が正しくありません</span>
             </div>
             <span class="fontstyle-ui-caption">難易度は1~10で表されます。</span>
           </div>

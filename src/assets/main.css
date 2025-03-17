@@ -1,82 +1,89 @@
 @import './base.css';
 
 .fontstyle-ui-title-large {
-  @apply font-primary;
-  font-size: 2.5rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 3.25rem;
+    @apply font-primary;
+    font-size: 2.5rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 3.25rem;
 }
 
 .fontstyle-ui-title {
-  @apply font-primary;
-  font-size: 1.75rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 2.25rem;
+    @apply font-primary;
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 2.25rem;
 }
 
 .fontstyle-ui-subtitle {
-  @apply font-primary;
-  font-size: 1.25rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.75rem;
+    @apply font-primary;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.75rem;
 }
 
 .fontstyle-ui-body {
-  @apply font-primary;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.5rem;
+    @apply font-primary;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem;
 }
 
 .fontstyle-ui-body-strong {
-  @apply font-primary;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.5rem;
+    @apply font-primary;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.5rem;
 }
 
 .fontstyle-ui-control {
-  @apply font-primary;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.25rem;
+    @apply font-primary;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.25rem;
 }
 
 .fontstyle-ui-control-strong {
-  @apply font-primary;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.25rem;
+    @apply font-primary;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.25rem;
 }
 
 .fontstyle-ui-caption {
-  @apply font-primary;
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1rem;
+    @apply font-primary;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1rem;
 }
 
 .fontstyle-ui-caption-link {
-  @apply font-primary;
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1rem;
-  text-decoration: underline;
+    @apply font-primary;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1rem;
+    text-decoration: underline;
 }
 
 .fontstyle-ui-caption-strong {
-  @apply font-primary;
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1rem;
+    @apply font-primary;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1rem;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button,
+input[type='number'] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield !important;
 }
