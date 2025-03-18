@@ -10,9 +10,9 @@ import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 
 const email = ref<string>('')
-const emailErrorMessage = ref<string | undefined>('')
+const emailErrorMessage = ref<string | undefined>()
 const password = ref<string>('')
-const passwordErrorMessage = ref<string | undefined>('')
+const passwordErrorMessage = ref<string | undefined>()
 const router = useRouter()
 
 const handleLogin = async () => {
