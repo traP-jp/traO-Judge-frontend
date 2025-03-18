@@ -24,6 +24,7 @@ const handleLogin = async () => {
 
   if (!isEmail(email.value)) {
     emailErrorMessage.value = 'メールアドレスの形式が正しくありません。'
+    passwordErrorMessage.value = ''
     return
   }
 
