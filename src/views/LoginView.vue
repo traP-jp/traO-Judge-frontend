@@ -59,7 +59,7 @@ const handleLogin = async () => {
         <OAuthButton app="traQ" class="h-10 w-full" mode="login" />
       </div>
 
-      <div class="h-px w-full border-t border-border-secondary"></div>
+      <hr class="h-px w-full border-t border-border-primary" />
 
       <div class="flex w-full flex-col gap-4">
         <EmailTextbox
