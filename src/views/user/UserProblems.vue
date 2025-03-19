@@ -1,24 +1,73 @@
 <script lang="ts" setup>
 import { useQueryParamInt } from '@/composables/useQueryParam'
-import ProblemsList from '@/components/ProblemsList.vue'
-import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
+import { computed, ref, watch } from 'vue'
+import { ProblemsApi, type ProblemSummaries, type ProblemSummary } from '@/api/generated'
+import { dateToString } from '@/utils/date'
+import ListingTable, { type Column } from '@/components/ListingTable.vue'
+import DifficultyStar from '@/components/DifficultyStar.vue'
+import Link from '@/components/Link.vue'
+import SimplePagination from '@/components/Controls/Pagination/SimplePagination.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
-import { computed, ref } from 'vue'
-import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
+import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
+import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 
 const { username } = defineProps<{ username: string }>()
 const page = useQueryParamInt('page', 1, true)
 
-let filterMenuShown = ref(false)
+const isLoaded = ref<boolean>(false)
+const totalProblems = ref<number>(1)
+const totalPage = ref<number>(1)
+const problemIds = ref<string[]>([])
+const problems = ref<Map<string, ProblemSummary>>(new Map())
+const rowPerPage = 2
+
+/**
+ * Fetch the problems with the current state and update the state
+ */
+const loadProblems = async () => {
+  isLoaded.value = false
+  try {
+    const summaries: ProblemSummaries = await new ProblemsApi().getProblems({
+      orderBy: 'createdAtDesc',
+      username,
+      limit: rowPerPage,
+      offset: page.value * rowPerPage
+    })
+
+    problemIds.value = summaries.problems?.map(({ id }) => id) ?? []
+    problems.value = new Map(summaries.problems?.map((problem) => [problem.id, problem]))
+
+    totalProblems.value = summaries.total ?? problemIds.value.length
+    totalPage.value = Math.ceil(totalProblems.value / rowPerPage)
+    if (page.value < 1) page.value = 1
+    if (page.value >= totalPage.value) page.value = totalPage.value
+  } catch (error) {
+    console.error('API Error:', error)
+    alert(`API Error: ${error}`)
+  } finally {
+    isLoaded.value = true
+  }
+}
+
+watch(page, () => loadProblems(), { immediate: true })
+
+const cols: (Column & { name: string })[] = [
+  { id: 'createdAt', textAlign: 'start', name: '投稿日時', width: '176px' },
+  { id: 'title', textAlign: 'start', name: '問題' },
+  { id: 'difficulty', textAlign: 'start', name: '難易度', width: '160px' },
+  { id: 'solvedCount', textAlign: 'end', name: 'Solves', width: '112px' }
+] as const
+
+const filterMenuShown = ref(false)
 const toggleFilterMenu = () => {
   filterMenuShown.value = !filterMenuShown.value
 }
 
-let filterDifficultyBegin = ref(1)
-let filterDifficultyEnd = ref(10)
+const filterDifficultyBegin = ref(1)
+const filterDifficultyEnd = ref(10)
 
-let filterDifficultyRangeError = computed(
+const filterDifficultyRangeError = computed(
   () =>
     filterDifficultyBegin.value > filterDifficultyEnd.value ||
     filterDifficultyBegin.value < 1 ||
@@ -29,7 +78,7 @@ let filterDifficultyRangeError = computed(
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <section class="flex flex-col gap-4">
     <div class="fontstyle-ui-subtitle relative flex items-center text-text-primary">
       <span class="mr-1">{{ username }}</span>
       <span class="grow">の問題</span>
@@ -82,10 +131,38 @@ let filterDifficultyRangeError = computed(
         </div>
       </div>
     </div>
-    <section class="">
-      <ProblemsList v-model:page="page" :username="username" />
-    </section>
-  </div>
+
+    <!-- TODO: add sorting and filtering features -->
+    <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
+    <ListingTable v-if="isLoaded" :cols="cols" :row-ids="problemIds">
+      <template #head="{ colId }">
+        {{ cols.find(({ id }) => id === colId)?.name }}
+      </template>
+      <template #cell="{ rowId, colId }">
+        <!-- 文字列のみとは限らずリンクやアイコンなどを含めるようにするため、関数に切り出してはいない -->
+        <template v-if="colId === 'createdAt'">
+          {{ dateToString(problems.get(rowId)?.createdAt) }}
+        </template>
+        <template v-else-if="colId === 'title'">
+          <Link :href="`/problems/${problems.get(rowId)?.id}`">
+            {{ problems.get(rowId)?.title }}
+          </Link>
+        </template>
+        <template v-else-if="colId === 'difficulty'">
+          <div class="flex">
+            <DifficultyStar class="grow" :difficulty="problems.get(rowId)?.difficulty ?? 1" />
+            <div>{{ problems.get(rowId)?.difficulty }}</div>
+          </div>
+        </template>
+        <template v-else-if="colId === 'solvedCount'">
+          {{ problems.get(rowId)?.solvedCount }}
+        </template>
+        <template v-else>Unknown column: {{ colId }}</template>
+      </template>
+    </ListingTable>
+    <div v-else>読み込み中...</div>
+    <SimplePagination v-model="page" :end="totalPage" class="mt-6" />
+  </section>
 </template>
 
 <style scoped></style>
