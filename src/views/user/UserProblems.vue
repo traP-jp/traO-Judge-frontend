@@ -88,6 +88,7 @@ const filterDifficultyRangeError = computed(
           <MaterialIcon icon="tune" size="20px" />
         </span>
       </MonochromeButton>
+      <!-- フィルタ画面 -->
       <div v-if="filterMenuShown" class="absolute right-0 top-full pt-2">
         <div
           class="flex flex-col gap-4 rounded-lg border border-border-secondary bg-background-primary p-4 text-text-secondary shadow-lg"
