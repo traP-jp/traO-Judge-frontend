@@ -5,7 +5,7 @@ import { ProblemsApi, type ProblemSummaries, type ProblemSummary } from '@/api/g
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import DifficultyStar from '@/components/DifficultyStar.vue'
 import Link from '@/components/Link.vue'
-import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
+import SimplePagination from '@/components/Controls/Pagination/SimplePagination.vue'
 
 const { username, rowPerPage = 20 } = defineProps<{ username: string; rowPerPage?: number }>()
 const page = defineModel<number>('page', { default: 1 })
@@ -84,7 +84,7 @@ const cols: (Column & { name: string })[] = [
     </template>
   </ListingTable>
   <div v-else>読み込み中...</div>
-  <SimplePagenation v-model="page" :end="totalPage" class="mt-6" />
+  <SimplePagination v-model="page" :end="totalPage" class="mt-6" />
 </template>
 
 <style scoped></style>

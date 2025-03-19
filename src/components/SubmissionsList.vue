@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { dateToString } from '@/utils/date'
 import { SubmissionsApi, type SubmissionSummaries, type SubmissionSummary } from '@/api/generated'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
-import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
+import SimplePagination from '@/components/Controls/Pagination/SimplePagination.vue'
 
 const { username, rowPerPage = 20 } = defineProps<{ username: string; rowPerPage?: number }>()
 const page = defineModel<number>('page', { default: 0 })
@@ -91,7 +91,7 @@ const cols: (Column & { name: string })[] = [
     </template>
   </ListingTable>
   <div v-else>読み込み中...</div>
-  <SimplePagenation v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mt-6" />
+  <SimplePagination v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mt-6" />
 </template>
 
 <style scoped></style>
