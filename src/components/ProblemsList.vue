@@ -3,16 +3,16 @@ import { ref, watch } from 'vue'
 import { dateToString } from '@/utils/date'
 import { ProblemsApi, type ProblemSummaries, type ProblemSummary } from '@/api/generated'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
-import PageSwitcher from '@/components/PageSwitcher.vue'
 import DifficultyStar from '@/components/DifficultyStar.vue'
 import Link from '@/components/Link.vue'
+import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
 
 const { username, rowPerPage = 20 } = defineProps<{ username: string; rowPerPage?: number }>()
-const page = defineModel<number>('page', { default: 0 })
+const page = defineModel<number>('page', { default: 1 })
 
 const isLoaded = ref<boolean>(false)
-const totalProblems = ref<number>(0)
-const totalPage = ref<number>(0)
+const totalProblems = ref<number>(1)
+const totalPage = ref<number>(1)
 const problemIds = ref<string[]>([])
 const problems = ref<Map<string, ProblemSummary>>(new Map())
 
@@ -34,7 +34,8 @@ const loadProblems = async () => {
 
     totalProblems.value = summaries.total ?? problemIds.value.length
     totalPage.value = Math.ceil(totalProblems.value / rowPerPage)
-    if (page.value >= totalPage.value) page.value = totalPage.value - 1
+    if (page.value < 1) page.value = 1
+    if (page.value >= totalPage.value) page.value = totalPage.value
   } catch (error) {
     console.error('API Error:', error)
     alert(`API Error: ${error}`)
@@ -54,7 +55,6 @@ const cols: (Column & { name: string })[] = [
 </script>
 
 <template>
-  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mb-6" />
   <!-- TODO: add sorting and filtering features -->
   <!-- Nullish になり得ない所でも型安全性のため Non-null Assertion はしない -->
   <ListingTable v-if="isLoaded" :cols="cols" :row-ids="problemIds">
@@ -84,7 +84,7 @@ const cols: (Column & { name: string })[] = [
     </template>
   </ListingTable>
   <div v-else>読み込み中...</div>
-  <PageSwitcher v-if="totalPage > 1" v-model="page" :begin="0" :end="totalPage" class="mt-6" />
+  <SimplePagenation v-model="page" :end="totalPage" class="mt-6" />
 </template>
 
 <style scoped></style>

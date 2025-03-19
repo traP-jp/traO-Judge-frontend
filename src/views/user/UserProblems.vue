@@ -5,11 +5,10 @@ import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import { computed, ref } from 'vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import SimplePagenation from '@/components/Controls/Pagenation/SimplePagenation.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
 
 const { username } = defineProps<{ username: string }>()
-const page = useQueryParamInt('page', 0, true)
+const page = useQueryParamInt('page', 1, true)
 
 let filterMenuShown = ref(false)
 const toggleFilterMenu = () => {
@@ -86,7 +85,6 @@ let filterDifficultyRangeError = computed(
     <section class="">
       <ProblemsList v-model:page="page" :username="username" />
     </section>
-    <SimplePagenation />
   </div>
 </template>
 
