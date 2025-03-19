@@ -145,7 +145,7 @@ const filterDifficultyRangeError = computed(
           {{ dateToString(problems.get(rowId)?.createdAt) }}
         </template>
         <template v-else-if="colId === 'title'">
-          <Link :href="`/problems/${problems.get(rowId)?.id}`">
+          <Link :href="`/problems/${problems.get(rowId)?.id}`" new-tab>
             {{ problems.get(rowId)?.title }}
           </Link>
         </template>
