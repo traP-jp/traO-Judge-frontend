@@ -22,6 +22,9 @@ const problemIds = ref<string[]>([])
 const problems = ref<Map<string, ProblemSummary>>(new Map())
 const rowPerPage = 20
 
+const filterDifficultyBegin = ref(1)
+const filterDifficultyEnd = ref(10)
+
 /**
  * Fetch the problems with the current state and update the state
  */
@@ -32,10 +35,16 @@ const loadProblems = async () => {
       orderBy: 'createdAtDesc',
       username,
       limit: rowPerPage,
-      offset: page.value * rowPerPage
+      offset: (page.value - 1) * rowPerPage
     })
 
-    problemIds.value = summaries.problems?.map(({ id }) => id) ?? []
+    problemIds.value =
+      summaries.problems
+        ?.filter(
+          ({ difficulty }) =>
+            filterDifficultyBegin.value <= difficulty && difficulty <= filterDifficultyEnd.value
+        )
+        .map(({ id }) => id) ?? []
     problems.value = new Map(summaries.problems?.map((problem) => [problem.id, problem]))
 
     totalProblems.value = summaries.total ?? problemIds.value.length
@@ -50,7 +59,7 @@ const loadProblems = async () => {
   }
 }
 
-watch(page, () => loadProblems(), { immediate: true })
+watch([page, filterDifficultyBegin, filterDifficultyEnd], () => loadProblems(), { immediate: true })
 
 const cols: (Column & { name: string })[] = [
   { id: 'createdAt', textAlign: 'start', name: '投稿日時', width: '176px' },
@@ -63,9 +72,6 @@ const filterMenuShown = ref(false)
 const toggleFilterMenu = () => {
   filterMenuShown.value = !filterMenuShown.value
 }
-
-const filterDifficultyBegin = ref(1)
-const filterDifficultyEnd = ref(10)
 
 const filterDifficultyRangeError = computed(
   () =>
