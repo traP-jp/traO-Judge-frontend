@@ -20,7 +20,7 @@ const totalProblems = ref<number>(1)
 const totalPage = ref<number>(1)
 const problemIds = ref<string[]>([])
 const problems = ref<Map<string, ProblemSummary>>(new Map())
-const rowPerPage = 2
+const rowPerPage = 20
 
 /**
  * Fetch the problems with the current state and update the state
