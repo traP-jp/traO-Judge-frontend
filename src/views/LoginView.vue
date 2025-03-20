@@ -50,7 +50,7 @@ const handleLogin = async () => {
 <template>
   <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
     <div
-      class="flex w-full max-w-form-max flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
+      class="flex w-[360px] flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
     >
       <h1 class="fontstyle-ui-subtitle leading-7 text-text-primary">ログイン</h1>
 
