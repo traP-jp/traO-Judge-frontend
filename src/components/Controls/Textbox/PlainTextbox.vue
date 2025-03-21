@@ -6,6 +6,7 @@ defineOptions({
   inheritAttrs: false
 })
 const {
+  error = false,
   errorMessage = '',
   label = '',
   leftIcon,
@@ -14,6 +15,7 @@ const {
 } = defineProps<{
   disabled?: boolean
   displaysLength?: boolean
+  error?: boolean
   errorMessage?: string
   id?: string
   label?: string
@@ -24,7 +26,7 @@ const {
 }>()
 const emit = defineEmits(['clickRight', 'focusin', 'blur'])
 const value = defineModel<string>()
-const displaysError = computed(() => errorMessage != '')
+const displaysError = computed(() => error || errorMessage != '')
 const displaysLeftIcon = computed(() => leftIcon != null)
 const displaysRightIcon = computed(() => rightIcon != null)
 const displaysSupportingText = computed(() => supportingText != null)
@@ -92,7 +94,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
         >{{ supportingText }}</span
       >
     </div>
-    <div v-if="displaysError" class="mt-2 flex items-start gap-2 text-status-error">
+    <div v-if="errorMessage != ''" class="mt-2 flex items-start gap-2 text-status-error">
       <MaterialIcon icon="error" size="1.25rem" is-filled />
       <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
     </div>

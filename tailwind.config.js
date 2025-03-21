@@ -13,7 +13,7 @@ export default {
       'brand-secondary': '#79083a',
       'brand-light-primary': '#fff3f3',
       'text-primary': '#2a2a2a',
-      'text-secondary': '#6c6c6c',
+      'text-secondary': '#4a4a4a',
       'text-tertiary': '#9a9a9a',
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
