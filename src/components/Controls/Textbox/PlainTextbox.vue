@@ -48,54 +48,56 @@ const onClickInnerBorder = (e: MouseEvent) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
-    <span v-if="label != ''" class="flex items-center gap-2">
-      <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
-      <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
-    </span>
-    <span
-      class="flex rounded border bg-background-primary px-2 py-1"
-      :class="[
-        { 'outline outline-1': isFocused },
-        { 'border-border-secondary outline-text-primary': !displaysError },
-        { 'border-status-error outline outline-1 outline-status-error': displaysError },
-        { 'border-text-primary': isFocused && !displaysError },
-        { 'bg-background-secondary': disabled }
-      ]"
-      @mousedown="onClickInnerBorder"
-    >
-      <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
-      <input
-        v-bind="$attrs"
-        :id="id"
-        ref="input"
-        v-model="value"
-        :disabled="disabled"
-        class="fontstyle-ui-body h-5 w-full min-w-0 bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
-        @focusin="onFocusin"
-        @blur="onBlur"
-      />
-      <span class="inline-flex items-center gap-2">
-        <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
-          value?.length ?? 0
-        }}</span>
-        <MaterialIcon
-          v-if="displaysRightIcon"
-          :icon="rightIcon!"
-          size="1.25rem"
-          @click="emit('clickRight')"
-        />
+  <div>
+    <div class="flex flex-col gap-1">
+      <span v-if="label != ''" class="flex items-center gap-2">
+        <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
+        <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
       </span>
-    </span>
-    <span
-      v-if="displaysSupportingText"
-      class="fontstyle-ui-caption whitespace-pre-line text-text-secondary"
-      >{{ supportingText }}</span
-    >
-  </div>
-  <div v-if="errorMessage != ''" class="mt-2 flex items-start gap-2 text-status-error">
-    <MaterialIcon icon="error" size="1.25rem" is-filled />
-    <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
+      <span
+        class="flex rounded border bg-background-primary px-2 py-1"
+        :class="[
+          { 'outline outline-1': isFocused },
+          { 'border-border-secondary outline-text-primary': !displaysError },
+          { 'border-status-error outline outline-1 outline-status-error': displaysError },
+          { 'border-text-primary': isFocused && !displaysError },
+          { 'bg-background-secondary': disabled }
+        ]"
+        @mousedown="onClickInnerBorder"
+      >
+        <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
+        <input
+          v-bind="$attrs"
+          :id="id"
+          ref="input"
+          v-model="value"
+          :disabled="disabled"
+          class="fontstyle-ui-body h-5 w-full min-w-0 bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
+          @focusin="onFocusin"
+          @blur="onBlur"
+        />
+        <span class="inline-flex items-center gap-2">
+          <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
+            value?.length ?? 0
+          }}</span>
+          <MaterialIcon
+            v-if="displaysRightIcon"
+            :icon="rightIcon!"
+            size="1.25rem"
+            @click="emit('clickRight')"
+          />
+        </span>
+      </span>
+      <span
+        v-if="displaysSupportingText"
+        class="fontstyle-ui-caption whitespace-pre-line text-text-secondary"
+        >{{ supportingText }}</span
+      >
+    </div>
+    <div v-if="errorMessage != ''" class="mt-2 flex items-start gap-2 text-status-error">
+      <MaterialIcon icon="error" size="1.25rem" is-filled />
+      <span class="fontstyle-ui-control min-w-0 break-words">{{ errorMessage }}</span>
+    </div>
   </div>
 </template>
 
