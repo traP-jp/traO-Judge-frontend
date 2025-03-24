@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
 import { passwordValidator, usernameValidator } from '@/utils/validator'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 
+const oauth = ref(false)
 const username = ref('')
 const usernameErrorMessage = ref('')
 const emailAddress = ref('')
@@ -15,18 +16,22 @@ const passwordErrorMessage = ref('')
 const confirmPassword = ref('')
 const confirmPasswordErrorMessage = ref('')
 
-onMounted(() => {
-  try {
-    const token = new URLSearchParams(window.location.search).get('token')
-    if (token) {
-      const decodedToken = jwtDecode<{ email: string }>(token)
-      emailAddress.value = decodedToken.email
-    }
-  } catch (error) {
-    console.error('Signup Register Error:', error)
-    alert('Signup Register Error:' + error)
+const route = useRoute()
+try {
+  if (route.query.oauth !== undefined) {
+    oauth.value = route.query.oauth === 'true'
   }
-})
+  if (typeof route.query.token !== 'string') {
+    throw new Error('Invalid token')
+  }
+  const token = route.query.token
+  if (!oauth.value) {
+    const decodedToken = jwtDecode<{ email: string }>(token)
+    emailAddress.value = decodedToken.email
+  }
+} catch (error) {
+  console.error('Signup Register Error:', error)
+}
 
 const router = useRouter()
 
@@ -40,45 +45,53 @@ async function onSignupRegister() {
     } else {
       usernameErrorMessage.value = ''
     }
-    const [isPasswordValid, passwordError] = passwordValidator(password.value)
-    if (!isPasswordValid) {
-      passwordErrorMessage.value = passwordError
-      error = true
-    } else {
-      passwordErrorMessage.value = ''
-    }
-    if (!confirmPassword.value) {
-      confirmPasswordErrorMessage.value = '必須項目です。'
-      error = true
-    } else if (password.value !== confirmPassword.value) {
-      confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
-      error = true
-    } else {
-      confirmPasswordErrorMessage.value = ''
+    if (!oauth.value) {
+      const [isPasswordValid, passwordError] = passwordValidator(password.value)
+      if (!isPasswordValid) {
+        passwordErrorMessage.value = passwordError
+        error = true
+      } else {
+        passwordErrorMessage.value = ''
+      }
+      if (!confirmPassword.value) {
+        confirmPasswordErrorMessage.value = '必須項目です。'
+        error = true
+      } else if (password.value !== confirmPassword.value) {
+        confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
+        error = true
+      } else {
+        confirmPasswordErrorMessage.value = ''
+      }
     }
     if (error) {
       return
     }
-    const token = new URLSearchParams(window.location.search).get('token')
+    const token = route.query.token
+    const payload = {
+      userName: username.value,
+      token: token,
+      ...(oauth.value ? {} : { password: password.value })
+    }
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ userName: username.value, password: password.value, token: token })
+      body: JSON.stringify(payload)
     })
     if (response.status === 201) {
       router.push('/login')
     } else if (response.status === 400) {
-      alert('不正なリクエストです')
+      throw new Error('不正なリクエストです')
     } else if (response.status === 401) {
-      alert('Unauthorized')
+      throw new Error('Unauthorized')
+    } else if (response.status === 500) {
+      throw new Error('Internal Server Error')
     } else {
-      alert(response.status)
+      throw new Error('Unknown error: ' + response.status)
     }
   } catch (error) {
     console.error('Signup Register Error:', error)
-    alert('Signup Register Error:' + error)
   }
 }
 </script>
@@ -99,6 +112,7 @@ async function onSignupRegister() {
           :error-message="usernameErrorMessage"
         />
         <PasswordTextbox
+          v-if="!oauth"
           id="password"
           v-model="password"
           label="パスワード"
@@ -108,6 +122,7 @@ async function onSignupRegister() {
           :error-message="passwordErrorMessage"
         />
         <PasswordTextbox
+          v-if="!oauth"
           id="confirmPassword"
           v-model="confirmPassword"
           label="パスワード（確認）"
