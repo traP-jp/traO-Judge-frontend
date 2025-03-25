@@ -16,12 +16,12 @@ const router = createRouter({
           component: () => import('@/views/SignupView.vue')
         },
         {
-          path: 'register',
-          component: () => import('@/views/SignupRegisterView.vue')
+          path: 'form',
+          component: () => import('@/views/SignupFormView.vue')
         },
         {
-          path: 'after-mail',
-          component: () => import('@/views/SignupAfterMailView.vue')
+          path: 'mail-send',
+          component: () => import('@/views/SignupMailSendView.vue')
         }
       ]
     },
