@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { AuthenticationApi } from '@/api/generated'
+import { ResponseError } from '@/api/generated/runtime'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
@@ -8,77 +10,84 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const username = ref('')
-const usernameErrorMessage = ref('')
+const token = ref('')
+const usernameErrorMessage = ref<string | undefined>('')
 const emailAddress = ref('')
 const password = ref('')
-const passwordErrorMessage = ref('')
+const passwordErrorMessage = ref<string | undefined>('')
 const confirmPassword = ref('')
-const confirmPasswordErrorMessage = ref('')
+const confirmPasswordErrorMessage = ref<string | undefined>('')
+const formError = ref<string | undefined>()
+const router = useRouter()
 
 onMounted(() => {
   try {
-    const token = new URLSearchParams(window.location.search).get('token')
-    if (token) {
-      const decodedToken = jwtDecode<{ email: string }>(token)
-      emailAddress.value = decodedToken.email
-    }
+    token.value = new URLSearchParams(window.location.search).get('token') ?? ''
+
+    const decodedToken = jwtDecode<{ email: string }>(token.value)
+    emailAddress.value = decodedToken.email
   } catch (error) {
-    console.error('Signup Register Error:', error)
-    alert('Signup Register Error:' + error)
+    console.error('トークン解析エラー:', error)
+    formError.value = '無効なリンクです。最初からやり直してください。'
   }
 })
 
-const router = useRouter()
-
 async function onSignupRegister() {
+  let hasError = false
+
+  const [isUsernameValid, usernameError] = usernameValidator(username.value)
+  if (!isUsernameValid) {
+    usernameErrorMessage.value = usernameError
+    hasError = true
+  } else {
+    usernameErrorMessage.value = ''
+  }
+
+  const [isPasswordValid, passwordError] = passwordValidator(password.value)
+  if (!isPasswordValid) {
+    passwordErrorMessage.value = passwordError
+    hasError = true
+  } else {
+    passwordErrorMessage.value = ''
+  }
+
+  if (!confirmPassword.value) {
+    confirmPasswordErrorMessage.value = '必須項目です。'
+    hasError = true
+  } else if (password.value !== confirmPassword.value) {
+    confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
+    hasError = true
+  } else {
+    confirmPasswordErrorMessage.value = ''
+  }
+
+  if (hasError) return
+
+  const authApi = new AuthenticationApi()
+
   try {
-    let error = false
-    const [isUsernameValid, usernameError] = usernameValidator(username.value)
-    if (!isUsernameValid) {
-      usernameErrorMessage.value = usernameError
-      error = true
-    } else {
-      usernameErrorMessage.value = ''
-    }
-    const [isPasswordValid, passwordError] = passwordValidator(password.value)
-    if (!isPasswordValid) {
-      passwordErrorMessage.value = passwordError
-      error = true
-    } else {
-      passwordErrorMessage.value = ''
-    }
-    if (!confirmPassword.value) {
-      confirmPasswordErrorMessage.value = '必須項目です。'
-      error = true
-    } else if (password.value !== confirmPassword.value) {
-      confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
-      error = true
-    } else {
-      confirmPasswordErrorMessage.value = ''
-    }
-    if (error) {
-      return
-    }
-    const token = new URLSearchParams(window.location.search).get('token')
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userName: username.value, password: password.value, token: token })
+    await authApi.postSignup({
+      signup: {
+        userName: username.value,
+        password: password.value,
+        token: token.value
+      }
     })
-    if (response.status === 201) {
-      router.push('/login')
-    } else if (response.status === 400) {
-      alert('不正なリクエストです')
-    } else if (response.status === 401) {
-      alert('Unauthorized')
+    router.push('/login')
+  } catch (error: unknown) {
+    if (error instanceof ResponseError) {
+      const status = error.response.status
+      if (status === 400) {
+        formError.value = '入力内容に問題があります。もう一度確認してください。'
+      } else if (status === 401) {
+        formError.value = '認証に失敗しました。リンクが無効か期限切れです。'
+      } else {
+        formError.value = 'エラーが発生しました。もう一度お試しください。'
+      }
     } else {
-      alert(response.status)
+      formError.value = '予期せぬエラーが発生しました。もう一度お試しください。'
+      console.error('サインアップエラー:', error)
     }
-  } catch (error) {
-    console.error('Signup Register Error:', error)
-    alert('Signup Register Error:' + error)
   }
 }
 </script>
