@@ -15,33 +15,23 @@ const router = useRouter()
 
 async function onOAuthClick() {
   try {
-    if (app === 'Github') {
+    if (app === 'Github' || app === 'Github') {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/github-oauth2/${action}/params`
+        `${import.meta.env.VITE_API_BASE_URL}/${app.toLowerCase()}-oauth2/${action}/params`
       )
       if (response.status === 200) {
         const responseJson = await response.json()
-        alert(responseJson.url)
         router.push(responseJson.url)
       } else if (response.status === 500) {
         const responseJson = await response.json()
-        alert('Internal Server Error: ' + responseJson.message)
+        throw new Error('Internal Server Error: ' + responseJson.message)
       } else {
-        alert(response.status)
-      }
-    } else if (app === 'Google') {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/google-oauth2/${action}/params`)
-      if (response.status === 200) {
-        const responseJson = await response.json()
-        router.push(responseJson.url)
-      } else if (response.status === 500) {
-        const responseJson = await response.json()
-        alert('Internal Server Error: ' + responseJson.message)
-      } else {
-        alert(response.status)
+        throw new Error('Unknown error: ' + response.status)
       }
     } else if (app === 'traQ') {
       router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
+    } else {
+      throw new Error('Unknown OAuth app: ' + app)
     }
   } catch (error) {
     console.error('OAuth Error:', error)
