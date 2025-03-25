@@ -46,13 +46,14 @@ async function toggleLink(service: Service) {
           service.linked = false
           service.ID = ''
         } else if (response.status === 400) {
-          throw new Error(
-            'Invalid request: Cannot revoke OAuth account because no other authentication method is available.'
-          )
+          const responseJson = await response.json()
+          throw new Error('Bad Request: ' + responseJson.message)
         } else if (response.status === 401) {
-          throw new Error('Unauthorized')
+          const responseJson = await response.json()
+          throw new Error('Unauthorized: ' + responseJson.message)
         } else if (response.status === 500) {
-          throw new Error('Internal Server Error')
+          const responseJson = await response.json()
+          throw new Error('Internal Server Error: ' + responseJson.message)
         } else {
           throw new Error('Unknown error: ' + response.status)
         }
