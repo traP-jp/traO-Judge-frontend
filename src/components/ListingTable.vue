@@ -1,5 +1,5 @@
 <script setup lang="ts">
-export type Column = { id: string; textAlign?: 'start' | 'end' | 'center' }
+export type Column = { id: string; textAlign?: 'start' | 'end' | 'center'; width?: string }
 
 // TODO: add sorting and filtering features
 const { cols, rowIds } = defineProps<{
@@ -10,13 +10,13 @@ const { cols, rowIds } = defineProps<{
 
 <template>
   <table class="w-full">
-    <thead class="h-10 bg-background-tertiary">
+    <thead class="h-10 bg-background-tertiary text-text-secondary">
       <tr>
         <th
-          v-for="{ id, textAlign } in cols"
+          v-for="{ id, textAlign, width } in cols"
           :key="id"
-          class="px-2 first:pl-4 last:pr-4"
-          :style="{ textAlign }"
+          class="fontstyle-ui-control-strong border-r border-border-secondary px-3 py-2 last:border-r-0"
+          :style="{ textAlign, width }"
         >
           <slot name="head" :col-id="id" />
         </th>
@@ -26,13 +26,13 @@ const { cols, rowIds } = defineProps<{
       <tr
         v-for="rowId in rowIds"
         :key="rowId"
-        class="h-9 border-b border-solid border-border-secondary"
+        class="h-9 border-b border-solid border-border-secondary text-text-primary"
       >
         <th
           v-for="col in cols"
           :key="col.id"
-          class="px-2 first:pl-4 last:pr-4"
-          :style="{ textAlign: col.textAlign }"
+          class="fontstyle-ui-body h-12 px-3"
+          :style="{ textAlign: col.textAlign, width: col.width }"
         >
           <slot name="cell" :row-id="rowId" :col-id="col.id" />
         </th>

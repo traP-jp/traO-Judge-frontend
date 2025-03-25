@@ -311,7 +311,7 @@
       "responses": [
         {
           "uuid": "359e4e02-f12c-4036-9e31-88034169e5f3",
-          "body": "{\n  \"total\": {{queryParam 'limit' 20}},\n  \"problems\": [\n    {{#repeat (queryParam 'limit' 20)}}\n    {\n      \"id\": \"{{faker 'string.uuid'}}\",\n      \"title\": \"{{faker 'lorem.sentence'}}\",\n      \"authorId\": \"{{faker 'string.uuid'}}\",\n      \"isPublic\": true,\n      \"difficulty\": {{faker 'number.int' min=100 max=1000}},\n      \"timeLimit\": 2000,\n      \"memoryLimit\": 1024,\n      \"solvedCount\": {{faker 'number.int' min=10 max=100}},\n      \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n      \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n    }\n    {{/repeat}}\n  ]\n}",
+          "body": "{\n  \"total\": {{queryParam 'limit' 20}},\n  \"problems\": [\n    {{#repeat (queryParam 'limit' 20)}}\n    {\n      \"id\": \"{{faker 'string.uuid'}}\",\n      \"title\": \"{{faker 'lorem.sentence'}}\",\n      \"authorId\": \"{{faker 'string.uuid'}}\",\n      \"isPublic\": true,\n      \"difficulty\": {{faker 'number.int' min=1 max=10}},\n      \"timeLimit\": 2000,\n      \"memoryLimit\": 1024,\n      \"solvedCount\": {{faker 'number.int' min=10 max=100}},\n      \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n      \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n    }\n    {{/repeat}}\n  ]\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",
