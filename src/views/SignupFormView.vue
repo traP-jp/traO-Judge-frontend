@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
-import { passwordValidator, usernameValidator } from '@/utils/validator'
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import { passwordValidator, usernameValidator } from '@/utils/validator'
+import { jwtDecode } from 'jwt-decode'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const username = ref('')
 const usernameErrorMessage = ref('')
@@ -84,10 +84,10 @@ async function onSignupRegister() {
 </script>
 
 <template>
-  <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
-    <div class="w-120 space-y-6 rounded-2xl bg-background-primary px-8 py-6">
-      <div class="fontstyle-ui-title text-text-primary">新規登録</div>
-      <div class="flex flex-col space-y-4">
+  <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
+    <div class="flex max-w-form-max flex-col gap-6 rounded-15 bg-background-primary px-14 py-10">
+      <h1 class="fontstyle-ui-subtitle text-text-primary">新規登録</h1>
+      <div class="flex flex-col gap-4">
         <PlainTextbox
           id="username"
           v-model="username"
@@ -114,10 +114,12 @@ async function onSignupRegister() {
           :required="true"
           :error-message="confirmPasswordErrorMessage"
         />
-        <div class="flex justify-center">
-          <PrimaryButton @click="onSignupRegister">次へ</PrimaryButton>
-        </div>
       </div>
+
+      <!-- TODO: form全体の横幅の扱いが確定したらここの横幅も変える -->
+      <form class="flex flex-col items-center" @submit.prevent="onSignupRegister">
+        <PrimaryButton class="h-10 w-5/12" @click="onSignupRegister">次へ</PrimaryButton>
+      </form>
     </div>
   </div>
 </template>
