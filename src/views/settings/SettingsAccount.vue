@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { MeApi } from '@/api/generated/apis/MeApi'
+import { useRouter } from 'vue-router'
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
@@ -26,14 +26,60 @@ interface Service {
   icon: string
 }
 
+const router = useRouter()
+
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
   { name: 'Google', linked: false, ID: '', icon: GoogleIcon },
   { name: 'traQ', linked: false, ID: '', icon: traQIcon }
 ])
 
-function toggleLink(service: Service) {
-  console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
+async function toggleLink(service: Service) {
+  if (service.name === 'GitHub' || service.name === 'Google') {
+    if (service.linked) {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/${service.name.toLowerCase()}-oauth2/revoke`,
+          { method: 'POST' }
+        )
+        if (response.status === 201) {
+          service.linked = false
+          service.ID = ''
+        } else if (response.status === 400) {
+          throw new Error(
+            'Invalid request: Cannot revoke OAuth account because no other authentication method is available.'
+          )
+        } else if (response.status === 401) {
+          throw new Error('Unauthorized')
+        } else if (response.status === 500) {
+          throw new Error('Internal Server Error')
+        } else {
+          throw new Error('Unknown error: ' + response.status)
+        }
+      } catch (error) {
+        console.error(`Revoke ${service.name} OAuth Error:`, error)
+      }
+    } else {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/${service.name.toLowerCase()}-oauth2/bind/params`
+        )
+        if (response.status === 200) {
+          const responseJson = await response.json()
+          router.push(responseJson.url)
+        } else if (response.status === 500) {
+          const responseJson = await response.json()
+          throw new Error('Internal Server Error: ' + responseJson.message)
+        } else {
+          throw new Error('Unknown error: ' + response.status)
+        }
+      } catch (error) {
+        console.error(`Bind ${service.name} OAuth Error:`, error)
+      }
+    }
+  } else {
+    console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
+  }
 }
 
 function changeUsername() {
