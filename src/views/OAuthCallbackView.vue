@@ -27,8 +27,9 @@ onBeforeMount(async () => {
   const code = route.query.code
   const state = route.query.state
 
-  if (state !== localStorage.getItem('oauth_state'))
+  if (state !== sessionStorage.getItem('oauth_state'))
     throw new Error('Invalid state - Possible CSRF attack')
+  sessionStorage.removeItem('oauth_state')
 
   const router = useRouter()
 
