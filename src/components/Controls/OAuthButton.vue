@@ -15,7 +15,7 @@ const router = useRouter()
 
 async function onOAuthClick() {
   try {
-    if (app === 'Github' || app === 'Github') {
+    if (app === 'Github' || app === 'Google') {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/${app.toLowerCase()}-oauth2/${action}/params`
       )
