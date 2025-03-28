@@ -36,7 +36,7 @@ async function onEmailSignup() {
       <div class="fontstyle-ui-subtitle text-text-primary">新規登録</div>
       <div class="divide-y divide-border-primary">
         <div class="space-y-2 pb-6">
-          <OAuthButton app="Github" action="signup" class="w-full" />
+          <OAuthButton app="GitHub" action="signup" class="w-full" />
           <OAuthButton app="Google" action="signup" class="w-full" />
           <OAuthButton app="traQ" action="signup" class="w-full" />
         </div>

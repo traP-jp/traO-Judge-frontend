@@ -15,7 +15,7 @@ const router = useRouter()
 
 async function onOAuthClick() {
   try {
-    if (app === 'Github' || app === 'Google') {
+    if (app === 'GitHub' || app === 'Google') {
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/${app.toLowerCase()}-oauth2/${action}/params`
       )
@@ -46,7 +46,7 @@ async function onOAuthClick() {
     class="fontstyle-ui-control-strong inline-block space-x-2.5 rounded-lg border border-border-secondary px-3 py-2 text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
     @click="onOAuthClick"
   >
-    <span v-if="app === 'Github'" class="inline-block align-middle"
+    <span v-if="app === 'GitHub'" class="inline-block align-middle"
       ><img src="/src/assets/service_icons/github.svg" class="size-5"
     /></span>
     <span v-if="app === 'Google'" class="inline-block align-middle"
