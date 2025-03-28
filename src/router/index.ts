@@ -48,6 +48,10 @@ const router = createRouter({
       ]
     },
     {
+      path: `/oauth/:provider/:action/callback`,
+      component: () => import('@/views/OAuthCallbackView.vue')
+    },
+    {
       path: '/users/:id',
       component: () => import('@/views/UserView.vue'),
       children: [
