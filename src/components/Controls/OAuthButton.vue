@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { generateRandomString } from '@/utils/random'
 import { useRouter } from 'vue-router'
 
 const {
@@ -21,7 +22,9 @@ async function onOAuthClick() {
       )
       if (response.status === 200) {
         const responseJson = await response.json()
-        router.push(responseJson.url)
+        const oauthState = generateRandomString(32)
+        sessionStorage.setItem('oauth_state', oauthState)
+        router.push(responseJson.url + `&state=${oauthState}`)
       } else if (response.status === 500) {
         const responseJson = await response.json()
         throw new Error('Internal Server Error: ' + responseJson.message)
