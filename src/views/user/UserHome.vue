@@ -48,7 +48,7 @@ onMounted(() => {
   <div class="flex flex-col items-start gap-2 py-4">
     <div v-if="githubId && githubLink" class="flex items-center">
       <span>
-        <img src="/src/assets/service_icons/github.svg" class="size-4" />
+        <img src="/src/assets/service_icons/github.svg" class="size-5" />
       </span>
       <span class="px-2">
         <Link :href="githubLink" new-tab>@{{ githubId }}</Link>
@@ -56,7 +56,7 @@ onMounted(() => {
     </div>
     <div v-if="xId && xLink" class="flex items-center">
       <span>
-        <img src="/src/assets/service_icons/X.svg" class="size-4" />
+        <img src="/src/assets/service_icons/X.svg" class="size-5" />
       </span>
       <span class="px-2">
         <Link :href="xLink" new-tab>@{{ xId }}</Link>
@@ -64,7 +64,7 @@ onMounted(() => {
     </div>
     <div v-if="traqId" class="flex items-center">
       <span>
-        <img src="/src/assets/service_icons/traq.svg" class="size-4" />
+        <img src="/src/assets/service_icons/traq.svg" class="size-5" />
       </span>
       <span class="px-2"> @{{ traqId }} </span>
     </div>
