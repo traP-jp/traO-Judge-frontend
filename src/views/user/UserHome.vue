@@ -55,7 +55,7 @@ onMounted(() => {
     </div>
     <div v-if="xId && xLink" class="flex items-center">
       <span>
-        <img src="/src/assets/service_icons/X.svg" class="size-5" />
+        <img src="/src/assets/service_icons/x.svg" class="size-5" />
       </span>
       <span class="px-2">
         <Link :href="xLink" new-tab>@{{ xId }}</Link>
