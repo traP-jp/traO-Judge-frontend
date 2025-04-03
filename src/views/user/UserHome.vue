@@ -27,7 +27,6 @@ const loadUser = async () => {
     } else {
       xId.value = ''
     }
-    console.log(xLink.value)
   } catch (error) {
     console.error('API Error:', error)
     alert(`API Error: ${error}`)
