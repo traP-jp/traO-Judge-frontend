@@ -59,15 +59,17 @@ async function onOAuthClick() {
     @click="onOAuthClick"
   >
     <span v-if="app === 'Github'" class="inline-block align-middle"
-      ><img src="" class="size-5"
+      ><img src="/src/assets/service_icons/github.svg" class="size-5"
     /></span>
     <span v-if="app === 'Google'" class="inline-block align-middle"
-      ><img src="" class="size-5"
+      ><img src="/src/assets/service_icons/google.svg" class="size-5"
     /></span>
     <span v-if="app === 'traQ'" class="inline-block align-middle"
-      ><img src="" class="size-5"
+      ><img src="/src/assets/service_icons/traq.svg" class="size-5"
     /></span>
-    <span class="inline-block align-middle">{{ app }} で新規登録</span>
+    <span class="inline-block align-middle"
+      >{{ app }} で{{ mode === 'signup' ? '新規登録' : 'ログイン' }}</span
+    >
   </button>
 </template>
 

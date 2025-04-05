@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import CodeBlock from '@/components/CodeBlock.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import { type Language, LanguageApi, SubmissionsApi } from '@/api/generated'
-import { onMounted, ref } from 'vue'
-import router from '@/router'
+
+const router = useRouter()
 
 const { problemId } = defineProps<{
   problemId: number
@@ -56,7 +58,7 @@ const submit = async () => {
     <div class="fontstyle-ui-body-strong py-1">ソースコード</div>
     <CodeBlock v-model="source" class="size-full" :language="language" />
     <div class="py-2">
-      <PrimaryButton text="提出" @click="submit" />
+      <PrimaryButton @click="submit">提出</PrimaryButton>
     </div>
   </div>
 </template>

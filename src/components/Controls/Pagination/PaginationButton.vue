@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { disabled = false, small = false } = defineProps<{
+const { disabled = false, current = false } = defineProps<{
   disabled?: boolean
   padding?: string
-  small?: boolean
+  current?: boolean
 }>()
 const emit = defineEmits(['click'])
 
@@ -14,8 +14,12 @@ function onClick() {
 <template>
   <button
     :disabled="disabled"
-    class="fontstyle-ui-control-strong inline-block rounded border text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
-    :class="small ? 'h-8 px-3 border-text-secondary' : 'h-10 px-6 border-text-primary'"
+    class="fontstyle-ui-control-strong inline-block size-8 rounded disabled:opacity-50"
+    :class="
+      current
+        ? 'bg-brand-primary text-text-inv-primary'
+        : 'border border-border-primary text-text-primary enabled:hover:bg-background-secondary'
+    "
     :style="{ paddingLeft: padding, paddingRight: padding }"
     @click="onClick"
   >

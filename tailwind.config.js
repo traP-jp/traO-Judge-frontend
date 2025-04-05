@@ -13,13 +13,13 @@ export default {
       'brand-secondary': '#79083a',
       'brand-light-primary': '#fff3f3',
       'text-primary': '#2a2a2a',
-      'text-secondary': '#6c6c6c',
+      'text-secondary': '#4a4a4a',
       'text-tertiary': '#9a9a9a',
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
       red: '#ff0000',
       white: '#ffffff',
-      transparent: 'transparent',
+      transparent: 'transparent'
     },
     fontFamily: {
       primary: ['Open Sans', 'Noto Sans JP', 'sans-serif']
@@ -29,6 +29,7 @@ export default {
         1.625: '0.40625rem',
         1.75: '0.4375rem',
         4.5: '1.125rem',
+        6.5: '1.625rem',
         7.5: '1.875rem',
         11.5: '2.875rem',
         27: '6.75rem',
@@ -42,6 +43,15 @@ export default {
         120: '30rem',
         172: '43rem',
         200: '50rem'
+      },
+      borderRadius: {
+        15: '15px'
+      },
+      height: {
+        'header-offset': 'calc(100vh - 56px)'
+      },
+      maxWidth: {
+        'form-max': '600px'
       }
     }
   },

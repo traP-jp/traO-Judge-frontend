@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import TopView from '@/views/TopView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,12 +16,12 @@ const router = createRouter({
           component: () => import('@/views/SignupView.vue')
         },
         {
-          path: 'register',
-          component: () => import('@/views/SignupRegisterView.vue')
+          path: 'form',
+          component: () => import('@/views/SignupFormView.vue')
         },
         {
-          path: 'after-mail',
-          component: () => import('@/views/SignupAfterMailView.vue')
+          path: 'mail-send',
+          component: () => import('@/views/SignupMailSendView.vue')
         }
       ]
     },
@@ -38,8 +38,12 @@ const router = createRouter({
           component: () => import('@/views/ResetPasswordFormView.vue')
         },
         {
-          path: 'after-mail',
-          component: () => import('@/views/ResetPasswordAfterMailView.vue')
+          path: 'mail-send',
+          component: () => import('@/views/ResetPasswordMailSendView.vue')
+        },
+        {
+          path: 'success',
+          component: () => import('@/views/ResetPasswordSuccessView.vue')
         }
       ]
     },
