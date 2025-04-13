@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { MeApi } from '@/api/generated/apis/MeApi'
 import { useRouter } from 'vue-router'
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
