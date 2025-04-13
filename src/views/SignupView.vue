@@ -62,9 +62,9 @@ const handleSignupRequest = async () => {
       <h1 class="fontstyle-ui-subtitle leading-7 text-text-primary">新規登録</h1>
 
       <div class="flex w-full flex-col items-start gap-2">
-        <OAuthButton app="GitHub" class="h-10 w-full" mode="signup" />
-        <OAuthButton app="Google" class="h-10 w-full" mode="signup" />
-        <OAuthButton app="traQ" class="h-10 w-full" mode="signup" />
+        <OAuthButton app="GitHub" class="h-10 w-full" action="signup" />
+        <OAuthButton app="Google" class="h-10 w-full" action="signup" />
+        <OAuthButton app="traQ" class="h-10 w-full" action="signup" />
       </div>
 
       <hr class="h-px w-full border-t border-border-primary" />
