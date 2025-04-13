@@ -1,57 +1,94 @@
 <script setup lang="ts">
+import { AuthenticationApi } from '@/api/generated'
+import { ResponseError } from '@/api/generated/runtime'
+import OAuthButton from '@/components/Controls/OAuthButton.vue'
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
+import { useSignupStore } from '@/stores/signup'
+import isEmail from 'validator/lib/isEmail'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
-import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
-import OAuthButton from '@/components/Controls/OAuthButton.vue'
 
-const emailAddress = ref('')
+const email = ref('')
+const emailErrorMessage = ref<string | undefined>()
 const router = useRouter()
-async function onEmailSignup() {
+const signupStore = useSignupStore()
+
+const handleSignupRequest = async () => {
+  if (!email.value) {
+    emailErrorMessage.value = 'メールアドレスが入力されていません。'
+    return
+  }
+
+  if (!isEmail(email.value)) {
+    emailErrorMessage.value = 'メールアドレスの形式が正しくありません。'
+    return
+  }
+
+  emailErrorMessage.value = undefined
+
+  const authApi = new AuthenticationApi()
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup/request`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: emailAddress.value })
+    await authApi.postSignupRequest({
+      signupRequest: {
+        email: email.value
+      }
     })
-    if (response.status === 201) {
-      router.push('/signup/after-mail')
-    } else if (response.status === 400) {
-      alert('不正なリクエストです　メールアドレスの形式を確認してください')
+    signupStore.setEmail(email.value)
+    router.push('/signup/mail-send')
+  } catch (error: unknown) {
+    if (error instanceof ResponseError) {
+      const status = error.response.status
+      // TODO: エラーハンドリングの文章
+      if (status === 400) {
+        emailErrorMessage.value = 'リクエストが不正です。入力内容を確認してください。'
+      } else {
+        emailErrorMessage.value = 'エラーが発生しました。もう一度お試しください。'
+      }
     } else {
-      alert(response.status)
+      // TODO: エラーハンドリングの文章
+      emailErrorMessage.value = '予期せぬエラーが発生しました。もう一度お試しください。'
+      console.error(error)
     }
-  } catch (error) {
-    console.error('Signup Error:', error)
-    alert('Signup Error:' + error)
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col items-center bg-background-tertiary" style="height: calc(100vh - 56px)">
-    <div class="w-90 space-y-6 rounded-2xl bg-background-primary px-8 py-6">
-      <div class="fontstyle-ui-subtitle text-text-primary">新規登録</div>
-      <div class="divide-y divide-border-primary">
-        <div class="space-y-2 pb-6">
-          <OAuthButton app="GitHub" action="signup" class="w-full" />
-          <OAuthButton app="Google" action="signup" class="w-full" />
-          <OAuthButton app="traQ" action="signup" class="w-full" />
-        </div>
-        <div class="space-y-4 pt-6">
-          <EmailTextbox id="email" v-model="emailAddress" placeholder="メールアドレス" />
-          <PrimaryButton class="w-full" @click="onEmailSignup">
-            メールアドレスで新規登録
-          </PrimaryButton>
-        </div>
+  <div class="flex h-header-offset items-start justify-center bg-background-secondary p-6">
+    <div
+      class="flex w-[360px] flex-col items-start justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
+    >
+      <h1 class="fontstyle-ui-subtitle leading-7 text-text-primary">新規登録</h1>
+
+      <div class="flex w-full flex-col items-start gap-2">
+        <OAuthButton app="GitHub" class="h-10 w-full" mode="signup" />
+        <OAuthButton app="Google" class="h-10 w-full" mode="signup" />
+        <OAuthButton app="traQ" class="h-10 w-full" mode="signup" />
       </div>
-      <div class="fontstyle-ui-caption-link text-text-secondary">
-        <a href="login">すでにアカウントをお持ちの場合</a>
+
+      <hr class="h-px w-full border-t border-border-primary" />
+
+      <div class="flex w-full flex-col gap-4">
+        <EmailTextbox
+          id="email"
+          v-model="email"
+          placeholder="メールアドレス"
+          :error-message="emailErrorMessage"
+        />
+        <PrimaryButton
+          class="h-10 w-full rounded px-6 py-2"
+          :disabled="!email"
+          @click="handleSignupRequest"
+        >
+          メールアドレスで新規登録
+        </PrimaryButton>
+      </div>
+      <div class="flex w-full flex-col justify-start gap-2">
+        <router-link to="/login" class="fontstyle-ui-caption text-text-secondary underline">
+          すでにアカウントをお持ちの場合
+        </router-link>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped></style>
