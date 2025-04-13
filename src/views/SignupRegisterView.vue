@@ -6,6 +6,7 @@ import { passwordValidator, usernameValidator } from '@/utils/validator'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import { AuthenticationApi } from '@/api/generated/apis/AuthenticationApi'
 
 const oauth = ref(false)
 const username = ref('')
@@ -66,29 +67,25 @@ async function onSignupRegister() {
     if (error) {
       return
     }
-    const token = route.query.token
-    const payload = {
-      userName: username.value,
-      token: token,
-      ...(oauth.value ? {} : { password: password.value })
-    }
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+    const token = route.query.token as string
+    const authenticationApi = new AuthenticationApi()
+    const response = await authenticationApi.postSignupRaw({
+      signup: {
+        userName: username.value,
+        token: token,
+        ...(oauth.value ? {} : { password: password.value })
+      }
     })
-    if (response.status === 201) {
+    if (response.raw.status === 201) {
       router.push('/login')
-    } else if (response.status === 400) {
+    } else if (response.raw.status === 400) {
       throw new Error('不正なリクエストです')
-    } else if (response.status === 401) {
+    } else if (response.raw.status === 401) {
       throw new Error('Unauthorized')
-    } else if (response.status === 500) {
+    } else if (response.raw.status === 500) {
       throw new Error('Internal Server Error')
     } else {
-      throw new Error('Unknown error: ' + response.status)
+      throw new Error('Unknown error: ' + response.raw.status)
     }
   } catch (error) {
     console.error('Signup Register Error:', error)

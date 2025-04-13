@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { generateRandomString } from '@/utils/random'
 import { useRouter } from 'vue-router'
+import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 
 const {
   disabled = false,
@@ -17,19 +18,21 @@ const router = useRouter()
 async function onOAuthClick() {
   try {
     if (app === 'GitHub' || app === 'Google') {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/${app.toLowerCase()}-oauth2/${action}/params`
-      )
-      if (response.status === 200) {
-        const responseJson = await response.json()
+      const oauth2Api = new Oauth2Api()
+      const response =
+        app === 'GitHub'
+          ? await oauth2Api.getgithubAuthParamsRaw({ oauthAction: action })
+          : await oauth2Api.getGoogleAuthParamsRaw({ oauthAction: action })
+      if (response.raw.status === 200) {
+        const responseJson = await response.value()
         const oauthState = generateRandomString(32)
         sessionStorage.setItem('oauth_state', oauthState)
         router.push(responseJson.url + `&state=${oauthState}`)
-      } else if (response.status === 500) {
-        const responseJson = await response.json()
+      } else if (response.raw.status === 500) {
+        const responseJson = await response.raw.json()
         throw new Error('Internal Server Error: ' + responseJson.message)
       } else {
-        throw new Error('Unknown error: ' + response.status)
+        throw new Error('Unknown error: ' + response.raw.status)
       }
     } else if (app === 'traQ') {
       router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
