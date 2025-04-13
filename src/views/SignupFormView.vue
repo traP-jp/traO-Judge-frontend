@@ -6,7 +6,8 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { passwordValidator, usernameValidator } from '@/utils/validator'
 import { jwtDecode } from 'jwt-decode'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 
 const oauth = ref(false)
