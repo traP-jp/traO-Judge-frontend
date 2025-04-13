@@ -2,6 +2,7 @@
 import { onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
+import { ResponseError } from '@/api/generated/runtime'
 
 onBeforeMount(async () => {
   const route = useRoute()
@@ -36,8 +37,8 @@ onBeforeMount(async () => {
 
   // traQのOAuthは未実装
 
-  if (action == 'signup') {
-    try {
+  try {
+    if (action == 'signup') {
       const oauth2Api = new Oauth2Api()
       const response =
         provider === 'github'
@@ -56,18 +57,8 @@ onBeforeMount(async () => {
       } else if (response.raw.status === 204) {
         alert('The OAuth account is already registered')
         router.push('/')
-      } else if (response.raw.status === 400) {
-        throw new Error('Invalid authorization code')
-      } else if (response.raw.status === 500) {
-        throw new Error('Internal Server Error')
-      } else {
-        throw new Error('Unknown error: ' + response.raw.status)
       }
-    } catch (error) {
-      console.error('OAuth Signup Error:', error)
-    }
-  } else if (action == 'login') {
-    try {
+    } else if (action == 'login') {
       const oauth2Api = new Oauth2Api()
       const response =
         provider === 'github'
@@ -86,18 +77,8 @@ onBeforeMount(async () => {
         router.push(`/signup/register?token=${token}&oauth=true`)
       } else if (response.raw.status === 204) {
         router.push('/')
-      } else if (response.raw.status === 400) {
-        throw new Error('Invalid authorization code')
-      } else if (response.raw.status === 500) {
-        throw new Error('Internal Server Error')
-      } else {
-        throw new Error('Unknown error: ' + response.raw.status)
       }
-    } catch (error) {
-      console.error('OAuth Login Error:', error)
-    }
-  } else if (action == 'bind') {
-    try {
+    } else if (action == 'bind') {
       const oauth2Api = new Oauth2Api()
       const response =
         provider === 'github'
@@ -111,17 +92,21 @@ onBeforeMount(async () => {
             })
       if (response.raw.status === 204) {
         router.push('/settings/account')
-      } else if (response.raw.status === 400) {
-        throw new Error('Invalid authorization code')
-      } else if (response.raw.status === 401) {
-        throw new Error('Unauthorized')
-      } else if (response.raw.status === 500) {
-        throw new Error('Internal Server Error')
-      } else {
-        throw new Error('Unknown error: ' + response.raw.status)
       }
-    } catch (error) {
-      console.error('OAuth Bind Error:', error)
+    }
+  } catch (error: unknown) {
+    if (error instanceof ResponseError) {
+      if (error.response.status === 400) {
+        console.error('Invalid authorization code')
+      } else if (error.response.status === 401) {
+        console.error('Unauthorized')
+      } else if (error.response.status === 500) {
+        console.error('Internal Server Error')
+      } else {
+        console.error('Unknown error: ' + error.response.status)
+      }
+    } else {
+      console.error('OAuth Error (' + action + '): ', error)
     }
   }
 })

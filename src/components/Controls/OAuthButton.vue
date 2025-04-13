@@ -2,6 +2,7 @@
 import { generateRandomString } from '@/utils/random'
 import { useRouter } from 'vue-router'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
+import { ResponseError } from '@/api/generated/runtime'
 
 const {
   disabled = false,
@@ -21,27 +22,27 @@ async function onOAuthClick() {
       const oauth2Api = new Oauth2Api()
       const response =
         app === 'GitHub'
-          ? await oauth2Api.getgithubAuthParamsRaw({ oauthAction: action })
-          : await oauth2Api.getGoogleAuthParamsRaw({ oauthAction: action })
-      if (response.raw.status === 200) {
-        const responseJson = await response.value()
-        const oauthState = generateRandomString(32)
-        sessionStorage.setItem('oauth_state', oauthState)
-        router.push(responseJson.url + `&state=${oauthState}`)
-      } else if (response.raw.status === 500) {
-        const responseJson = await response.raw.json()
-        throw new Error('Internal Server Error: ' + responseJson.message)
-      } else {
-        throw new Error('Unknown error: ' + response.raw.status)
-      }
+          ? await oauth2Api.getgithubAuthParams({ oauthAction: action })
+          : await oauth2Api.getGoogleAuthParams({ oauthAction: action })
+      const oauthState = generateRandomString(32)
+      sessionStorage.setItem('oauth_state', oauthState)
+      router.push(response.url + `&state=${oauthState}`)
     } else if (app === 'traQ') {
       router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
     } else {
       throw new Error('Unknown OAuth app: ' + app)
     }
-  } catch (error) {
-    console.error('OAuth Error:', error)
-    alert('OAuth Error:' + error)
+  } catch (error: unknown) {
+    if (error instanceof ResponseError) {
+      if (error.response.status === 500) {
+        const responseJson = await error.response.json()
+        console.error('Internal Server Error: ' + responseJson.message)
+      } else {
+        console.error('Unknown error: ' + error.response.status)
+      }
+    } else {
+      console.error('OAuth Error:', error)
+    }
   }
 }
 </script>

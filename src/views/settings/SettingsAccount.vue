@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { MeApi } from '@/api/generated/apis/MeApi'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
+import { ResponseError } from '@/api/generated/runtime'
 import { useRouter } from 'vue-router'
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -41,46 +42,48 @@ async function toggleLink(service: Service) {
     if (service.linked) {
       try {
         const oauth2Api = new Oauth2Api()
-        const response =
-          service.name === 'GitHub'
-            ? await oauth2Api.revokeGithubAuthRaw()
-            : await oauth2Api.revokeGoogleAuthRaw()
-        if (response.raw.status === 201) {
-          service.linked = false
-          service.ID = ''
-        } else if (response.raw.status === 400) {
-          const responseJson = await response.raw.json()
-          throw new Error('Bad Request: ' + responseJson.message)
-        } else if (response.raw.status === 401) {
-          const responseJson = await response.raw.json()
-          throw new Error('Unauthorized: ' + responseJson.message)
-        } else if (response.raw.status === 500) {
-          const responseJson = await response.raw.json()
-          throw new Error('Internal Server Error: ' + responseJson.message)
+        if (service.name === 'GitHub') {
+          await oauth2Api.revokeGithubAuth()
         } else {
-          throw new Error('Unknown error: ' + response.raw.status)
+          await oauth2Api.revokeGoogleAuth()
         }
+        service.linked = false
+        service.ID = ''
       } catch (error) {
-        console.error(`Revoke ${service.name} OAuth Error:`, error)
+        if (error instanceof ResponseError) {
+          const responseJson = await error.response.json()
+          if (error.response.status === 400) {
+            throw new Error('Bad Request: ' + responseJson.message)
+          } else if (error.response.status === 401) {
+            throw new Error('Unauthorized: ' + responseJson.message)
+          } else if (error.response.status === 500) {
+            throw new Error('Internal Server Error: ' + responseJson.message)
+          } else {
+            throw new Error('Unknown error: ' + error.response.status)
+          }
+        } else {
+          console.error(`Revoke ${service.name} OAuth Error:`, error)
+        }
       }
     } else {
       try {
         const oauth2Api = new Oauth2Api()
         const response =
           service.name === 'GitHub'
-            ? await oauth2Api.getgithubAuthParamsRaw({ oauthAction: 'bind' })
-            : await oauth2Api.getGoogleAuthParamsRaw({ oauthAction: 'bind' })
-        if (response.raw.status === 200) {
-          const responseJson = await response.value()
-          router.push(responseJson.url)
-        } else if (response.raw.status === 500) {
-          const responseJson = await response.raw.json()
-          throw new Error('Internal Server Error: ' + responseJson.message)
+            ? await oauth2Api.getgithubAuthParams({ oauthAction: 'bind' })
+            : await oauth2Api.getGoogleAuthParams({ oauthAction: 'bind' })
+        router.push(response.url)
+      } catch (error: unknown) {
+        if (error instanceof ResponseError) {
+          if (error.response.status === 500) {
+            const responseJson = await error.response.json()
+            throw new Error('Internal Server Error: ' + responseJson.message)
+          } else {
+            throw new Error('Unknown error: ' + error.response.status)
+          }
         } else {
-          throw new Error('Unknown error: ' + response.raw.status)
+          console.error(`Bind ${service.name} OAuth Error:`, error)
         }
-      } catch (error) {
-        console.error(`Bind ${service.name} OAuth Error:`, error)
       }
     }
   } else {
