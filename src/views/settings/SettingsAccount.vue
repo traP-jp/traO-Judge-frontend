@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { MeApi } from '@/api/generated/apis/MeApi'
+import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
+import { ResponseError } from '@/api/generated/runtime'
+import { useRouter } from 'vue-router'
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
@@ -26,14 +29,66 @@ interface Service {
   icon: string
 }
 
+const router = useRouter()
+
 const services = ref<Service[]>([
   { name: 'GitHub', linked: false, ID: '', icon: GitHubIcon },
   { name: 'Google', linked: false, ID: '', icon: GoogleIcon },
   { name: 'traQ', linked: false, ID: '', icon: traQIcon }
 ])
 
-function toggleLink(service: Service) {
-  console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
+async function toggleLink(service: Service) {
+  if (service.name === 'GitHub' || service.name === 'Google') {
+    if (service.linked) {
+      try {
+        const oauth2Api = new Oauth2Api()
+        if (service.name === 'GitHub') {
+          await oauth2Api.revokeGithubAuth()
+        } else {
+          await oauth2Api.revokeGoogleAuth()
+        }
+        service.linked = false
+        service.ID = ''
+      } catch (error) {
+        if (error instanceof ResponseError) {
+          const responseJson = await error.response.json()
+          if (error.response.status === 400) {
+            throw new Error('Bad Request: ' + responseJson.message)
+          } else if (error.response.status === 401) {
+            throw new Error('Unauthorized: ' + responseJson.message)
+          } else if (error.response.status === 500) {
+            throw new Error('Internal Server Error: ' + responseJson.message)
+          } else {
+            throw new Error('Unknown error: ' + error.response.status)
+          }
+        } else {
+          console.error(`Revoke ${service.name} OAuth Error:`, error)
+        }
+      }
+    } else {
+      try {
+        const oauth2Api = new Oauth2Api()
+        const response =
+          service.name === 'GitHub'
+            ? await oauth2Api.getgithubAuthParams({ oauthAction: 'bind' })
+            : await oauth2Api.getGoogleAuthParams({ oauthAction: 'bind' })
+        router.push(response.url)
+      } catch (error: unknown) {
+        if (error instanceof ResponseError) {
+          if (error.response.status === 500) {
+            const responseJson = await error.response.json()
+            throw new Error('Internal Server Error: ' + responseJson.message)
+          } else {
+            throw new Error('Unknown error: ' + error.response.status)
+          }
+        } else {
+          console.error(`Bind ${service.name} OAuth Error:`, error)
+        }
+      }
+    }
+  } else {
+    console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
+  }
 }
 
 function changeUsername() {

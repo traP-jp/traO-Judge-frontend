@@ -6,9 +6,11 @@ import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { passwordValidator, usernameValidator } from '@/utils/validator'
 import { jwtDecode } from 'jwt-decode'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 
+const oauth = ref(false)
 const username = ref('')
 const token = ref('')
 const usernameErrorMessage = ref<string | undefined>('')
@@ -18,19 +20,24 @@ const passwordErrorMessage = ref<string | undefined>('')
 const confirmPassword = ref('')
 const confirmPasswordErrorMessage = ref<string | undefined>('')
 const formError = ref<string | undefined>()
+const route = useRoute()
 const router = useRouter()
 
-onMounted(() => {
-  try {
-    token.value = new URLSearchParams(window.location.search).get('token') ?? ''
-
-    const decodedToken = jwtDecode<{ email: string }>(token.value)
-    emailAddress.value = decodedToken.email
-  } catch (error) {
-    console.error('トークン解析エラー:', error)
-    formError.value = '無効なリンクです。最初からやり直してください。'
+try {
+  if (route.query.oauth !== undefined) {
+    oauth.value = route.query.oauth === 'true'
   }
-})
+  if (typeof route.query.token !== 'string') {
+    throw new Error('Invalid token')
+  }
+  const token = route.query.token
+  if (!oauth.value) {
+    const decodedToken = jwtDecode<{ email: string }>(token)
+    emailAddress.value = decodedToken.email
+  }
+} catch (error) {
+  console.error('Signup Register Error:', error)
+}
 
 async function onSignupRegister() {
   let hasError = false
@@ -43,22 +50,24 @@ async function onSignupRegister() {
     usernameErrorMessage.value = ''
   }
 
-  const [isPasswordValid, passwordError] = passwordValidator(password.value)
-  if (!isPasswordValid) {
-    passwordErrorMessage.value = passwordError
-    hasError = true
-  } else {
-    passwordErrorMessage.value = ''
-  }
+  if (!oauth.value) {
+    const [isPasswordValid, passwordError] = passwordValidator(password.value)
+    if (!isPasswordValid) {
+      passwordErrorMessage.value = passwordError
+      hasError = true
+    } else {
+      passwordErrorMessage.value = ''
+    }
 
-  if (!confirmPassword.value) {
-    confirmPasswordErrorMessage.value = '必須項目です。'
-    hasError = true
-  } else if (password.value !== confirmPassword.value) {
-    confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
-    hasError = true
-  } else {
-    confirmPasswordErrorMessage.value = ''
+    if (!confirmPassword.value) {
+      confirmPasswordErrorMessage.value = '必須項目です。'
+      hasError = true
+    } else if (password.value !== confirmPassword.value) {
+      confirmPasswordErrorMessage.value = '入力されたパスワードが一致しません。'
+      hasError = true
+    } else {
+      confirmPasswordErrorMessage.value = ''
+    }
   }
 
   if (hasError) return
@@ -108,6 +117,7 @@ async function onSignupRegister() {
           :error-message="usernameErrorMessage"
         />
         <PasswordTextbox
+          v-if="!oauth"
           id="password"
           v-model="password"
           label="パスワード"
@@ -117,6 +127,7 @@ async function onSignupRegister() {
           :error-message="passwordErrorMessage"
         />
         <PasswordTextbox
+          v-if="!oauth"
           id="confirmPassword"
           v-model="confirmPassword"
           label="パスワード（確認）"
