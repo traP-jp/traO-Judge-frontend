@@ -43,12 +43,13 @@ const handleLogin = () => {
     </router-link>
     <span class="fontstyle-ui-control-strong ml-auto flex items-center gap-5">
       <router-link to="/problems">問題一覧</router-link>
-      <router-link to="/submissions">提出一覧</router-link><!-- TODO: どこに飛ぶのか確認 -->
-      <PrimaryButton v-if="!isLoggedIn" padding="1rem" @click="handleLogin">
+      <router-link to="/submissions">提出一覧</router-link
+      ><!-- TODO: どこに飛ぶのか確認 -->
+      <PrimaryButton v-if="isLoggedIn" padding="0.5rem" class="h-10 w-22" @click="handleLogin">
         ログイン
       </PrimaryButton>
-      <div id="top-navbar-menu" class="relative">
-        <button v-if="isLoggedIn" class="flex items-center gap-1" @click="toggleMenu">
+      <div v-else id="top-navbar-menu" class="relative">
+        <button class="flex items-center gap-1" @click="toggleMenu">
           <span class="inline-block">{{ username }}</span>
           <IconDropdownTriangle
             class="inline-block h-1.625"
