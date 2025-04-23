@@ -45,7 +45,7 @@ const handleLogin = () => {
       <router-link to="/problems">問題一覧</router-link>
       <router-link to="/submissions">提出一覧</router-link
       ><!-- TODO: どこに飛ぶのか確認 -->
-      <PrimaryButton v-if="isLoggedIn" padding="0.5rem" class="h-10 w-22" @click="handleLogin">
+      <PrimaryButton v-if="!isLoggedIn" padding="0.5rem" class="h-10 w-22" @click="handleLogin">
         ログイン
       </PrimaryButton>
       <div v-else id="top-navbar-menu" class="relative">
