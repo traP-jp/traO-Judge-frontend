@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { disabled = false } = defineProps<{
+const { disabled = false, padding } = defineProps<{
   disabled?: boolean
-  text: string
+  padding?: string
 }>()
 const emit = defineEmits(['click'])
 function onClick() {
@@ -12,10 +12,11 @@ function onClick() {
 <template>
   <button
     :disabled="disabled"
-    class="fontstyle-ui-control-strong rounded bg-brand-primary px-6 py-2 text-white enabled:hover:bg-brand-secondary disabled:opacity-50"
+    class="fontstyle-ui-control-strong inline-block rounded border border-brand-primary bg-brand-primary px-6 text-white enabled:hover:border-brand-secondary enabled:hover:bg-brand-secondary disabled:opacity-50"
+    :style="{ paddingLeft: padding, paddingRight: padding }"
     @click="onClick"
   >
-    {{ text }}
+    <slot />
   </button>
 </template>
 

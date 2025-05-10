@@ -1,21 +1,127 @@
+import TopView from '@/views/TopView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      component: TopView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/signup',
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/SignupView.vue')
+        },
+        {
+          path: 'form',
+          component: () => import('@/views/SignupFormView.vue')
+        },
+        {
+          path: 'mail-send',
+          component: () => import('@/views/SignupMailSendView.vue')
+        }
+      ]
+    },
+    { path: '/login', component: () => import('@/views/LoginView.vue') },
+    {
+      path: '/reset-password',
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/ResetPasswordView.vue')
+        },
+        {
+          path: 'form',
+          component: () => import('@/views/ResetPasswordFormView.vue')
+        },
+        {
+          path: 'mail-send',
+          component: () => import('@/views/ResetPasswordMailSendView.vue')
+        },
+        {
+          path: 'success',
+          component: () => import('@/views/ResetPasswordSuccessView.vue')
+        }
+      ]
+    },
+    {
+      path: `/oauth/:provider/:action/callback`,
+      component: () => import('@/views/OAuthCallbackView.vue')
+    },
+    {
+      path: '/users/:id',
+      component: () => import('@/views/UserView.vue'),
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/user/UserHome.vue')
+        },
+        {
+          path: 'submissions',
+          component: () => import('@/views/user/UserSubmissions.vue')
+        },
+        { path: 'problems', component: () => import('@/views/user/UserProblems.vue') }
+      ]
+    },
+    {
+      path: '/problems',
+      component: () => import('@/views/ProblemsView.vue')
+    },
+    {
+      path: '/problems/:id',
+      component: () => import('@/views/ProblemView.vue'),
+      children: [
+        {
+          path: '',
+          component: () => import('@/views/problem/ProblemHome.vue')
+        },
+        {
+          path: 'submit',
+          component: () => import('@/views/problem/ProblemSubmit.vue')
+        },
+        {
+          path: 'submissions',
+          component: () => import('@/views/problem/ProblemSubmissions.vue')
+        },
+        {
+          path: 'submissions/:submissionId',
+          component: () => import('@/views/problem/ProblemSubmission.vue')
+        },
+        {
+          path: 'editorials',
+          component: () => import('@/views/problem/ProblemEditorials.vue')
+        },
+        {
+          path: 'editorials/:editorialId',
+          component: () => import('@/views/problem/ProblemEditorial.vue')
+        },
+        {
+          path: 'editorials/:editorialId/edit',
+          component: () => import('@/views/problem/ProblemEditorialEdit.vue')
+        },
+        {
+          path: 'edit',
+          component: () => import('@/views/problem/ProblemEdit.vue')
+        }
+      ]
+    },
+    {
+      path: '/settings',
+      component: () => import('@/views/SettingsView.vue'),
+      children: [
+        { path: '', redirect: '/settings/account' },
+        {
+          path: 'account',
+          component: () => import('@/views/settings/SettingsAccount.vue')
+        },
+        {
+          path: 'profile',
+          component: () => import('@/views/settings/SettingsProfile.vue')
+        }
+      ]
     }
   ]
 })

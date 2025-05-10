@@ -40,14 +40,15 @@ const setMenuState = (state: boolean) => {
       <button>提出一覧</button>
       <PrimaryButton
         v-if="!isLoggedIn"
-        class="px-4"
-        text="ログイン"
+        padding="1rem"
         @click="
           () => {
             console.log('TODO: login')
           }
         "
-      />
+      >
+        ログイン
+      </PrimaryButton>
       <div id="top-navbar-menu" class="relative">
         <button v-if="isLoggedIn" class="flex items-center gap-1" @click="toggleMenu">
           <span class="inline-block">{{ username }}</span>
@@ -62,31 +63,34 @@ const setMenuState = (state: boolean) => {
         >
           <MenuButton
             icon="person"
-            text="プロフィール"
             @click="
               () => {
                 console.log('TODO: プロフィール画面へ遷移')
               }
             "
-          />
+          >
+            プロフィール
+          </MenuButton>
           <MenuButton
             icon="settings"
-            text="設定"
             @click="
               () => {
                 console.log('TODO: 設定画面へ遷移')
               }
             "
-          />
+          >
+            設定
+          </MenuButton>
           <MenuButton
             icon="logout"
-            text="ログアウト"
             @click="
               () => {
                 console.log('TODO: ログアウト')
               }
             "
-          />
+          >
+            ログアウト
+          </MenuButton>
         </div>
       </div>
     </span>
