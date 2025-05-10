@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>
+  <div class="h-header-offset">
     <h1>Top</h1>
     <RouterView />
   </div>
