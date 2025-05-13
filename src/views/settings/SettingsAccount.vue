@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { MeApi } from '@/api/generated/apis/MeApi'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 import { ResponseError } from '@/api/generated/runtime'
-import { useRouter } from 'vue-router'
+import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
-import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
-import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
-import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import GitHubIcon from '@/assets/service_icons/github.svg'
 import GoogleIcon from '@/assets/service_icons/google.svg'
@@ -16,8 +13,17 @@ import traQIcon from '@/assets/service_icons/traq.svg'
 
 import checkIcon from '@/assets/status_icons/check.svg'
 
-const username = ref<string>('')
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
+import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
+
 const email = ref<string>('')
+const username = ref<string>('')
+
+const showPasswordForm = ref(false)
+const showEmailForm = ref(false)
+const newEmail = ref<string>('')
+
 const currentPassword = ref<string>('')
 const newPassword = ref<string>('')
 const confirmPassword = ref<string>('')
@@ -91,16 +97,31 @@ async function toggleLink(service: Service) {
   }
 }
 
-function changeUsername() {
-  console.log('TODO: ユーザー名の変更を反映する')
+async function changeEmail() {
+  if (!showEmailForm.value) {
+    showEmailForm.value = true
+    return
+  }
+  // TODO: 認証メール送信ロジックをここに実装
+  console.log('認証メール送信:', newEmail.value)
 }
 
-function changeEmail() {
-  console.log('TODO: メールアドレスの変更を反映する')
+function cancelEmailChange() {
+  showEmailForm.value = false
+  newEmail.value = ''
 }
 
-function changePassword() {
-  console.log('TODO: パスワードの変更を反映する')
+async function changePassword() {
+  if (!showPasswordForm.value) {
+    showPasswordForm.value = true
+    return
+  }
+  // TODO: 実際のパスワード変更ロジックをここに実装
+  console.log('パスワード変更:', currentPassword.value, newPassword.value, confirmPassword.value)
+}
+
+function togglePasswordForm() {
+  showPasswordForm.value = true
 }
 
 async function fetchUserData() {
@@ -108,6 +129,7 @@ async function fetchUserData() {
     const meApi = new MeApi()
     const user = await meApi.getMe()
     username.value = user.name
+    email.value = user.email || ''
 
     services.value = services.value.map((service) => {
       switch (service.name) {
@@ -142,28 +164,77 @@ onMounted(() => {
 <template>
   <div class="flex gap-12 px-6 py-8 font-primary">
     <SideMenuUserSetting />
-    <div class="flex flex-col gap-6 p-3" style="width: 800px">
-      <div class="flex flex-col pb-3">
-        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">基本情報</h2>
+    <div class="flex w-[918px] flex-col gap-6 py-6">
+      <!-- メールアドレスの変更 -->
+      <div v-if="!showEmailForm" class="flex flex-col gap-4">
+        <h2 class="text-xl font-medium text-text-primary">メールアドレスの変更</h2>
 
-        <label class="pt-3 text-sm font-medium" for="username">ユーザー名</label>
-        <div class="flex items-center gap-2">
-          <PlainTextbox id="username" v-model="username" />
-          <PrimaryButton @click="changeUsername">変更</PrimaryButton>
+        <div class="flex w-full max-w-[400px] flex-col">
+          <div class="text-xs font-medium text-text-secondary">現在のメールアドレス</div>
+          <div class="text-base text-text-primary">{{ email || '未設定' }}</div>
         </div>
 
-        <label class="pt-3 text-sm font-medium" for="email">メールアドレス</label>
-        <div class="flex items-center gap-2">
-          <EmailTextbox id="email" v-model="email" />
-          <PrimaryButton @click="changeEmail">変更</PrimaryButton>
+        <div>
+          <BorderedButton class="h-10" @click="changeEmail">メール アドレスを変更</BorderedButton>
         </div>
       </div>
 
+      <div v-else class="inline-flex flex-col items-start justify-start gap-4 self-stretch">
+        <div
+          class="text-black justify-center self-stretch font-['Noto_Sans_JP'] text-xl font-medium leading-7"
+        >
+          メールアドレスの変更
+        </div>
+        <div
+          data-displayserrormessage="false"
+          data-displayslabel="true"
+          data-displayssupportingtext="false"
+          class="flex w-full max-w-[400px] flex-col items-start justify-start gap-2"
+        >
+          <div class="flex flex-col items-start justify-start gap-1 self-stretch">
+            <div
+              data-isrequired="true"
+              class="inline-flex items-center justify-start gap-2 self-stretch overflow-hidden"
+            >
+              <div
+                class="justify-center font-['Noto_Sans_JP'] text-sm font-normal leading-normal text-text-primary"
+              >
+                新しいメールアドレス
+              </div>
+              <div
+                class="justify-center font-['Noto_Sans_JP'] text-xs font-medium leading-none text-status-error"
+              >
+                必須
+              </div>
+            </div>
+            <div
+              data-displayslefticon="false"
+              data-displayslength="false"
+              data-displaysrighticon="false"
+              data-status="None"
+              data-valuetype="Text"
+              class="inline-flex items-center justify-start self-stretch rounded bg-white p-2 outline outline-1 outline-offset-[-1px] outline-border-secondary"
+            >
+              <div class="flex flex-1 items-center justify-start gap-2 overflow-hidden px-2">
+                <EmailTextbox v-model="newEmail" />
+              </div>
+              <div class="flex items-center justify-start gap-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="inline-flex items-start justify-start gap-3 self-stretch">
+          <PrimaryButton @click="changeEmail">認証メールを送信</PrimaryButton>
+          <BorderedButton @click="cancelEmailChange">キャンセル</BorderedButton>
+        </div>
+      </div>
+
+      <!-- パスワードの変更 -->
       <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">
-          パスワードの変更
-        </h2>
-        <form class="flex flex-col gap-2" @submit.prevent="changePassword">
+        <h2 class="h-9 border-border-secondary pb-2 text-xl font-medium">パスワードの変更</h2>
+        <div v-if="!showPasswordForm">
+          <BorderedButton class="h-10" @click="togglePasswordForm">パスワードを変更</BorderedButton>
+        </div>
+        <form v-else class="flex flex-col gap-2" @submit.prevent="changePassword">
           <input v-model="username" type="text" autocomplete="username" hidden />
 
           <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
@@ -195,10 +266,9 @@ onMounted(() => {
         </form>
       </div>
 
-      <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-b-2 border-border-secondary pb-2 text-xl font-medium">
-          外部サービスとの連携
-        </h2>
+      <!-- 外部サービスとの連携 -->
+      <div class="flex flex-col gap-3 py-6">
+        <h2 class="text-xl font-medium text-text-primary">外部サービスとの連携</h2>
         <div>
           <div
             v-for="service in services"
@@ -213,7 +283,7 @@ onMounted(() => {
                 </label>
               </div>
               <span
-                :style="service.linked ? 'color: #16B179;' : 'text-text-tertiary'"
+                :class="service.linked ? 'text-[#16B179]' : 'text-text-tertiary'"
                 class="flex w-32 gap-1"
               >
                 {{ service.linked ? '連携済' : '未連携' }}
