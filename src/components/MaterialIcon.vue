@@ -1,5 +1,6 @@
 <script setup lang="ts">
 export type Icon =
+  | 'alternate_email'
   | 'assignment'
   | 'assignment_turned_in'
   | 'close'
@@ -21,6 +22,8 @@ export type Icon =
   | 'tune'
   | 'visibility'
   | 'visibility_off'
+  | 'close'
+  | 'alternate_email'
 const { size = '1.5rem', isFilled = false } = defineProps<{
   icon: Icon
   size?: string
