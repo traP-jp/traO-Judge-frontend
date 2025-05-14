@@ -15,7 +15,7 @@ export default {
       'text-primary': '#2a2a2a',
       'text-secondary': '#4a4a4a',
       'text-tertiary': '#9a9a9a',
-      'text-inv-primary': '#f0f0f0',
+      'text-inv-primary': '#ffffff',
       'status-error': '#e02a2a',
       red: '#ff0000',
       white: '#ffffff',
