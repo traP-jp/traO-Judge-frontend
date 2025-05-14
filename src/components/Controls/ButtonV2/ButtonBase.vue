@@ -7,22 +7,12 @@ const {
   disabled = false,
   size,
   prefixIcon,
-  suffixIcon,
-  colorText,
-  colorBorder,
-  colorEnabled,
-  colorHover,
-  colorDisabled
+  suffixIcon
 } = defineProps<{
   disabled?: boolean
   size: Size
   prefixIcon?: Icon
   suffixIcon?: Icon
-  colorText: string
-  colorBorder: string
-  colorEnabled: string
-  colorHover: string
-  colorDisabled: string
 }>()
 const emit = defineEmits(['click'])
 function onClick() {
@@ -54,15 +44,7 @@ const px = computed(() => {
   <button
     :disabled="disabled"
     class="fontstyle-ui-control-strong inline-flex items-center justify-center rounded border"
-    :class="[
-      py,
-      px,
-      colorEnabled,
-      colorText,
-      colorBorder,
-      `enabled:hover:${colorHover}`,
-      `disabled:${colorDisabled}`
-    ]"
+    :class="[py, px]"
     @click="onClick"
   >
     <MaterialIcon v-if="prefixIcon" :icon="prefixIcon" size="size-6" />

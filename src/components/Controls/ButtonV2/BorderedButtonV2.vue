@@ -16,12 +16,8 @@ function onClick() {
 
 <template>
   <ButtonBase
+    class="border-solid border-brand-primary bg-background-primary text-brand-primary hover:bg-brand-light-primary disabled:opacity-50"
     :size="size"
-    color-text="text-brand-primary"
-    color-border="border-brand-primary"
-    color-enabled="bg-background-primary"
-    color-hover="bg-brand-light-primary"
-    color-disabled="opacity-50"
     :disabled="disabled"
     :prefix-icon="prefixIcon"
     :suffix-icon="suffixIcon"
