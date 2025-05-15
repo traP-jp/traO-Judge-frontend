@@ -3,7 +3,6 @@ import PlainTextArea from '@//components/PlainTextArea.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import SNSTextbox from '@/components/Controls/Textbox/SNSTextbox.vue'
-import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import { ref } from 'vue'
 
 const displayName = ref<string>('')
@@ -21,9 +20,8 @@ function saveProfile() {
 </script>
 
 <template>
-  <div class="flex grow gap-12 px-6 py-8 font-primary">
-    <SideMenuUserSetting />
-    <div class="flex w-full flex-col p-3 py-6">
+  <div class="flex font-primary">
+    <div class="flex w-full flex-col">
       <div class="flex max-w-profile-max flex-col items-start justify-start gap-4">
         <h2 class="text-xl font-medium">プロフィール</h2>
 

@@ -55,6 +55,9 @@ export default {
       maxWidth: {
         'form-max': '600px',
         'profile-max': '500px'
+      },
+      padding: {
+        'container-x': '120px'
       }
     }
   },
