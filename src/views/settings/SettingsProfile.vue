@@ -21,11 +21,11 @@ function saveProfile() {
 </script>
 
 <template>
-  <div class="flex gap-12 px-6 py-8 font-primary">
+  <div class="flex grow gap-12 px-6 py-8 font-primary">
     <SideMenuUserSetting />
     <div class="flex w-full flex-col p-3 py-6">
-      <div class="flex w-[500px] flex-col items-start justify-start gap-4">
-        <h2 class="text-xl font-medium text-text-primary">プロフィール</h2>
+      <div class="flex max-w-profile-max flex-col items-start justify-start gap-4">
+        <h2 class="text-xl font-medium">プロフィール</h2>
 
         <div class="w-full">
           <PlainTextbox
@@ -33,19 +33,18 @@ function saveProfile() {
             v-model="displayName"
             class="h-5.5 w-full"
             label="表示名"
-            required
+            requiredh
           />
         </div>
-        <!-- TODO: コンポーネントに切り出す？切り出さない？ -->
         <div class="w-full">
           <PlainTextArea
             id="introduction"
             v-model="introduction"
-            class="h-[122px] w-full"
+            class="h-27 w-full"
             label="自己紹介"
           />
         </div>
-        <div class="flex w-full max-w-[500px] flex-col gap-1">
+        <div class="flex w-full max-w-profile-max flex-col gap-1">
           <div class="flex items-center gap-2">
             <span class="fontstyle-ui-control text-text-primary">SNSアカウント</span>
           </div>
@@ -58,7 +57,7 @@ function saveProfile() {
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <div class="flex h-[25px] w-6 items-center justify-center">
+            <div class="flex size-6 items-center justify-center">
               <img src="@/assets/service_icons/x.svg" alt="X" class="size-5" />
             </div>
             <div class="flex-1">
@@ -66,7 +65,7 @@ function saveProfile() {
             </div>
           </div>
         </div>
-        <PrimaryButton class="h-10 w-[72px] px-3 py-2" @click="saveProfile">保存</PrimaryButton>
+        <PrimaryButton class="h-10 w-18 px-3 py-2" @click="saveProfile">保存</PrimaryButton>
       </div>
     </div>
   </div>
