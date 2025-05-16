@@ -3,6 +3,7 @@ import { MeApi } from '@/api/generated/apis/MeApi'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 import { ResponseError } from '@/api/generated/runtime'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
+import isEmail from 'validator/lib/isEmail'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -23,6 +24,8 @@ const showEmailForm = ref(false)
 const showEmailInfo = ref(false)
 const showPasswordInfo = ref(false)
 const newEmail = ref<string>('')
+const emailError = ref<string>('')
+const isLoading = ref<boolean>(false)
 
 const currentPassword = ref<string>('')
 const newPassword = ref<string>('')
@@ -98,17 +101,58 @@ async function toggleLink(service: Service) {
 }
 
 async function changeEmail() {
-  if (!showEmailForm.value) {
-    showEmailForm.value = true
+  emailError.value = ''
+  if (!newEmail.value || !newEmail.value.trim()) {
+    emailError.value = 'メールアドレスを入力してください。'
     return
   }
-  // TODO: 認証メール送信ロジックをここに実装
-  console.log('認証メール送信:', newEmail.value)
+
+  if (!isEmail(newEmail.value)) {
+    emailError.value = '有効なメールアドレスを入力してください。'
+    return
+  }
+
+  isLoading.value = true
+  try {
+    const meApi = new MeApi()
+    await meApi.putMeEmail({
+      email: {
+        email: newEmail.value
+      }
+    })
+
+    showEmailForm.value = false
+    showEmailInfo.value = true
+    newEmail.value = ''
+  } catch (error) {
+    console.error('メールアドレス変更エラー:', error)
+    if (error instanceof ResponseError) {
+      if (error.response.status === 400) {
+        emailError.value = '無効なメールアドレスです。'
+      } else if (error.response.status === 401) {
+        emailError.value = '認証に失敗しました。'
+      } else if (error.response.status === 409) {
+        emailError.value = 'このメールアドレスは既に使用されています。'
+      } else {
+        emailError.value = 'メールアドレスの変更に失敗しました。'
+      }
+    } else {
+      emailError.value = 'メールアドレスの変更に失敗しました。'
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+function toggleEmailForm() {
+  showEmailForm.value = true
+  showEmailInfo.value = false
 }
 
 function cancelEmailChange() {
   showEmailForm.value = false
   newEmail.value = ''
+  emailError.value = ''
 }
 
 async function changePassword() {
