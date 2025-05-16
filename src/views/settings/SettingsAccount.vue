@@ -136,14 +136,17 @@ async function changeEmail() {
   } catch (error) {
     console.error('メールアドレス変更エラー:', error)
     if (error instanceof ResponseError) {
-      if (error.response.status === 400) {
-        emailError.value = '無効なメールアドレスです。'
-      } else if (error.response.status === 401) {
-        emailError.value = '認証に失敗しました。'
-      } else if (error.response.status === 409) {
-        emailError.value = 'このメールアドレスは既に使用されています。別のメールアドレスを使用してください。'
-      } else {
-        emailError.value = 'メールアドレスの変更に失敗しました。'
+      switch (error.response.status) {
+        case 400:
+          emailError.value = '無効なメールアドレスです。'
+          break
+        case 409:
+          emailError.value =
+            'このメールアドレスは既に使用されています。別のメールアドレスを使用してください。'
+          break
+        default:
+          emailError.value = 'メールアドレスの変更に失敗しました。'
+          break
       }
     } else {
       emailError.value = 'メールアドレスの変更に失敗しました。'
