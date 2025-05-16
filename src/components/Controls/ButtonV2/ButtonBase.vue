@@ -43,7 +43,7 @@ const px = computed(() => {
 <template>
   <button
     :disabled="disabled"
-    class="fontstyle-ui-control-strong inline-flex items-center justify-center rounded border"
+    class="fontstyle-ui-control-strong inline-flex items-center justify-center rounded-lg border"
     :class="[py, px]"
     @click="onClick"
   >
