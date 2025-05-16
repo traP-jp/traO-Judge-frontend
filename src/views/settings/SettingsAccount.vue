@@ -259,7 +259,7 @@ onMounted(() => {
             :key="service.name"
             class="border-b-2 border-border-secondary"
           >
-            <div class="flex h-12 items-center justify-between gap-2.5">
+            <div class="flex items-center justify-between gap-2.5 px-4 py-2">
               <div class="flex items-center gap-4">
                 <div class="flex w-24 items-center gap-2">
                   <img :src="service.icon" alt="" width="20" height="20" />
