@@ -10,8 +10,6 @@ import GitHubIcon from '@/assets/service_icons/github.svg'
 import GoogleIcon from '@/assets/service_icons/google.svg'
 import traQIcon from '@/assets/service_icons/traq.svg'
 
-import checkIcon from '@/assets/status_icons/check.svg'
-
 import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
@@ -253,7 +251,6 @@ onMounted(() => {
         </template>
       </div>
 
-      <!-- 外部サービスとの連携 -->
       <div class="flex flex-col gap-3 py-6">
         <h2 class="text-xl font-medium text-text-primary">外部サービスとの連携</h2>
         <div>
@@ -262,25 +259,20 @@ onMounted(() => {
             :key="service.name"
             class="border-b-2 border-border-secondary"
           >
-            <div class="flex h-12 items-center gap-2.5">
-              <div class="flex items-center gap-2">
-                <img :src="service.icon" alt="" width="20" height="20" />
-                <label class="w-32">
-                  {{ service.name }}
-                </label>
+            <div class="flex h-12 items-center justify-between gap-2.5">
+              <div class="flex items-center gap-4">
+                <div class="flex w-24 items-center gap-2">
+                  <img :src="service.icon" alt="" width="20" height="20" />
+                  <label>
+                    {{ service.name }}
+                  </label>
+                </div>
+                <span class="h-12 content-around text-base font-normal text-text-secondary">
+                  {{ '@' + service.ID }}
+                </span>
               </div>
-              <span
-                :class="service.linked ? 'text-[#16B179]' : 'text-text-tertiary'"
-                class="flex w-32 gap-1"
-              >
-                {{ service.linked ? '連携済' : '未連携' }}
-                <img v-if="service.linked" :src="checkIcon" alt="" width="16" height="16" />
-              </span>
-              <span class="h-12 min-w-72 content-around text-base font-normal text-text-secondary">
-                {{ service.ID }}
-              </span>
               <button
-                class="mr-10 h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary"
+                class="h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary"
                 @click="toggleLink(service)"
               >
                 {{ service.linked ? '連携解除' : '連携' }}
