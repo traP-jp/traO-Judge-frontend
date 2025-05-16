@@ -3,6 +3,7 @@ import { MeApi } from '@/api/generated/apis/MeApi'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 import { ResponseError } from '@/api/generated/runtime'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
+import { passwordValidator } from '@/utils/validator'
 import isEmail from 'validator/lib/isEmail'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -25,6 +26,8 @@ const showEmailInfo = ref(false)
 const showPasswordInfo = ref(false)
 const newEmail = ref<string>('')
 const emailError = ref<string>('')
+const currentPasswordError = ref<string>('')
+const newPasswordError = ref<string>('')
 const isLoading = ref<boolean>(false)
 
 const currentPassword = ref<string>('')
@@ -61,18 +64,20 @@ async function toggleLink(service: Service) {
       } catch (error) {
         if (error instanceof ResponseError) {
           const responseJson = await error.response.json()
-          if (error.response.status === 400) {
-            throw new Error('Bad Request: ' + responseJson.message)
-          } else if (error.response.status === 401) {
-            throw new Error('Unauthorized: ' + responseJson.message)
-          } else if (error.response.status === 500) {
-            throw new Error('Internal Server Error: ' + responseJson.message)
-          } else {
-            throw new Error('Unknown error: ' + error.response.status)
+          switch (error.response.status) {
+            case 400:
+              throw new Error(`Bad Request: ${responseJson.message}`)
+            case 401:
+              throw new Error(`Unauthorized: ${responseJson.message}`)
+            case 404:
+              throw new Error(`Not Found: ${responseJson.message}`)
+            case 500:
+              throw new Error(`Internal Server Error: ${responseJson.message}`)
+            default:
+              throw new Error(`Unknown error: ${error.response.status}`)
           }
-        } else {
-          console.error(`Revoke ${service.name} OAuth Error:`, error)
         }
+        console.error(`Revoke ${service.name} OAuth Error:`, error)
       }
     } else {
       try {
@@ -86,18 +91,22 @@ async function toggleLink(service: Service) {
         if (error instanceof ResponseError) {
           if (error.response.status === 500) {
             const responseJson = await error.response.json()
-            throw new Error('Internal Server Error: ' + responseJson.message)
-          } else {
-            throw new Error('Unknown error: ' + error.response.status)
+            throw new Error(`Internal Server Error: ${responseJson.message}`)
           }
-        } else {
-          console.error(`Bind ${service.name} OAuth Error:`, error)
+
+          throw new Error(`Unknown error: ${error.response.status}`)
         }
+        console.error(`Bind ${service.name} OAuth Error:`, error)
       }
     }
   } else {
     console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
   }
+}
+
+function toggleEmailForm() {
+  showEmailForm.value = true
+  showEmailInfo.value = false
 }
 
 async function changeEmail() {
@@ -132,7 +141,7 @@ async function changeEmail() {
       } else if (error.response.status === 401) {
         emailError.value = '認証に失敗しました。'
       } else if (error.response.status === 409) {
-        emailError.value = 'このメールアドレスは既に使用されています。'
+        emailError.value = 'このメールアドレスは既に使用されています。別のメールアドレスを使用してください。'
       } else {
         emailError.value = 'メールアドレスの変更に失敗しました。'
       }
@@ -144,15 +153,16 @@ async function changeEmail() {
   }
 }
 
-function toggleEmailForm() {
-  showEmailForm.value = true
-  showEmailInfo.value = false
-}
-
 function cancelEmailChange() {
   showEmailForm.value = false
+  showEmailInfo.value = false
   newEmail.value = ''
   emailError.value = ''
+}
+
+function togglePasswordForm() {
+  showPasswordForm.value = true
+  showPasswordInfo.value = false
 }
 
 async function changePassword() {
@@ -160,13 +170,84 @@ async function changePassword() {
     showPasswordForm.value = true
     return
   }
-  // TODO: 実際のパスワード変更ロジックをここに実装
-  console.log('パスワード変更:', currentPassword.value, newPassword.value, confirmPassword.value)
-  showPasswordInfo.value = true
+
+  let hasError = false
+  currentPasswordError.value = ''
+  newPasswordError.value = ''
+
+  if (!currentPassword.value) {
+    hasError = true
+    currentPasswordError.value = '必須項目です。'
+    return
+  }
+
+  if (!newPassword.value) {
+    hasError = true
+    newPasswordError.value = '必須項目です'
+    return
+  }
+
+  if (newPassword.value !== confirmPassword.value) {
+    hasError = true
+    newPasswordError.value = '新しいパスワードと確認用パスワードが一致しません。'
+    return
+  }
+
+  const [isValid, errorMessage] = passwordValidator(newPassword.value)
+  if (!isValid) {
+    hasError = true
+    newPasswordError.value = errorMessage
+    return
+  }
+
+  if (hasError) return
+
+  isLoading.value = true
+  try {
+    const meApi = new MeApi()
+    await meApi.putUsersMePassword({
+      putPasswordRequest: {
+        oldPassword: currentPassword.value,
+        newPassword: newPassword.value
+      }
+    })
+
+    showPasswordForm.value = false
+    showPasswordInfo.value = true
+
+    currentPassword.value = ''
+    newPassword.value = ''
+    confirmPassword.value = ''
+  } catch (error) {
+    console.error('パスワード変更エラー:', error)
+    if (error instanceof ResponseError) {
+      switch (error.response.status) {
+        case 400:
+          newPasswordError.value = 'パスワードの形式が正しくありません。'
+          break
+        case 401:
+          currentPasswordError.value = '現在のパスワードが正しくありません。'
+          break
+        default:
+          newPasswordError.value = 'パスワードの変更に失敗しました。'
+          break
+      }
+    } else {
+      newPasswordError.value = 'パスワードの変更に失敗しました。'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 
-function togglePasswordForm() {
-  showPasswordForm.value = true
+function cancelPasswordChange() {
+  showPasswordForm.value = false
+  showPasswordInfo.value = false
+  currentPassword.value = ''
+  newPassword.value = ''
+  confirmPassword.value = ''
+  currentPasswordError.value = ''
+  newPasswordError.value = ''
 }
 
 async function fetchUserData() {
@@ -174,22 +255,21 @@ async function fetchUserData() {
     const meApi = new MeApi()
     const user = await meApi.getMe()
     username.value = user.name
-    email.value = user.email || ''
+    email.value = user.authentication.emailAuth || ''
 
     services.value = services.value.map((service) => {
       switch (service.name) {
         case 'GitHub':
-          console.log(user.githubId)
-          service.linked = user.githubId !== null
-          service.ID = user.githubId ?? ''
+          service.linked = user.authentication.githubAuth !== null
+          service.ID = user.authentication.githubAuth ?? ''
           break
         case 'traQ':
-          console.log(user.traqId)
-          service.linked = user.traqId !== null
-          service.ID = user.traqId ?? ''
+          service.linked = user.authentication.traqAuth !== null
+          service.ID = user.authentication.traqAuth ?? ''
           break
         case 'Google':
-          console.log('TODO: Google との連携状況を取得する')
+          service.linked = user.authentication.googleAuth !== null
+          service.ID = user.authentication.googleAuth ?? ''
           break
         default:
           break
@@ -211,8 +291,6 @@ onMounted(() => {
     <div class="flex w-full flex-col gap-6">
       <div class="flex max-w-form-max flex-col gap-4">
         <h2 class="fontstyle-ui-subtitle text-text-primary">メールアドレスの変更</h2>
-
-        <!-- 閲覧状態 -->
         <template v-if="!showEmailForm">
           <div class="flex w-full flex-col">
             <div class="fontstyle-ui-caption-strong text-xs text-text-secondary">
@@ -225,20 +303,22 @@ onMounted(() => {
             text="認証メールを送信しました。60分以内にメールに記載されたアドレスにアクセスして、メールアドレスの変更を完了してください。"
           />
           <div>
-            <BorderedButton class="h-10" @click="changeEmail">メール アドレスを変更</BorderedButton>
+            <BorderedButton class="h-10" @click="toggleEmailForm"
+              >メール アドレスを変更</BorderedButton
+            >
           </div>
         </template>
         <template v-else>
           <div class="w-2/3">
-            <EmailTextbox v-model="newEmail" class="h-10" />
+            <EmailTextbox v-model="newEmail" class="h-10" :error-message="emailError" />
           </div>
           <div class="inline-flex items-start justify-start gap-3 self-stretch">
-            <PrimaryButton class="h-10 px-3 py-2" @click="changeEmail"
-              >認証メールを送信</PrimaryButton
-            >
-            <BorderedButton class="h-10 px-3 py-2" @click="cancelEmailChange"
-              >キャンセル</BorderedButton
-            >
+            <PrimaryButton class="h-10 px-3 py-2" :disabled="isLoading" @click="changeEmail">
+              認証メールを送信
+            </PrimaryButton>
+            <BorderedButton class="h-10 px-3 py-2" :disabled="isLoading" @click="cancelEmailChange">
+              キャンセル
+            </BorderedButton>
           </div>
         </template>
       </div>
@@ -260,6 +340,7 @@ onMounted(() => {
               label="現在のパスワード"
               autocomplete="current-password"
               class="w-full"
+              :error-message="currentPasswordError"
             />
             <PasswordTextbox
               id="new-password"
@@ -269,6 +350,7 @@ onMounted(() => {
               supporting-text="半角英数字と記号(@, $, !, %, *, ?, &)を用いた8文字以上64文字以下のパスワードが利用できます。
               大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。"
               class="w-full"
+              :error-message="newPasswordError"
             />
             <PasswordTextbox
               id="confirm-password"
@@ -279,18 +361,16 @@ onMounted(() => {
             />
           </div>
           <div class="inline-flex items-start justify-start gap-3 self-stretch">
-            <PrimaryButton class="h-10 px-3 py-2" @click="changePassword"
-              >パスワードを変更</PrimaryButton
-            >
+            <PrimaryButton class="h-10 px-3 py-2" :disabled="isLoading" @click="changePassword">
+              パスワードを変更
+            </PrimaryButton>
             <BorderedButton
               class="h-10 px-3 py-2"
-              @click="
-                () => {
-                  showPasswordForm = false
-                }
-              "
-              >キャンセル</BorderedButton
+              :disabled="isLoading"
+              @click="cancelPasswordChange"
             >
+              キャンセル
+            </BorderedButton>
           </div>
         </template>
       </div>
