@@ -26,7 +26,7 @@ const {
 }>()
 const emit = defineEmits(['clickRight', 'focusin', 'blur'])
 const value = defineModel<string>()
-const displaysError = computed(() => error || errorMessage != '')
+const displaysError = computed(() => error || errorMessage !== '')
 const displaysLeftIcon = computed(() => leftIcon != null)
 const displaysRightIcon = computed(() => rightIcon != null)
 const displaysSupportingText = computed(() => supportingText != null)
@@ -86,7 +86,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
             aria-label="アクションボタン"
             @click="emit('clickRight')"
           >
-            <MaterialIcon :icon="rightIcon!" size="1.25rem" />
+            <MaterialIcon :icon="rightIcon!" size="1.25rem" class="flex items-center" />
           </button>
         </span>
       </span>

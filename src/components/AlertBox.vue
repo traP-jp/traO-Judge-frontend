@@ -7,12 +7,9 @@ defineProps<{
   show: boolean
 }>()
 
-const emits = defineEmits<{
-  (e: 'update:show', value: boolean): void
-}>()
-
+const emit = defineEmits(['update:show'])
 const handleClose = () => {
-  emits('update:show', false)
+  emit('update:show', false)
 }
 </script>
 
@@ -22,7 +19,7 @@ const handleClose = () => {
     class="relative flex items-start gap-2 rounded border border-border-secondary bg-background-secondary px-4 py-3"
   >
     <img :src="infoIcon" class="py-1" alt="info" />
-    <span class="flex text-text-primary">{{ text }}</span>
+    <span class="flex flex-1 text-text-primary">{{ text }}</span>
     <button type="button" class="size-6 shrink-0 p-1" aria-label="閉じる" @click="handleClose">
       <img :src="closeIcon" alt="info" />
     </button>

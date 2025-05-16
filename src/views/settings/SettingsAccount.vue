@@ -3,7 +3,6 @@ import { MeApi } from '@/api/generated/apis/MeApi'
 import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 import { ResponseError } from '@/api/generated/runtime'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
-import SideMenuUserSetting from '@/components/Navigations/SideMenu/SideMenuUserSetting.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -13,6 +12,7 @@ import traQIcon from '@/assets/service_icons/traq.svg'
 
 import checkIcon from '@/assets/status_icons/check.svg'
 
+import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import EmailTextbox from '@/components/Controls/Textbox/EmailTextbox.vue'
 import PasswordTextbox from '@/components/Controls/Textbox/PasswordTextbox.vue'
@@ -22,6 +22,8 @@ const username = ref<string>('')
 
 const showPasswordForm = ref(false)
 const showEmailForm = ref(false)
+const showEmailInfo = ref(false)
+const showPasswordInfo = ref(false)
 const newEmail = ref<string>('')
 
 const currentPassword = ref<string>('')
@@ -118,6 +120,7 @@ async function changePassword() {
   }
   // TODO: 実際のパスワード変更ロジックをここに実装
   console.log('パスワード変更:', currentPassword.value, newPassword.value, confirmPassword.value)
+  showPasswordInfo.value = true
 }
 
 function togglePasswordForm() {
@@ -162,108 +165,92 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex gap-12 px-6 py-8 font-primary">
-    <SideMenuUserSetting />
-    <div class="flex w-[918px] flex-col gap-6 py-6">
-      <!-- メールアドレスの変更 -->
-      <div v-if="!showEmailForm" class="flex flex-col gap-4">
-        <h2 class="text-xl font-medium text-text-primary">メールアドレスの変更</h2>
+  <div class="flex font-primary">
+    <div class="flex w-full flex-col gap-6">
+      <div class="flex max-w-form-max flex-col gap-4">
+        <h2 class="fontstyle-ui-subtitle text-text-primary">メールアドレスの変更</h2>
 
-        <div class="flex w-full max-w-[400px] flex-col">
-          <div class="text-xs font-medium text-text-secondary">現在のメールアドレス</div>
-          <div class="text-base text-text-primary">{{ email || '未設定' }}</div>
-        </div>
-
-        <div>
-          <BorderedButton class="h-10" @click="changeEmail">メール アドレスを変更</BorderedButton>
-        </div>
-      </div>
-
-      <div v-else class="inline-flex flex-col items-start justify-start gap-4 self-stretch">
-        <div
-          class="text-black justify-center self-stretch font-['Noto_Sans_JP'] text-xl font-medium leading-7"
-        >
-          メールアドレスの変更
-        </div>
-        <div
-          data-displayserrormessage="false"
-          data-displayslabel="true"
-          data-displayssupportingtext="false"
-          class="flex w-full max-w-[400px] flex-col items-start justify-start gap-2"
-        >
-          <div class="flex flex-col items-start justify-start gap-1 self-stretch">
-            <div
-              data-isrequired="true"
-              class="inline-flex items-center justify-start gap-2 self-stretch overflow-hidden"
-            >
-              <div
-                class="justify-center font-['Noto_Sans_JP'] text-sm font-normal leading-normal text-text-primary"
-              >
-                新しいメールアドレス
-              </div>
-              <div
-                class="justify-center font-['Noto_Sans_JP'] text-xs font-medium leading-none text-status-error"
-              >
-                必須
-              </div>
+        <!-- 閲覧状態 -->
+        <template v-if="!showEmailForm">
+          <div class="flex w-full flex-col">
+            <div class="fontstyle-ui-caption-strong text-xs text-text-secondary">
+              現在のメールアドレス
             </div>
-            <div
-              data-displayslefticon="false"
-              data-displayslength="false"
-              data-displaysrighticon="false"
-              data-status="None"
-              data-valuetype="Text"
-              class="inline-flex items-center justify-start self-stretch rounded bg-white p-2 outline outline-1 outline-offset-[-1px] outline-border-secondary"
-            >
-              <div class="flex flex-1 items-center justify-start gap-2 overflow-hidden px-2">
-                <EmailTextbox v-model="newEmail" />
-              </div>
-              <div class="flex items-center justify-start gap-2"></div>
-            </div>
+            <span class="fontstyle-ui-body text-text-primary">{{ email || '未設定' }}</span>
           </div>
-        </div>
-        <div class="inline-flex items-start justify-start gap-3 self-stretch">
-          <PrimaryButton @click="changeEmail">認証メールを送信</PrimaryButton>
-          <BorderedButton @click="cancelEmailChange">キャンセル</BorderedButton>
-        </div>
+          <AlertBox
+            v-model:show="showEmailInfo"
+            text="認証メールを送信しました。60分以内にメールに記載されたアドレスにアクセスして、メールアドレスの変更を完了してください。"
+          />
+          <div>
+            <BorderedButton class="h-10" @click="changeEmail">メール アドレスを変更</BorderedButton>
+          </div>
+        </template>
+        <template v-else>
+          <div class="w-2/3">
+            <EmailTextbox v-model="newEmail" class="h-10" />
+          </div>
+          <div class="inline-flex items-start justify-start gap-3 self-stretch">
+            <PrimaryButton class="h-10 px-3 py-2" @click="changeEmail"
+              >認証メールを送信</PrimaryButton
+            >
+            <BorderedButton class="h-10 px-3 py-2" @click="cancelEmailChange"
+              >キャンセル</BorderedButton
+            >
+          </div>
+        </template>
       </div>
-
-      <!-- パスワードの変更 -->
-      <div class="flex flex-col gap-3 pb-3">
-        <h2 class="h-9 border-border-secondary pb-2 text-xl font-medium">パスワードの変更</h2>
-        <div v-if="!showPasswordForm">
-          <BorderedButton class="h-10" @click="togglePasswordForm">パスワードを変更</BorderedButton>
-        </div>
-        <form v-else class="flex flex-col gap-2" @submit.prevent="changePassword">
-          <input v-model="username" type="text" autocomplete="username" hidden />
-
-          <label class="text-sm font-medium" for="current-password">現在のパスワード</label>
-          <div class="w-64">
+      <div class="flex max-w-form-max flex-col gap-4">
+        <h2 class="fontstyle-ui-subtitle text-xl text-text-primary">パスワードの変更</h2>
+        <template v-if="!showPasswordForm">
+          <AlertBox v-model:show="showPasswordInfo" text="パスワードを変更しました。" />
+          <div>
+            <BorderedButton class="h-10" @click="togglePasswordForm"
+              >パスワードを変更</BorderedButton
+            >
+          </div>
+        </template>
+        <template v-else>
+          <div class="flex w-2/3 flex-col gap-4">
             <PasswordTextbox
               id="current-password"
               v-model="currentPassword"
+              label="現在のパスワード"
               autocomplete="current-password"
+              class="w-full"
             />
-          </div>
-
-          <label class="text-sm font-medium" for="new-password">新しいパスワード</label>
-          <div class="w-64">
-            <PasswordTextbox id="new-password" v-model="newPassword" autocomplete="new-password" />
-          </div>
-
-          <label class="text-sm font-medium" for="confirm-password">新しいパスワード (確認)</label>
-          <div class="w-64">
+            <PasswordTextbox
+              id="new-password"
+              v-model="newPassword"
+              label="新しいパスワード"
+              autocomplete="new-password"
+              supporting-text="半角英数字と記号(@, $, !, %, *, ?, &)を用いた8文字以上64文字以下のパスワードが利用できます。
+              大文字と小文字の英字をそれぞれ1文字ずつ使用する必要があります。"
+              class="w-full"
+            />
             <PasswordTextbox
               id="confirm-password"
               v-model="confirmPassword"
+              label="新しいパスワード（確認）"
               autocomplete="new-password"
+              class="w-full"
             />
           </div>
-
-          <div>
-            <PrimaryButton type="submit">変更</PrimaryButton>
+          <div class="inline-flex items-start justify-start gap-3 self-stretch">
+            <PrimaryButton class="h-10 px-3 py-2" @click="changePassword"
+              >パスワードを変更</PrimaryButton
+            >
+            <BorderedButton
+              class="h-10 px-3 py-2"
+              @click="
+                () => {
+                  showPasswordForm = false
+                }
+              "
+              >キャンセル</BorderedButton
+            >
           </div>
-        </form>
+        </template>
       </div>
 
       <!-- 外部サービスとの連携 -->
