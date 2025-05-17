@@ -80,12 +80,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
           <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
             value?.length ?? 0
           }}</span>
-          <button
-            v-if="displaysRightIcon"
-            type="button"
-            aria-label="アクションボタン"
-            @click="emit('clickRight')"
-          >
+          <button v-if="displaysRightIcon" type="button" @click="emit('clickRight')">
             <MaterialIcon :icon="rightIcon!" size="1.25rem" class="flex items-center" />
           </button>
         </span>
