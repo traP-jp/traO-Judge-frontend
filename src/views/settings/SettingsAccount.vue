@@ -186,7 +186,7 @@ async function changePassword() {
 
   if (!newPassword.value) {
     hasError = true
-    newPasswordError.value = '必須項目です'
+    newPasswordError.value = '必須項目です。'
     return
   }
 
