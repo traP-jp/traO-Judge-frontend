@@ -17,7 +17,7 @@ const router = createRouter({
         },
         {
           path: 'register',
-          component: () => import('@/views/SignupFormView.vue')
+          component: () => import('@/views/SignupRegisterView.vue')
         },
         {
           path: 'mail-send',
