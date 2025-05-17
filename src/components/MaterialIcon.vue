@@ -1,34 +1,32 @@
 <script setup lang="ts">
 export type Icon =
-	| "alternate_email"
-	| "assignment"
-	| "assignment_turned_in"
-	| "close"
-	| "code"
-	| "edit"
-	| "edit_note"
-	| "error"
-	| "format_list_bulleted"
-	| "id_card"
-	| "info"
-	| "library_books"
-	| "logout"
-	| "open_in_new"
-	| "person"
-	| "search"
-	| "settings"
-	| "star_half"
-	| "star_rate"
-	| "tune"
-	| "visibility"
-	| "visibility_off"
-	| "close"
-	| "alternate_email";
-const { size = "1.5rem", isFilled = false } = defineProps<{
-	icon: Icon;
-	size?: string;
-	isFilled?: boolean;
-}>();
+  | 'alternate_email'
+  | 'assignment'
+  | 'assignment_turned_in'
+  | 'close'
+  | 'code'
+  | 'edit'
+  | 'edit_note'
+  | 'error'
+  | 'format_list_bulleted'
+  | 'id_card'
+  | 'info'
+  | 'library_books'
+  | 'logout'
+  | 'open_in_new'
+  | 'person'
+  | 'search'
+  | 'settings'
+  | 'star_half'
+  | 'star_rate'
+  | 'tune'
+  | 'visibility'
+  | 'visibility_off'
+const { size = '1.5rem', isFilled = false } = defineProps<{
+  icon: Icon
+  size?: string
+  isFilled?: boolean
+}>()
 </script>
 
 <template>
