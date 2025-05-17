@@ -18,7 +18,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex gap-8 px-[120px]">
+  <div class="flex gap-8 px-container-x">
     <nav class="sticky top-14 h-header-offset">
       <SideMenuUserPage :username="username" />
     </nav>

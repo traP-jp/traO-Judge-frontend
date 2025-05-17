@@ -26,11 +26,11 @@ const {
 }>()
 const emit = defineEmits(['clickRight', 'focusin', 'blur'])
 const value = defineModel<string>()
-const displaysError = computed(() => error || errorMessage !== '')
+const displaysError = computed(() => error || errorMessage != '')
 const displaysLeftIcon = computed(() => leftIcon != null)
 const displaysRightIcon = computed(() => rightIcon != null)
 const displaysSupportingText = computed(() => supportingText != null)
-const input = useTemplateRef('input')
+const textarea = useTemplateRef('textarea')
 const isFocused = ref<boolean>(false)
 const onFocusin = (): void => {
   isFocused.value = true
@@ -43,7 +43,7 @@ const onBlur = (): void => {
 const onClickInnerBorder = (e: MouseEvent) => {
   e.stopPropagation()
   e.preventDefault()
-  if (!isFocused.value) input.value?.focus()
+  if (!isFocused.value) textarea.value?.focus()
 }
 </script>
 
@@ -65,25 +65,32 @@ const onClickInnerBorder = (e: MouseEvent) => {
         ]"
         @mousedown="onClickInnerBorder"
       >
-        <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
-        <input
-          v-bind="$attrs"
-          :id="id"
-          ref="input"
-          v-model="value"
-          :disabled="disabled"
-          class="fontstyle-ui-body w-full min-w-0 bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
-          @focusin="onFocusin"
-          @blur="onBlur"
-        />
-        <span class="inline-flex items-center gap-2">
-          <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
-            value?.length ?? 0
-          }}</span>
-          <button v-if="displaysRightIcon" type="button" @click="emit('clickRight')">
-            <MaterialIcon :icon="rightIcon!" size="1.25rem" class="flex items-center" />
-          </button>
-        </span>
+        <div class="flex w-full flex-col">
+          <div class="flex w-full">
+            <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
+            <textarea
+              v-bind="$attrs"
+              :id="id"
+              ref="textarea"
+              v-model="value"
+              :disabled="disabled"
+              class="fontstyle-ui-body w-full min-w-0 resize-none bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
+              @focusin="onFocusin"
+              @blur="onBlur"
+            ></textarea>
+          </div>
+          <span class="inline-flex items-center justify-end gap-2">
+            <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
+              value?.length ?? 0
+            }}</span>
+            <MaterialIcon
+              v-if="displaysRightIcon"
+              :icon="rightIcon!"
+              size="1.25rem"
+              @click="emit('clickRight')"
+            />
+          </span>
+        </div>
       </span>
       <span
         v-if="displaysSupportingText"

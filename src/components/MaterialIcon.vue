@@ -1,5 +1,6 @@
 <script setup lang="ts">
 export type Icon =
+  | 'alternate_email'
   | 'assignment'
   | 'assignment_turned_in'
   | 'close'

@@ -63,8 +63,10 @@ const handleResendEmail = async () => {
         60分以内に、メールに記載されたリンクから登録フォームにアクセスしてください。
       </p>
       <div class="flex flex-col items-stretch justify-center gap-2 self-stretch">
-        <PrimaryButton class="h-10" @click="handleClose"> この画面を閉じる </PrimaryButton>
-        <BorderedButton class="h-10" @click="handleResendEmail">
+        <PrimaryButton class="h-10 px-4 py-3" @click="handleClose">
+          この画面を閉じる
+        </PrimaryButton>
+        <BorderedButton class="h-10 px-4 py-3" @click="handleResendEmail">
           メールを再送信する
         </BorderedButton>
       </div>

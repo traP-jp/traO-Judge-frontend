@@ -77,7 +77,7 @@ const handleSignupRequest = async () => {
           :error-message="emailErrorMessage"
         />
         <PrimaryButton
-          class="h-10 w-full rounded px-6 py-2"
+          class="h-10 w-full rounded px-4 py-3"
           :disabled="!email"
           @click="handleSignupRequest"
         >

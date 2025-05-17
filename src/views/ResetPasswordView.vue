@@ -50,7 +50,7 @@ const requestResetPassword = async () => {
         </div>
         <PrimaryButton
           :disabled="!isEmail(emailAddress.email)"
-          class="h-10 w-full"
+          class="h-10 w-full px-4 py-3"
           @click="requestResetPassword"
         >
           リセット用のメールを送信

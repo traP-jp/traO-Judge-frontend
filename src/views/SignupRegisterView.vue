@@ -7,8 +7,7 @@ import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { passwordValidator, usernameValidator } from '@/utils/validator'
 import { jwtDecode } from 'jwt-decode'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const oauth = ref(false)
 const username = ref('')
@@ -138,7 +137,7 @@ async function onSignupRegister() {
 
       <!-- TODO: form全体の横幅の扱いが確定したらここの横幅も変える -->
       <form class="flex flex-col items-center" @submit.prevent="onSignupRegister">
-        <PrimaryButton class="h-10 w-5/12" @click="onSignupRegister">次へ</PrimaryButton>
+        <PrimaryButton class="h-10 w-5/12 px-4 py-3" @click="onSignupRegister">次へ</PrimaryButton>
       </form>
     </div>
   </div>

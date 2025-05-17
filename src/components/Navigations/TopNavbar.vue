@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import IconDropdownTriangle from '@/components/icons/IconDropdownTriangle.vue'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
-import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import { ref } from 'vue'
 
 const { isLoggedIn = false, username = '' } = defineProps<{
   isLoggedIn: boolean
@@ -41,6 +41,7 @@ const setMenuState = (state: boolean) => {
       <PrimaryButton
         v-if="!isLoggedIn"
         padding="1rem"
+        class="h-10 px-3 py-2"
         @click="
           () => {
             console.log('TODO: login')

@@ -13,7 +13,7 @@ const toggleVisibility = () => (visible.value = !visible.value)
     displays-length
     :right-icon="rightIcon"
     :type="visible ? 'text' : 'password'"
-    class="h-6.5"
+    class="h-5.5"
     @click-right="toggleVisibility"
   />
 </template>
