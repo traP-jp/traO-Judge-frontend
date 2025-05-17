@@ -2,13 +2,10 @@
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { ref, watch } from 'vue'
 
-// モデル値
 const modelValue = defineModel<string>()
 
-// 右端のクロスアイコンの表示状態
 const showClearIcon = ref<boolean>(false)
 
-// 入力値に基づいてクリアアイコン表示を更新
 watch(
   () => modelValue.value,
   (newValue) => {
@@ -17,10 +14,8 @@ watch(
   { immediate: true }
 )
 
-// クリアボタンクリック時の処理
 function clearInput() {
   modelValue.value = ''
-  showClearIcon.value = false
 }
 </script>
 
@@ -28,7 +23,7 @@ function clearInput() {
   <PlainTextbox
     v-model="modelValue"
     left-icon="alternate_email"
-    right-icon="close"
+    :right-icon="showClearIcon ? 'close' : undefined"
     v-bind="$attrs"
     class="h-5.5"
     @click-right="clearInput"
