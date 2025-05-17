@@ -21,7 +21,7 @@ const handleClose = () => {
     <img :src="infoIcon" class="py-1" alt="info" />
     <span class="flex flex-1 text-text-primary">{{ text }}</span>
     <button type="button" class="size-6 shrink-0 p-1" aria-label="閉じる" @click="handleClose">
-      <img :src="closeIcon" alt="info" />
+      <img :src="closeIcon" alt="close" />
     </button>
   </div>
 </template>
