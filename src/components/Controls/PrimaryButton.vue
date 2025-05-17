@@ -21,4 +21,3 @@ function onClick() {
 </template>
 
 <style scoped></style>
-h
