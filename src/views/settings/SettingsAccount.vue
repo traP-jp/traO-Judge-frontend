@@ -34,6 +34,9 @@ const currentPassword = ref<string>('')
 const newPassword = ref<string>('')
 const confirmPassword = ref<string>('')
 
+const passwordErrorMessage = ref<string>('')
+const showPasswordError = ref<boolean>(false)
+
 interface Service {
   name: string
   linked: boolean
@@ -166,6 +169,9 @@ function cancelEmailChange() {
 function togglePasswordForm() {
   showPasswordForm.value = true
   showPasswordInfo.value = false
+  showPasswordError.value = false
+  currentPasswordError.value = ''
+  newPasswordError.value = ''
 }
 
 async function changePassword() {
@@ -226,17 +232,20 @@ async function changePassword() {
     if (error instanceof ResponseError) {
       switch (error.response.status) {
         case 400:
-          newPasswordError.value = 'パスワードの形式が正しくありません。'
+          passwordErrorMessage.value = 'パスワードの形式が正しくありません。'
+          showPasswordError.value = true
           break
         case 401:
           currentPasswordError.value = '現在のパスワードが正しくありません。'
           break
         default:
-          newPasswordError.value = 'パスワードの変更に失敗しました。'
+          passwordErrorMessage.value = 'パスワードの変更に失敗しました。'
+          showPasswordError.value = true
           break
       }
     } else {
-      newPasswordError.value = 'パスワードの変更に失敗しました。'
+      passwordErrorMessage.value = 'パスワードの変更に失敗しました。'
+      showPasswordError.value = true
     }
   } finally {
     isLoading.value = false
@@ -246,6 +255,7 @@ async function changePassword() {
 function cancelPasswordChange() {
   showPasswordForm.value = false
   showPasswordInfo.value = false
+  showPasswordError.value = false
   currentPassword.value = ''
   newPassword.value = ''
   confirmPassword.value = ''
@@ -363,6 +373,7 @@ onMounted(() => {
               class="w-full"
             />
           </div>
+          <AlertBox v-model:show="showPasswordError" :text="passwordErrorMessage" type="error" />
           <div class="inline-flex items-start justify-start gap-3 self-stretch">
             <PrimaryButton class="h-10 px-3 py-2" :disabled="isLoading" @click="changePassword">
               パスワードを変更
