@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PlainTextArea from '@//components/PlainTextArea.vue'
 import { MeApi } from '@/api/generated/apis/MeApi'
+import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import SNSTextbox from '@/components/Controls/Textbox/SNSTextbox.vue'
@@ -15,6 +16,7 @@ const displayNameError = ref<string>('')
 const introductionError = ref<string>('')
 const saveError = ref<string>('')
 const saveSuccess = ref<boolean>(false)
+const saveErrorShow = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 
 const MAX_INTRO_LENGTH = 200
@@ -32,6 +34,7 @@ async function fetchUserData() {
   } catch (error) {
     console.error('プロフィール情報の取得に失敗しました:', error)
     saveError.value = 'プロフィール情報の取得に失敗しました。'
+    saveErrorShow.value = true
   } finally {
     isLoading.value = false
   }
@@ -39,6 +42,7 @@ async function fetchUserData() {
 
 async function saveProfile() {
   saveSuccess.value = false
+  saveErrorShow.value = false
   displayNameError.value = ''
   introductionError.value = ''
   saveError.value = ''
@@ -63,13 +67,15 @@ async function saveProfile() {
         userName: displayName.value,
         selfIntroduction: introduction.value,
         githubId: githubAccount.value,
-        xId: xAccount.value
+        xId: xAccount.value,
+        icon: undefined // TODO: アイコンのアップロード機能を実装したらここを修正
       }
     })
     saveSuccess.value = true
   } catch (error) {
     console.error('プロフィールの保存に失敗しました:', error)
     saveError.value = 'プロフィールの保存に失敗しました。'
+    saveErrorShow.value = true
   } finally {
     isLoading.value = false
   }
@@ -130,9 +136,8 @@ onMounted(() => {
         <PrimaryButton class="h-10 w-18 px-3 py-2" :disabled="isLoading" @click="saveProfile">
           保存
         </PrimaryButton>
-        <!-- <AlertBox v-model:show="saveSuccess" text="プロフィールが保存されました。" /> -->
-        <!-- TODO: デザインの確認 -->
-        <div v-if="saveError" class="mt-2 text-status-error">{{ saveError }}</div>
+        <AlertBox v-model:show="saveSuccess" text="プロフィールが保存されました。" />
+        <AlertBox v-model:show="saveErrorShow" :text="saveError" type="error" />
       </div>
     </div>
   </div>
