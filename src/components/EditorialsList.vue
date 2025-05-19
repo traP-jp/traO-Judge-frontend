@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Link from '@/components/Link.vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
-import { type EditorialSummary } from '@/api/generated'
+import type { EditorialSummary } from '@/api/generated'
 import { EditorialsApi } from '@/api/generated/apis/EditorialsApi.ts'
 import { ResponseError } from '@/api/generated/runtime'
 import { onMounted, ref } from 'vue'
