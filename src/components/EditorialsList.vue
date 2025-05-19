@@ -77,7 +77,9 @@ onMounted(async () => {
         </Link>
       </template>
       <template v-else-if="colId === 'authorId'">
-        {{ editorials.get(rowId)?.authorId }}
+        <Link :href="'/users/' + editorials.get(rowId)?.authorId" new-tab>
+          {{ editorials.get(rowId)?.authorId }}
+        </Link>
       </template>
       <template v-else-if="colId === 'updatedAt'">
         {{
