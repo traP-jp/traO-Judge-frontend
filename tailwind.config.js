@@ -29,9 +29,11 @@ export default {
         1.625: '0.40625rem',
         1.75: '0.4375rem',
         4.5: '1.125rem',
+        5.5: '1.375rem',
         6.5: '1.625rem',
         7.5: '1.875rem',
         11.5: '2.875rem',
+        18: '4.5rem',
         27: '6.75rem',
         37: '9.25rem',
         50: '12.5rem',
@@ -51,7 +53,11 @@ export default {
         'header-offset': 'calc(100vh - 56px)'
       },
       maxWidth: {
-        'form-max': '600px'
+        'form-max': '600px',
+        'profile-max': '500px'
+      },
+      padding: {
+        'container-x': '120px'
       }
     }
   },

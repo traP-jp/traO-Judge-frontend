@@ -77,7 +77,7 @@ const handleLogin = async () => {
           :error-message="passwordErrorMessage"
         />
 
-        <PrimaryButton class="h-10 w-full rounded px-6 py-2" @click="handleLogin">
+        <PrimaryButton class="h-10 w-full rounded px-4 py-3" @click="handleLogin">
           ログイン
         </PrimaryButton>
       </div>
