@@ -44,7 +44,8 @@ export default {
         90: '22.5rem',
         120: '30rem',
         172: '43rem',
-        200: '50rem'
+        200: '50rem',
+        300: '75rem',
       },
       borderRadius: {
         15: '15px'
