@@ -110,7 +110,7 @@ watch(model, () => {
 </script>
 
 <template>
-  <div class="rounded border border-border-primary p-1">
+  <div class="h-50 rounded border border-border-primary p-1">
     <div ref="codeBlock" class="size-full"></div>
   </div>
 </template>
