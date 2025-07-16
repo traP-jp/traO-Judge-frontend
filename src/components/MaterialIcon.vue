@@ -11,6 +11,7 @@ export type Icon =
   | 'format_list_bulleted'
   | 'id_card'
   | 'info'
+  | 'labs'
   | 'library_books'
   | 'logout'
   | 'open_in_new'
