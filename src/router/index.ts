@@ -97,14 +97,34 @@ const router = createRouter({
         {
           path: 'editorials/:editorialId',
           component: () => import('@/views/problem/ProblemEditorial.vue')
+        }
+      ]
+    },
+    {
+      path: '/problems/:id/edit',
+      component: () => import('@/views/ProblemEditView.vue'),
+      children: [
+        { 
+          path: '', 
+          redirect: (to) => {
+            return `/problems/${to.params.id}/edit/basic`
+          }
         },
         {
-          path: 'editorials/:editorialId/edit',
-          component: () => import('@/views/problem/ProblemEditorialEdit.vue')
+          path: 'basic',
+          component: () => import('@/views/problem/edit/ProblemEditBasic.vue')
         },
         {
-          path: 'edit',
-          component: () => import('@/views/problem/ProblemEdit.vue')
+          path: 'statement',
+          component: () => import('@/views/problem/edit/ProblemEditStatement.vue')
+        },
+        {
+          path: 'testcases',
+          component: () => import('@/views/problem/edit/ProblemEditTestcases.vue')
+        },
+        {
+          path: 'editorials',
+          component: () => import('@/views/problem/edit/ProblemEditEditorials.vue')
         }
       ]
     },
