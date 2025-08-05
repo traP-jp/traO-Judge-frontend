@@ -1,10 +1,12 @@
 <script setup lang="ts">
 export type Icon =
+  | 'add'
   | 'alternate_email'
   | 'assignment'
   | 'assignment_turned_in'
   | 'close'
   | 'code'
+  | 'delete'
   | 'edit'
   | 'edit_note'
   | 'error'
@@ -14,6 +16,7 @@ export type Icon =
   | 'labs'
   | 'library_books'
   | 'logout'
+  | 'more_vert'
   | 'open_in_new'
   | 'person'
   | 'search'
