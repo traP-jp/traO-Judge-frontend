@@ -16,10 +16,12 @@ const isLoaded = ref<boolean>(false)
 const editorialIds = ref<string[]>([])
 const editorials = ref<Map<string, EditorialSummary>>(new Map())
 
-const loadSubmissions = async () => {
+const editorialsApi = new EditorialsApi()
+
+async function loadSubmissions() {
   isLoaded.value = false
   try {
-    const summaries: EditorialSummary[] = await new EditorialsApi().getEditorialsOnProblem({
+    const summaries: EditorialSummary[] = await editorialsApi.getEditorialsOnProblem({
       problemId
     })
 
@@ -43,22 +45,40 @@ const cols: (Column & { name: string })[] = [
   { id: 'actions', textAlign: 'start', name: '操作', width: '0' }
 ] as const
 
-const handleAddEditorial = () => {
+function handleAddEditorial() {
   router.push({ path: `${router.currentRoute.value.fullPath.replace(/\/$/, '')}/new` })
 }
 
-const currentActionMenu = ref<string | null>(null)
+async function deleteEditorial() {
+  if (focused.value === null) return
 
-const toggleActionMenu = (id: string) => {
-  if (currentActionMenu.value === id) {
+  const editorial = editorials.value.get(focused.value)
+  if (!editorial) return
+
+  try {
+    await editorialsApi.deleteEditorial({ editorialId: editorial.id })
+    editorials.value.delete(focused.value)
+    editorialIds.value = editorialIds.value.filter((id) => id !== editorial.id)
+  } catch (error) {
+    console.error('API Error:', error)
+    alert(`API Error: ${error}`)
+  } finally {
     closeActionMenu()
-  } else {
-    currentActionMenu.value = id
   }
 }
 
-const closeActionMenu = () => {
-  currentActionMenu.value = null
+const focused = ref<string | null>(null)
+
+function toggleActionMenu(id: string) {
+  if (focused.value === id) {
+    closeActionMenu()
+  } else {
+    focused.value = id
+  }
+}
+
+function closeActionMenu() {
+  focused.value = null
 }
 </script>
 
@@ -77,7 +97,7 @@ const closeActionMenu = () => {
     v-if="isLoaded"
     :cols="cols"
     :row-ids="editorialIds"
-    :selected-rows="currentActionMenu === null ? [] : [currentActionMenu]"
+    :selected-rows="focused === null ? [] : [focused]"
   >
     <template #head="{ colId }">
       {{ cols.find(({ id }) => id === colId)?.name }}
@@ -106,14 +126,14 @@ const closeActionMenu = () => {
             </span>
           </button>
 
-          <div v-if="currentActionMenu === rowId" class="absolute right-0 top-full">
+          <div v-if="focused === rowId" class="absolute right-0 top-full">
             <div
               class="flex w-36 flex-col gap-4 rounded-lg border border-border-secondary bg-background-primary py-2 text-text-secondary shadow-lg"
             >
               <MenuButton
                 icon="delete"
                 class="rounded-none pl-2 !text-status-error hover:bg-status-error/10"
-                @click="closeActionMenu()"
+                @click="deleteEditorial()"
               >
                 <span class="inline-flex items-start gap-1">削除</span>
               </MenuButton>
