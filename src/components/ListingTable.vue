@@ -2,9 +2,10 @@
 export type Column = { id: string; textAlign?: 'start' | 'end' | 'center'; width?: string }
 
 // TODO: add sorting and filtering features
-const { cols, rowIds } = defineProps<{
+const { cols, rowIds, selectedRows } = defineProps<{
   cols: Column[]
   rowIds: string[]
+  selectedRows?: string[]
 }>()
 </script>
 
@@ -26,7 +27,10 @@ const { cols, rowIds } = defineProps<{
       <tr
         v-for="rowId in rowIds"
         :key="rowId"
-        class="h-9 border-b border-solid border-border-secondary text-text-primary"
+        class="h-9 border border-solid border-border-secondary border-x-transparent border-t-transparent text-text-primary"
+        :class="{
+          '!border-brand-primary bg-brand-light-primary': selectedRows?.includes(rowId)
+        }"
       >
         <th
           v-for="col in cols"

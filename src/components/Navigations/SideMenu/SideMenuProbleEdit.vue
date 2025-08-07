@@ -39,7 +39,7 @@ const currentTab = ref<number>(0)
 watch(
   () => route.path,
   (path) => {
-    const index = mainContents.value.findIndex((content) => content.href === path)
+    const index = mainContents.value.findIndex((content) => path.startsWith(content.href!))
     if (index >= 0) currentTab.value = index
   },
   { immediate: true }
