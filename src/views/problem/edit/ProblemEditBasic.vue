@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
+import { ProblemsApi, type Problem } from '@/api/generated'
 
-const problemTitle = ref<string>('')
+const problem = ref<Problem>()
+
+const title = ref<string>('')
 const difficulty = ref<number>()
 const timeLimit = ref<number>()
 const memoryLimit = ref<number>()
@@ -22,11 +25,14 @@ const saveErrorShow = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 
 const inputInvalid = computed<boolean>(() => {
-  if (!problemTitle.value) return true
+  if (!title.value) return true
   if (!difficulty.value) return true
   if (!timeLimit.value) return true
   if (!memoryLimit.value) return true
   if (difficultyError.value) return true
+  if (difficulty.value < 1 || difficulty.value > 10) return true
+  if (timeLimit.value < 1) return true
+  if (memoryLimit.value < 1) return true
   return false
 })
 
@@ -44,7 +50,7 @@ watch(
 
 function onChangeTitle() {
   problemTitleError.value = ''
-  if (!problemTitle.value) {
+  if (!title.value) {
     problemTitleError.value = '必須項目です。'
   }
 }
@@ -73,9 +79,50 @@ function onChangeMemoryLimit() {
   }
 }
 
+const problemsApi = new ProblemsApi()
+
+async function fetchProblem() {
+  isLoading.value = true
+  try {
+    problem.value = await problemsApi.getProblem({ problemId: problemId.value })
+    title.value = problem.value.title
+    difficulty.value = problem.value.difficulty
+    timeLimit.value = problem.value.timeLimit
+    memoryLimit.value = problem.value.memoryLimit
+  } catch (error) {
+    console.error('問題の取得に失敗しました:', error)
+    saveError.value = '問題の取得に失敗しました。'
+    saveErrorShow.value = true
+  } finally {
+    isLoading.value = false
+  }
+}
+
 async function saveSetting() {
   isLoading.value = true
+  try {
+    problem.value!.title = title.value
+    problem.value!.difficulty = difficulty.value!
+    problem.value!.timeLimit = timeLimit.value!
+    problem.value!.memoryLimit = memoryLimit.value!
+    await problemsApi.putProblem({
+      problemId: problemId.value,
+      putProblemRequest: problem.value
+    })
+    console.log(problem.value)
+    saveSuccess.value = true
+  } catch (error) {
+    console.error('基本設定の保存に失敗しました:', error)
+    saveError.value = '基本設定の保存に失敗しました。'
+    saveErrorShow.value = true
+  } finally {
+    isLoading.value = false
+  }
 }
+
+onMounted(() => {
+  fetchProblem()
+})
 </script>
 
 <template>
@@ -87,7 +134,7 @@ async function saveSetting() {
         <div class="w-full">
           <PlainTextbox
             id="display-name"
-            v-model="problemTitle"
+            v-model="title"
             class="h-5.5 w-full"
             label="問題タイトル"
             required
@@ -147,13 +194,12 @@ async function saveSetting() {
           </div>
         </div>
 
-        <PrimaryButton class="h-10 w-18 px-3 py-2" :disabled="isLoading || inputInvalid">
+        <PrimaryButton class="h-10 w-18 px-3 py-2" :disabled="isLoading || inputInvalid" @click="saveSetting">
           保存
         </PrimaryButton>
         <AlertBox
           v-model:show="saveSuccess"
           text="基本設定が保存されました。"
-          @click="saveSetting"
         />
         <AlertBox v-model:show="saveErrorShow" :text="saveError" type="error" />
       </div>
