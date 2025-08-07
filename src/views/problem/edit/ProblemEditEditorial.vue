@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
-import PlainTextArea from '@//components/PlainTextArea.vue'
+import PlainTextArea from '@/components/PlainTextArea.vue'
 import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
@@ -15,6 +15,7 @@ import {
   type PutEditorialOperationRequest,
   type PutEditorialRequest
 } from '@/api/generated'
+import router from '@/router'
 
 const title = ref<string>('')
 const body = ref<string>('')
@@ -111,9 +112,7 @@ async function saveEditorial() {
         postEditorialRequest: editorialPayload as PostEditorialRequest
       } as PostEditorialOperationRequest)
 
-      if (editorialId.value === 'new') {
-        location.href = `/problems/${problemId.value}/edit/editorials/${response!.id}`
-      }
+      router.push(`/problems/${problemId.value}/edit/editorials/${response!.id}`)
     } else {
       await editorialApi.putEditorial({
         editorialId: editorialId.value,

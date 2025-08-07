@@ -6,6 +6,7 @@ import { dateToString } from '@/utils/date'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import BorderedButton from './Controls/BorderedButton.vue'
+import router from '@/router'
 
 const { problemId } = defineProps<{
   problemId: string
@@ -43,7 +44,7 @@ const cols: (Column & { name: string })[] = [
 ] as const
 
 const handleAddEditorial = () => {
-  location.href += '/new'
+  router.push({ path: `${router.currentRoute.value.fullPath.replace(/\/$/, '')}/new` })
 }
 
 const currentActionMenu = ref<string | null>(null)
