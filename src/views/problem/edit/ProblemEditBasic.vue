@@ -194,13 +194,14 @@ onMounted(() => {
           </div>
         </div>
 
-        <PrimaryButton class="h-10 w-18 px-3 py-2" :disabled="isLoading || inputInvalid" @click="saveSetting">
+        <PrimaryButton
+          class="h-10 w-18 px-3 py-2"
+          :disabled="isLoading || inputInvalid"
+          @click="saveSetting"
+        >
           保存
         </PrimaryButton>
-        <AlertBox
-          v-model:show="saveSuccess"
-          text="基本設定が保存されました。"
-        />
+        <AlertBox v-model:show="saveSuccess" text="基本設定が保存されました。" />
         <AlertBox v-model:show="saveErrorShow" :text="saveError" type="error" />
       </div>
     </div>

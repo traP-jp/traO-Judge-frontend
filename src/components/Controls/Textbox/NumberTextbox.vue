@@ -2,12 +2,9 @@
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import { computed } from 'vue'
 
-const {
-  min = NaN,
-  max = NaN,
-} = defineProps<{
-  min?: number,
-  max?: number,
+const { min = NaN, max = NaN } = defineProps<{
+  min?: number
+  max?: number
 }>()
 
 const value = defineModel<number>()
@@ -16,7 +13,7 @@ const valueString = computed<string>({
     return value.value?.toFixed() ?? ''
   },
   set: (newValue: string) => {
-    if(newValue === '') {
+    if (newValue === '') {
       value.value = undefined
     } else {
       value.value = Number(newValue)
@@ -25,16 +22,16 @@ const valueString = computed<string>({
 })
 
 function onChange() {
-  if(value.value === undefined) {
+  if (value.value === undefined) {
     return
   }
-  if(value.value < min) value.value = min
-  if(value.value > max) value.value = max
+  if (value.value < min) value.value = min
+  if (value.value > max) value.value = max
 }
 </script>
 
 <template>
-  <PlainTextbox v-model="valueString" type="number" @change="onChange"/>
+  <PlainTextbox v-model="valueString" type="number" @change="onChange" />
 </template>
 
 <style scoped></style>

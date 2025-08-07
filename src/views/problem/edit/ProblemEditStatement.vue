@@ -72,31 +72,18 @@ onMounted(() => {
         <h2 class="text-xl font-medium">問題文</h2>
 
         <div class="w-full">
-          <PlainTextArea
-            id="problem-statement"
-            v-model="body"
-            class="h-64 w-full"
-            required
-          />
+          <PlainTextArea id="problem-statement" v-model="body" class="h-64 w-full" required />
         </div>
 
-        <PrimaryButton
-          class="h-10 w-18 px-3 py-2"
-          :disabled="isLoading"
-          @click="saveStatement"
-        >
+        <PrimaryButton class="h-10 w-18 px-3 py-2" :disabled="isLoading" @click="saveStatement">
           保存
         </PrimaryButton>
 
-        <AlertBox
-          v-model:show="saveSuccess"
-          text="問題文が保存されました。"
-        />
+        <AlertBox v-model:show="saveSuccess" text="問題文が保存されました。" />
         <AlertBox v-model:show="saveErrorShow" :text="saveError" type="error" />
       </div>
     </div>
   </div>
 </template>
-
 
 <style scoped></style>

@@ -13,7 +13,7 @@ const {
   rightIcon,
   supportingText,
   containerClass = '',
-  unit,
+  unit
 } = defineProps<{
   disabled?: boolean
   displaysLength?: boolean
@@ -56,7 +56,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
 <template>
   <div class="w-full">
     <div class="flex flex-col gap-1">
-      <span v-if="label != ''" class="flex items-center gap-2 ">
+      <span v-if="label != ''" class="flex items-center gap-2">
         <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
         <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
       </span>
@@ -94,9 +94,7 @@ const onClickInnerBorder = (e: MouseEvent) => {
             </button>
           </span>
         </span>
-        <span
-          v-if="displaysUnit" 
-          class="fontstyle-ui-unit text-text-primary">
+        <span v-if="displaysUnit" class="fontstyle-ui-unit text-text-primary">
           {{ unit }}
         </span>
       </div>
