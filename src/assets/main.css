@@ -81,6 +81,14 @@
   line-height: 1rem;
 }
 
+.fontstyle-ui-unit {
+  @apply font-primary;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1rem;
+}
+
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button,
 input[type='number'] {
