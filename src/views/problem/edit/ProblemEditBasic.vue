@@ -99,17 +99,17 @@ async function fetchProblem() {
 }
 
 async function saveSetting() {
+  if (problem.value == null) return
   isLoading.value = true
   try {
-    problem.value!.title = title.value
-    problem.value!.difficulty = difficulty.value!
-    problem.value!.timeLimit = timeLimit.value!
-    problem.value!.memoryLimit = memoryLimit.value!
+    problem.value.title = title.value
+    problem.value.difficulty = difficulty.value!
+    problem.value.timeLimit = timeLimit.value!
+    problem.value.memoryLimit = memoryLimit.value!
     await problemsApi.putProblem({
       problemId: problemId.value,
       putProblemRequest: problem.value
     })
-    console.log(problem.value)
     saveSuccess.value = true
   } catch (error) {
     console.error('基本設定の保存に失敗しました:', error)

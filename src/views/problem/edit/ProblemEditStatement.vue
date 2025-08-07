@@ -43,9 +43,10 @@ async function fetchProblem() {
 }
 
 async function saveStatement() {
+  if (problem.value == null) return
   isLoading.value = true
   try {
-    problem.value!.statement = body.value
+    problem.value.statement = body.value
     await problemsApi.putProblem({
       problemId: problemId.value,
       putProblemRequest: problem.value
