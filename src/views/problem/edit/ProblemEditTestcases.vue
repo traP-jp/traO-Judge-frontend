@@ -128,14 +128,28 @@ function handleMore(event: MouseEvent, id: string) {
 }
 
 function handleCopy(id: string) {
-  console.log('Copy testcase:', id)
-  // TODO: Implement copy functionality
+  const testcase = testcases.value.get(id)
+  if (testcase) {
+    editingTestcase.value = null
+    formData.value = {
+      name: testcase.name,
+      input: testcase.input || '',
+      output: testcase.output || ''
+    }
+    showEditForm.value = true
+  }
   dropdownOpenId.value = null
 }
 
 function handleDelete(id: string) {
-  console.log('Delete testcase:', id)
-  // TODO: Implement delete functionality with confirmation
+  const testcase = testcases.value.get(id)
+  if (testcase && confirm(`テストケース「${testcase.name}」を削除しますか？`)) {
+    testcases.value.delete(id)
+    testcaseIds.value = Array.from(testcases.value.keys())
+    if (editingTestcase.value?.id === id) {
+      closeEditArea()
+    }
+  }
   dropdownOpenId.value = null
 }
 
