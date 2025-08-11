@@ -4,7 +4,7 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
-import PlainTextArea from '@/components/PlainTextArea.vue'
+import CopyableTextArea from '@/components/CopyableTextArea.vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 
@@ -175,14 +175,6 @@ function handleSaveTestcase() {
   showEditForm.value = false
 }
 
-async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text)
-  } catch (err) {
-    console.error('Failed to copy text:', err)
-  }
-}
-
 onMounted(() => {
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
@@ -269,7 +261,6 @@ onMounted(() => {
         </ListingTable>
       </div>
 
-      <!-- Edit area -->
       <div
         class="flex flex-col gap-4 rounded border border-border-primary bg-background-primary p-4"
         style="width: 300px"
@@ -287,28 +278,12 @@ onMounted(() => {
             </button>
           </div>
 
-          <div class="flex flex-col gap-4 overflow-y-auto">
-            <div class="flex flex-col gap-2">
-              <PlainTextbox v-model="formData.name" label="テストケース名" :required="true" />
-            </div>
+          <div class="flex flex-col gap-4">
+            <PlainTextbox v-model="formData.name" label="テストケース名" :required="true" />
 
-            <div class="flex flex-col">
-              <PlainTextArea
-                v-model="formData.input"
-                label="入力"
-                class="h-50"
-                @click-right="copyToClipboard(formData.input)"
-              />
-            </div>
+            <CopyableTextArea v-model="formData.input" class="h-50" label="入力" />
 
-            <div class="flex flex-col">
-              <PlainTextArea
-                v-model="formData.output"
-                label="出力"
-                ckass="h-50"
-                @click-right="copyToClipboard(formData.output)"
-              />
-            </div>
+            <CopyableTextArea v-model="formData.output" class="h-50" label="出力" />
           </div>
 
           <PrimaryButton
