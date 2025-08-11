@@ -6,6 +6,7 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
 import { ProblemsApi, type Problem } from '@/api/generated'
+import { type Ref } from 'vue'
 
 const problem = ref<Problem>()
 
@@ -48,36 +49,18 @@ watch(
   { immediate: true }
 )
 
-function onChangeTitle() {
-  problemTitleError.value = ''
-  if (!title.value) {
-    problemTitleError.value = '必須項目です。'
+function validateRequiredField<Value>(valueRef: Ref<Value>, errorRef: Ref<string>) {
+  if (!valueRef.value) {
+    errorRef.value = '必須項目です。'
+  } else {
+    errorRef.value = ''
   }
 }
 
-function onChangeDifficulty() {
-  difficultyError.value = ''
-  if (!difficulty.value) {
-    difficultyError.value = '必須項目です。'
-    return
-  }
-}
-
-function onChangeTimeLimit() {
-  timeLimitError.value = ''
-  if (!timeLimit.value) {
-    timeLimitError.value = '必須項目です。'
-    return
-  }
-}
-
-function onChangeMemoryLimit() {
-  memoryLimitError.value = ''
-  if (!memoryLimit.value) {
-    memoryLimitError.value = '必須項目です。'
-    return
-  }
-}
+const onChangeTitle = validateRequiredField.bind(null, title, problemTitleError)
+const onChangeDifficulty = validateRequiredField.bind(null, difficulty, difficultyError)
+const onChangeTimeLimit = validateRequiredField.bind(null, timeLimit, timeLimitError)
+const onChangeMemoryLimit = validateRequiredField.bind(null, memoryLimit, memoryLimitError)
 
 const problemsApi = new ProblemsApi()
 
