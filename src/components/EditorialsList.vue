@@ -42,7 +42,7 @@ onMounted(() => {
 const cols: (Column & { name: string })[] = [
   { id: 'title', textAlign: 'start', name: '名前' },
   { id: 'updatedAt', textAlign: 'start', name: '更新日時', width: '176px' },
-  { id: 'actions', textAlign: 'start', name: '操作', width: '0' }
+  { id: 'actions', textAlign: 'start', name: '操作', width: '100px' }
 ] as const
 
 function handleAddEditorial() {
@@ -51,6 +51,7 @@ function handleAddEditorial() {
 
 async function deleteEditorial() {
   if (focused.value === null) return
+  if (!confirm('本当に削除しますか？')) return
 
   const editorial = editorials.value.get(focused.value)
   if (!editorial) return
