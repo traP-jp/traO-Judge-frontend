@@ -20,6 +20,7 @@ export type Icon =
   | 'more_vert'
   | 'open_in_new'
   | 'person'
+  | 'save'
   | 'search'
   | 'settings'
   | 'star_half'

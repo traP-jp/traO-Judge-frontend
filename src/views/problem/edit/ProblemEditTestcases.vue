@@ -2,6 +2,9 @@
 import { useRoute } from 'vue-router'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
+import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
+import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
+import PlainTextArea from '@/components/PlainTextArea.vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 
@@ -22,13 +25,42 @@ interface TestCase {
   id: string
   name: string
   updatedAt: Date
+  input?: string
+  output?: string
 }
 
 const testcases = ref<Map<string, TestCase>>(
   new Map([
-    ['1', { id: '1', name: 'sample_01', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['2', { id: '2', name: 'sample_02', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['3', { id: '3', name: 'sample_03', updatedAt: new Date('2025-01-02T12:34:56') }],
+    [
+      '1',
+      {
+        id: '1',
+        name: 'sample_01',
+        updatedAt: new Date('2025-01-02T12:34:56'),
+        input: '2',
+        output: 'Hello world!\nHello world!'
+      }
+    ],
+    [
+      '2',
+      {
+        id: '2',
+        name: 'sample_02',
+        updatedAt: new Date('2025-01-02T12:34:56'),
+        input: '3',
+        output: 'Hello world!\nHello world!\nHello world!'
+      }
+    ],
+    [
+      '3',
+      {
+        id: '3',
+        name: 'sample_03',
+        updatedAt: new Date('2025-01-02T12:34:56'),
+        input: '1',
+        output: 'Hello world!'
+      }
+    ],
     ['4', { id: '4', name: 'sample_04', updatedAt: new Date('2025-01-02T12:34:56') }],
     ['5', { id: '5', name: 'sample_05', updatedAt: new Date('2025-01-02T12:34:56') }],
     ['6', { id: '6', name: 'sample_06', updatedAt: new Date('2025-01-02T12:34:56') }],
@@ -47,9 +79,20 @@ const cols: (Column & { name: string })[] = [
   { id: 'actions', textAlign: 'center', name: '操作', width: '100px' }
 ] as const
 
-const selectedTestcaseId = ref<string | null>(null)
 const dropdownOpenId = ref<string | null>(null)
 const dropdownRef = ref<HTMLDivElement | null>(null)
+const editingTestcase = ref<TestCase | null>(null)
+const formData = ref({
+  name: '',
+  input: '',
+  output: ''
+})
+const showEditForm = ref(false)
+const closeEditArea = () => {
+  editingTestcase.value = null
+  formData.value = { name: '', input: '', output: '' }
+  showEditForm.value = false
+}
 
 function formatDate(date: Date): string {
   const year = date.getFullYear()
@@ -62,7 +105,16 @@ function formatDate(date: Date): string {
 }
 
 function handleEdit(id: string) {
-  selectedTestcaseId.value = id
+  const testcase = testcases.value.get(id)
+  if (testcase) {
+    editingTestcase.value = testcase
+    formData.value = {
+      name: testcase.name,
+      input: testcase.input || '',
+      output: testcase.output || ''
+    }
+    showEditForm.value = true
+  }
   dropdownOpenId.value = null
 }
 
@@ -88,11 +140,49 @@ function handleDelete(id: string) {
 }
 
 function handleAddTestcase() {
-  // TODO: Implement add testcase functionality
-  console.log('Add new testcase')
+  editingTestcase.value = null
+  formData.value = {
+    name: '',
+    input: '',
+    output: ''
+  }
+  showEditForm.value = true
 }
 
-// Close dropdown when clicking outside
+function handleSaveTestcase() {
+  if (editingTestcase.value) {
+    testcases.value.set(editingTestcase.value.id, {
+      ...editingTestcase.value,
+      name: formData.value.name,
+      input: formData.value.input,
+      output: formData.value.output,
+      updatedAt: new Date()
+    })
+  } else {
+    const newId = String(testcases.value.size + 1)
+    testcases.value.set(newId, {
+      id: newId,
+      name: formData.value.name,
+      input: formData.value.input,
+      output: formData.value.output,
+      updatedAt: new Date()
+    })
+    testcaseIds.value = Array.from(testcases.value.keys())
+  }
+
+  editingTestcase.value = null
+  formData.value = { name: '', input: '', output: '' }
+  showEditForm.value = false
+}
+
+async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch (err) {
+    console.error('Failed to copy text:', err)
+  }
+}
+
 onMounted(() => {
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
@@ -100,7 +190,7 @@ onMounted(() => {
     }
   }
   document.addEventListener('click', handleClickOutside)
-  
+
   onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
   })
@@ -108,18 +198,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col gap-4">
+  <div class="flex h-full flex-col gap-6">
     <!-- Header -->
     <div class="flex items-start justify-between">
       <h1 class="fontstyle-ui-subtitle text-text-primary">テストケース</h1>
-      <BorderedButton icon="add" @click="handleAddTestcase">
-        テストケースを追加
-      </BorderedButton>
+      <BorderedButton icon="add" @click="handleAddTestcase"> テストケースを追加 </BorderedButton>
     </div>
 
-    <!-- Main content -->
     <div class="flex flex-1 gap-6 overflow-hidden">
-      <!-- Testcases table -->
       <div class="flex-1 overflow-auto">
         <ListingTable :cols="cols" :row-ids="testcaseIds">
           <template #head="{ colId }">
@@ -153,8 +239,7 @@ onMounted(() => {
                 >
                   <MaterialIcon icon="more_vert" size="24px" />
                 </button>
-                
-                <!-- Dropdown Menu -->
+
                 <div
                   v-if="dropdownOpenId === rowId"
                   ref="dropdownRef"
@@ -163,7 +248,7 @@ onMounted(() => {
                 >
                   <div class="p-2">
                     <button
-                      class="flex w-full items-center gap-2 rounded px-4 py-1 text-left hover:bg-background-secondary"
+                      class="flex w-full items-center gap-2 rounded-2xl px-4 py-1 text-left hover:bg-background-secondary"
                       @click="handleCopy(rowId)"
                     >
                       <MaterialIcon icon="content_copy" size="18px" />
@@ -185,8 +270,58 @@ onMounted(() => {
       </div>
 
       <!-- Edit area -->
-      <div class="flex h-full shrink-0 flex-col gap-4 rounded-2xl bg-background-tertiary p-6" style="width: 300px">
-        <p class="fontstyle-ui-control-strong text-text-secondary">
+      <div
+        class="flex flex-col gap-4 rounded border border-border-primary bg-background-primary p-4"
+        style="width: 300px"
+      >
+        <template v-if="showEditForm">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="fontstyle-ui-subtitle text-text-primary">
+              テストケースを{{ editingTestcase ? '編集' : '追加' }}
+            </h2>
+            <button
+              class="rounded p-1 text-text-secondary hover:bg-background-secondary"
+              @click="closeEditArea"
+            >
+              <MaterialIcon icon="close" size="24px" />
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-4 overflow-y-auto">
+            <div class="flex flex-col gap-2">
+              <PlainTextbox v-model="formData.name" label="テストケース名" :required="true" />
+            </div>
+
+            <div class="flex flex-col">
+              <PlainTextArea
+                v-model="formData.input"
+                label="入力"
+                class="h-50"
+                @click-right="copyToClipboard(formData.input)"
+              />
+            </div>
+
+            <div class="flex flex-col">
+              <PlainTextArea
+                v-model="formData.output"
+                label="出力"
+                ckass="h-50"
+                @click-right="copyToClipboard(formData.output)"
+              />
+            </div>
+          </div>
+
+          <PrimaryButton
+            left-icon="save"
+            class="h-12"
+            :disabled="!formData.name"
+            @click="handleSaveTestcase"
+          >
+            保存
+          </PrimaryButton>
+        </template>
+
+        <p v-else class="fontstyle-ui-control-strong text-text-secondary">
           編集するテストケースが選択されていません。
         </p>
       </div>
