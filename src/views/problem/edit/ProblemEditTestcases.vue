@@ -7,6 +7,8 @@ import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import CopyableTextArea from '@/components/CopyableTextArea.vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
+import { TestcasesApi } from '@/api/generated/apis/TestcasesApi'
+import type { TestcaseSummary, Testcase, PostTestcaseRequestInner, PutTestcaseRequest } from '@/api/generated/models'
 
 const route = useRoute()
 
@@ -20,58 +22,12 @@ watch(
   { immediate: true }
 )
 
-// Mock data for testcases
-interface TestCase {
-  id: string
-  name: string
-  updatedAt: Date
-  input?: string
-  output?: string
-}
+const testcasesApi = new TestcasesApi()
 
-const testcases = ref<Map<string, TestCase>>(
-  new Map([
-    [
-      '1',
-      {
-        id: '1',
-        name: 'sample_01',
-        updatedAt: new Date('2025-01-02T12:34:56'),
-        input: '2',
-        output: 'Hello world!\nHello world!'
-      }
-    ],
-    [
-      '2',
-      {
-        id: '2',
-        name: 'sample_02',
-        updatedAt: new Date('2025-01-02T12:34:56'),
-        input: '3',
-        output: 'Hello world!\nHello world!\nHello world!'
-      }
-    ],
-    [
-      '3',
-      {
-        id: '3',
-        name: 'sample_03',
-        updatedAt: new Date('2025-01-02T12:34:56'),
-        input: '1',
-        output: 'Hello world!'
-      }
-    ],
-    ['4', { id: '4', name: 'sample_04', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['5', { id: '5', name: 'sample_05', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['6', { id: '6', name: 'sample_06', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['7', { id: '7', name: 'sample_07', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['8', { id: '8', name: 'sample_08', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['9', { id: '9', name: 'sample_09', updatedAt: new Date('2025-01-02T12:34:56') }],
-    ['10', { id: '10', name: 'sample_10', updatedAt: new Date('2025-01-02T12:34:56') }]
-  ])
-)
-
-const testcaseIds = ref<string[]>(Array.from(testcases.value.keys()))
+const testcases = ref<Map<string, TestcaseSummary>>(new Map())
+const testcaseIds = ref<string[]>([])
+const testcaseDetails = ref<Map<string, Testcase>>(new Map())
+const loading = ref(false)
 
 const cols: (Column & { name: string })[] = [
   { id: 'name', textAlign: 'start', name: '名前' },
@@ -81,7 +37,7 @@ const cols: (Column & { name: string })[] = [
 
 const dropdownOpenId = ref<string | null>(null)
 const dropdownRef = ref<HTMLDivElement | null>(null)
-const editingTestcase = ref<TestCase | null>(null)
+const editingTestcase = ref<Testcase | null>(null)
 const formData = ref({
   name: '',
   input: '',
@@ -94,6 +50,39 @@ const closeEditArea = () => {
   showEditForm.value = false
 }
 
+async function fetchTestcases() {
+  try {
+    loading.value = true
+    const response = await testcasesApi.getTestcases({ problemId: problemId.value })
+
+    testcases.value.clear()
+    response.forEach(testcase => {
+      if (testcase.id) {
+        testcases.value.set(testcase.id, testcase)
+      }
+    })
+    testcaseIds.value = Array.from(testcases.value.keys())
+  } catch {
+    alert('テストケースの取得に失敗しました')
+  } finally {
+    loading.value = false
+  }
+}
+
+async function fetchTestcaseDetails(testcaseId: string): Promise<Testcase | null> {
+  try {
+    if (testcaseDetails.value.has(testcaseId)) {
+      return testcaseDetails.value.get(testcaseId)!
+    }
+    
+    const testcase = await testcasesApi.getTestcase({ testcaseId })
+    testcaseDetails.value.set(testcaseId, testcase)
+    return testcase
+  } catch {
+    return null
+  }
+}
+
 function formatDate(date: Date): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -104,14 +93,14 @@ function formatDate(date: Date): string {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
-function handleEdit(id: string) {
-  const testcase = testcases.value.get(id)
-  if (testcase) {
-    editingTestcase.value = testcase
+async function handleEdit(id: string) {
+  const testcaseDetail = await fetchTestcaseDetails(id)
+  if (testcaseDetail) {
+    editingTestcase.value = testcaseDetail
     formData.value = {
-      name: testcase.name,
-      input: testcase.input || '',
-      output: testcase.output || ''
+      name: testcaseDetail.name,
+      input: testcaseDetail.testInput,
+      output: testcaseDetail.testOutput
     }
     showEditForm.value = true
   }
@@ -127,27 +116,35 @@ function handleMore(event: MouseEvent, id: string) {
   }
 }
 
-function handleCopy(id: string) {
-  const testcase = testcases.value.get(id)
-  if (testcase) {
+async function handleCopy(id: string) {
+  const testcaseDetail = await fetchTestcaseDetails(id)
+  if (testcaseDetail) {
     editingTestcase.value = null
     formData.value = {
-      name: testcase.name,
-      input: testcase.input || '',
-      output: testcase.output || ''
+      name: testcaseDetail.name,
+      input: testcaseDetail.testInput,
+      output: testcaseDetail.testOutput
     }
     showEditForm.value = true
   }
   dropdownOpenId.value = null
 }
 
-function handleDelete(id: string) {
+async function handleDelete(id: string) {
   const testcase = testcases.value.get(id)
   if (testcase && confirm(`テストケース「${testcase.name}」を削除しますか？`)) {
-    testcases.value.delete(id)
-    testcaseIds.value = Array.from(testcases.value.keys())
-    if (editingTestcase.value?.id === id) {
-      closeEditArea()
+    try {
+      await testcasesApi.deleteTestcase({ testcaseId: id })
+      
+      testcases.value.delete(id)
+      testcaseDetails.value.delete(id)
+      testcaseIds.value = Array.from(testcases.value.keys())
+      
+      if (editingTestcase.value?.id === id) {
+        closeEditArea()
+      }
+    } catch {
+      alert('テストケースの削除に失敗しました')
     }
   }
   dropdownOpenId.value = null
@@ -163,33 +160,54 @@ function handleAddTestcase() {
   showEditForm.value = true
 }
 
-function handleSaveTestcase() {
-  if (editingTestcase.value) {
-    testcases.value.set(editingTestcase.value.id, {
-      ...editingTestcase.value,
-      name: formData.value.name,
-      input: formData.value.input,
-      output: formData.value.output,
-      updatedAt: new Date()
-    })
-  } else {
-    const newId = String(testcases.value.size + 1)
-    testcases.value.set(newId, {
-      id: newId,
-      name: formData.value.name,
-      input: formData.value.input,
-      output: formData.value.output,
-      updatedAt: new Date()
-    })
-    testcaseIds.value = Array.from(testcases.value.keys())
+async function handleSaveTestcase() {
+  try {
+    if (editingTestcase.value) {
+      const putRequest: PutTestcaseRequest = {
+        name: formData.value.name,
+        testInput: formData.value.input,
+        testOutput: formData.value.output
+      }
+      
+      await testcasesApi.putTestcase({
+        testcaseId: editingTestcase.value.id,
+        putTestcaseRequest: putRequest
+      })
+      
+      testcaseDetails.value.set(editingTestcase.value.id, {
+        ...editingTestcase.value,
+        name: formData.value.name,
+        testInput: formData.value.input,
+        testOutput: formData.value.output,
+        updatedAt: new Date()
+      })
+    } else {
+      const postRequest: PostTestcaseRequestInner = {
+        name: formData.value.name,
+        testInput: formData.value.input,
+        testOutput: formData.value.output
+      }
+      // TODO: 配列型でいいのか確認
+      // 複数の一括追加を想定して作ったが，本当に必要？
+      await testcasesApi.postTestcases({
+        problemId: problemId.value,
+        postTestcaseRequestInner: [postRequest]
+      })
+    }
+    
+    await fetchTestcases()
+    
+    editingTestcase.value = null
+    formData.value = { name: '', input: '', output: '' }
+    showEditForm.value = false
+  } catch {
+    alert('テストケースの保存に失敗しました')
   }
-
-  editingTestcase.value = null
-  formData.value = { name: '', input: '', output: '' }
-  showEditForm.value = false
 }
 
 onMounted(() => {
+  fetchTestcases()  
+
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
       dropdownOpenId.value = null
@@ -201,14 +219,21 @@ onMounted(() => {
     document.removeEventListener('click', handleClickOutside)
   })
 })
+
+watch(problemId, () => {
+  fetchTestcases()
+})
 </script>
 
 <template>
   <div class="flex h-full flex-col gap-6">
-    <!-- Header -->
     <div class="flex items-start justify-between">
       <h1 class="fontstyle-ui-subtitle text-text-primary">テストケース</h1>
-      <BorderedButton icon="add" @click="handleAddTestcase"> テストケースを追加 </BorderedButton>
+      <BorderedButton icon="add" :disabled="loading" @click="handleAddTestcase"> テストケースを追加 </BorderedButton>
+    </div>
+
+    <div v-if="loading" class="flex justify-center p-4">
+      <div class="text-text-secondary">読み込み中...</div>
     </div>
 
     <div class="flex flex-1 gap-6 overflow-hidden">
@@ -227,7 +252,7 @@ onMounted(() => {
             </template>
             <template v-else-if="colId === 'updatedAt'">
               <span class="fontstyle-ui-body text-text-primary">
-                {{ formatDate(testcases.get(rowId)?.updatedAt || new Date()) }}
+                {{ testcases.get(rowId)?.updatedAt ? formatDate(testcases.get(rowId)!.updatedAt!) : '---' }}
               </span>
             </template>
             <template v-else-if="colId === 'actions'">
