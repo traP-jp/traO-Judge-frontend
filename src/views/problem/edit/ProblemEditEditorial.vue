@@ -112,7 +112,7 @@ async function saveEditorial() {
         postEditorialRequest: editorialPayload as PostEditorialRequest
       } as PostEditorialOperationRequest)
 
-      router.push(`/problems/${problemId.value}/edit/editorials/${response!.id}`)
+      router.push(`/problems/${problemId.value}/edit/editorials/${response.id}`)
     } else {
       await editorialApi.putEditorial({
         editorialId: editorialId.value,
@@ -125,10 +125,24 @@ async function saveEditorial() {
     console.error('解説保存エラー:', error)
 
     if (error instanceof ResponseError) {
-      const response = await error.response.json()
-      saveError.value = `解説の保存に失敗しました: ${response.body.message} (${response.status})`
+      switch (error.response.status) {
+        case 400:
+          saveError.value = 'リクエストが不正です。入力内容を確認してください。'
+          break
+        case 403:
+          saveError.value = '解説を投稿または編集する権限がありません。'
+          break
+        case 404:
+          saveError.value = '問題が存在しないか、閲覧権限がありません．'
+          break
+        case 500:
+          saveError.value = 'サーバーエラーが発生しました。'
+          break
+        default:
+          saveError.value = '解説の保存に失敗しました。もう一度お試しください。'
+      }
     } else {
-      saveError.value = '解説の保存に失敗しました。もう一度お試しください。'
+      saveError.value = '予期せぬエラーが発生しました。もう一度お試しください。'
     }
     saveErrorShow.value = true
   } finally {
