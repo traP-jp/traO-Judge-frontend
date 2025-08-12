@@ -94,8 +94,8 @@ const filterDifficultyRangeError = computed(
               <span class="w-16">
                 <NumberTextbox
                   v-model="filterDifficultyBegin"
-                  min="1"
-                  max="10"
+                  :min="1"
+                  :max="10"
                   :error="filterDifficultyRangeError"
                 />
               </span>
@@ -105,8 +105,8 @@ const filterDifficultyRangeError = computed(
               <span class="w-16">
                 <NumberTextbox
                   v-model="filterDifficultyEnd"
-                  min="1"
-                  max="10"
+                  :min="1"
+                  :max="10"
                   :error="filterDifficultyRangeError"
                 />
               </span>
