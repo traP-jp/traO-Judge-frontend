@@ -226,7 +226,7 @@ watch(problemId, () => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col gap-6">
+  <div class="flex h-full flex-col gap-4">
     <div class="flex items-start justify-between">
       <h1 class="fontstyle-ui-subtitle text-text-primary">テストケース</h1>
       <BorderedButton icon="add" :disabled="loading" @click="handleAddTestcase"> テストケースを追加 </BorderedButton>
