@@ -27,6 +27,7 @@ export type Icon =
   | 'tune'
   | 'visibility'
   | 'visibility_off'
+  | 'send'
 const { size = '1.5rem', isFilled = false } = defineProps<{
   icon: Icon
   size?: string

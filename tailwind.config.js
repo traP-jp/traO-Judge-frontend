@@ -4,8 +4,8 @@ export default {
   theme: {
     colors: {
       'background-primary': '#ffffff',
-      'background-secondary': '#f0f0f0',
-      'background-tertiary': '#f5f5f5',
+      'background-secondary': '#f5f5f5',
+      'background-tertiary': '#f0f0f0',
       'background-inv-primary': '#252525',
       'border-primary': '#d4d4d4',
       'border-secondary': '#eaeaea',
@@ -14,8 +14,8 @@ export default {
       'brand-light-primary': '#fff3f3',
       'text-primary': '#2a2a2a',
       'text-secondary': '#4a4a4a',
-      'text-tertiary': '#9a9a9a',
-      'text-inv-primary': '#f0f0f0',
+      'text-tertiary': '#909090',
+      'text-inv-primary': '#ffffff',
       'status-error': '#e02a2a',
       red: '#ff0000',
       white: '#ffffff',
