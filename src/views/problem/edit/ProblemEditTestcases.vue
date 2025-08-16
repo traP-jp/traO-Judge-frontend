@@ -8,7 +8,12 @@ import CopyableTextArea from '@/components/CopyableTextArea.vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import { TestcasesApi } from '@/api/generated/apis/TestcasesApi'
-import type { TestcaseSummary, Testcase, PostTestcaseRequestInner, PutTestcaseRequest } from '@/api/generated/models'
+import type {
+  TestcaseSummary,
+  Testcase,
+  PostTestcaseRequestInner,
+  PutTestcaseRequest
+} from '@/api/generated/models'
 
 const route = useRoute()
 
@@ -27,12 +32,12 @@ const testcasesApi = new TestcasesApi()
 const testcases = ref<Map<string, TestcaseSummary>>(new Map())
 const testcaseIds = ref<string[]>([])
 const testcaseDetails = ref<Map<string, Testcase>>(new Map())
-const loading = ref(false)
+const loading = ref(true)
 
 const cols: (Column & { name: string })[] = [
   { id: 'name', textAlign: 'start', name: '名前' },
   { id: 'updatedAt', textAlign: 'start', name: '更新日時', width: '176px' },
-  { id: 'actions', textAlign: 'center', name: '操作', width: '100px' }
+  { id: 'actions', textAlign: 'start', name: '操作', width: '100px' }
 ] as const
 
 const dropdownOpenId = ref<string | null>(null)
@@ -56,7 +61,7 @@ async function fetchTestcases() {
     const response = await testcasesApi.getTestcases({ problemId: problemId.value })
 
     testcases.value.clear()
-    response.forEach(testcase => {
+    response.forEach((testcase) => {
       if (testcase.id) {
         testcases.value.set(testcase.id, testcase)
       }
@@ -74,7 +79,7 @@ async function fetchTestcaseDetails(testcaseId: string): Promise<Testcase | null
     if (testcaseDetails.value.has(testcaseId)) {
       return testcaseDetails.value.get(testcaseId)!
     }
-    
+
     const testcase = await testcasesApi.getTestcase({ testcaseId })
     testcaseDetails.value.set(testcaseId, testcase)
     return testcase
@@ -135,11 +140,11 @@ async function handleDelete(id: string) {
   if (testcase && confirm(`テストケース「${testcase.name}」を削除しますか？`)) {
     try {
       await testcasesApi.deleteTestcase({ testcaseId: id })
-      
+
       testcases.value.delete(id)
       testcaseDetails.value.delete(id)
       testcaseIds.value = Array.from(testcases.value.keys())
-      
+
       if (editingTestcase.value?.id === id) {
         closeEditArea()
       }
@@ -168,12 +173,12 @@ async function handleSaveTestcase() {
         testInput: formData.value.input,
         testOutput: formData.value.output
       }
-      
+
       await testcasesApi.putTestcase({
         testcaseId: editingTestcase.value.id,
         putTestcaseRequest: putRequest
       })
-      
+
       testcaseDetails.value.set(editingTestcase.value.id, {
         ...editingTestcase.value,
         name: formData.value.name,
@@ -194,9 +199,9 @@ async function handleSaveTestcase() {
         postTestcaseRequestInner: [postRequest]
       })
     }
-    
+
     await fetchTestcases()
-    
+
     editingTestcase.value = null
     formData.value = { name: '', input: '', output: '' }
     showEditForm.value = false
@@ -206,7 +211,7 @@ async function handleSaveTestcase() {
 }
 
 onMounted(() => {
-  fetchTestcases()  
+  fetchTestcases()
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
@@ -229,7 +234,9 @@ watch(problemId, () => {
   <div class="flex h-full flex-col gap-4">
     <div class="flex items-start justify-between">
       <h1 class="fontstyle-ui-subtitle text-text-primary">テストケース</h1>
-      <BorderedButton icon="add" :disabled="loading" @click="handleAddTestcase"> テストケースを追加 </BorderedButton>
+      <BorderedButton icon="add" :disabled="loading" @click="handleAddTestcase">
+        テストケースを追加
+      </BorderedButton>
     </div>
 
     <div v-if="loading" class="flex justify-center p-4">
@@ -252,7 +259,11 @@ watch(problemId, () => {
             </template>
             <template v-else-if="colId === 'updatedAt'">
               <span class="fontstyle-ui-body text-text-primary">
-                {{ testcases.get(rowId)?.updatedAt ? formatDate(testcases.get(rowId)!.updatedAt!) : '---' }}
+                {{
+                  testcases.get(rowId)?.updatedAt
+                    ? formatDate(testcases.get(rowId)!.updatedAt!)
+                    : '---'
+                }}
               </span>
             </template>
             <template v-else-if="colId === 'actions'">
