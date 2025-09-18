@@ -80,7 +80,7 @@
                         {
                             "target": "body",
                             "modifier": "$",
-                            "value": "jijx",
+                            "value": "jljx",
                             "invert": false,
                             "operator": "valid_json_schema"
                         }
@@ -107,7 +107,7 @@
                         {
                             "target": "body",
                             "modifier": "$",
-                            "value": "jijx",
+                            "value": "jljx",
                             "invert": false,
                             "operator": "valid_json_schema"
                         }
@@ -253,10 +253,10 @@
                     "rules": [
                         {
                             "target": "body",
-                            "modifier": "",
+                            "modifier": "$",
                             "value": "{{data '9ht6'}}",
                             "invert": false,
-                            "operator": "equals"
+                            "operator": "valid_json_schema"
                         }
                     ],
                     "rulesOperator": "OR",
@@ -644,7 +644,7 @@
             "responses": [
                 {
                     "uuid": "632f0d05-527b-4fa5-9b1b-031c13942e53",
-                    "body": "[\n  {\n  \"name\": \"testcase_sample\".\n  \"id\": \"{{faker 'string.uuid'}}\",\n  \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n  }\n]",
+                    "body": "[\n  {\n  \"name\": \"testcase_sample\",\n  \"id\": \"{{faker 'string.uuid'}}\",\n  \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n  }\n]",
                     "latency": 0,
                     "statusCode": 200,
                     "label": "",
@@ -675,7 +675,7 @@
             "responses": [
                 {
                     "uuid": "d707e121-bc68-452c-af1f-0f2c835f6167",
-                    "body": "{\n  \"name\": \"{{body 'name'}}\",\n  \"id\": \"{{body 'id'}}\",\n  \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n}\n",
+                    "body": "[\n  {\n  \"name\": \"{{body 'name'}}\",\n  \"id\": \"{{faker 'string.uuid'}}\",\n  \"createdAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"updatedAt\": \"{{date '2024-11-06' '2024-11-11' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n  }\n]",
                     "latency": 0,
                     "statusCode": 201,
                     "label": "",
@@ -690,34 +690,7 @@
                             "modifier": "$",
                             "value": "6ycz",
                             "invert": false,
-                            "operator": "valid_json_schema"
-                        }
-                    ],
-                    "rulesOperator": "OR",
-                    "disableTemplating": false,
-                    "fallbackTo404": false,
-                    "default": false,
-                    "crudKey": "id",
-                    "callbacks": []
-                },
-                {
-                    "uuid": "61603046-a5f7-435a-85c9-ec89617518a9",
-                    "body": "{\n  \"status\": 400,\n  \"body\": {\n    \"message\": \"Bad Request\"\n  }\n}",
-                    "latency": 0,
-                    "statusCode": 400,
-                    "label": "",
-                    "headers": [],
-                    "bodyType": "INLINE",
-                    "filePath": "",
-                    "databucketID": "",
-                    "sendFileAsBody": false,
-                    "rules": [
-                        {
-                            "target": "body",
-                            "modifier": "$",
-                            "value": "6ycz",
-                            "invert": false,
-                            "operator": "valid_json_schema"
+                            "operator": "array_includes"
                         }
                     ],
                     "rulesOperator": "OR",
@@ -1651,7 +1624,7 @@
             "id": "nfur",
             "name": "PutTestcaseRequest",
             "documentation": "",
-            "value": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"testInput\": {\n      \"type\": \"string\"\n    },\n    \"testOutput\": {\n      \"type\": \"string\"\n    },\n    \"createdAt\": {\n      \"type\": \"string\"\n    },\n    \"updatedAt\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"name\",\n    \"id\",\n    \"testInput\",\n    \"testOutput\"\n  ]\n}"
+            "value": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"testInput\": {\n      \"type\": \"string\"\n    },\n    \"testOutput\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"name\",\n    \"testInput\",\n    \"testOutput\"\n  ]\n}"
         },
         {
             "uuid": "395403f5-23ae-4883-97da-4753aedd4883",
@@ -1707,7 +1680,7 @@
             "id": "6ycz",
             "name": "PostTestcaseRequest",
             "documentation": "",
-            "value": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"name\": { \"type\": \"string\" },\n    \"testInput\": { \"type\": \"string\" },\n    \"testOutput\": { \"type\": \"string\" }\n  },\n  \"required\": [\"name\", \"testInput\", \"testOutput\"]\n}"
+            "value": "[\n  {\n    \"type\": \"object\",\n    \"additionalProperties\": false,\n    \"properties\": {\n      \"name\": { \"type\": \"string\" },\n      \"testInput\": { \"type\": \"string\" },\n      \"testOutput\": { \"type\": \"string\" }\n    },\n    \"required\": [\"name\", \"testInput\", \"testOutput\"]\n  }\n]"
         },
         {
             "uuid": "bfd940e8-2328-4f70-8c7a-82c019a2a073",
