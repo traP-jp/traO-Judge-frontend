@@ -14,7 +14,7 @@ const { problemId } = defineProps<{
 // ジャッジで使用可能な言語一覧
 const languages = ref<Language[]>([])
 // 現在選択されている言語
-const language = ref<Language>({ id: -1, name: 'none' })
+const language = ref<Language>({ id: '', name: 'none' })
 
 onMounted(async () => {
   languages.value = await new LanguageApi().getLanguages()
@@ -45,9 +45,7 @@ const submit = async () => {
       class="fontstyle-ui-body rounded border border-border-primary px-4 py-2 text-text-primary"
       @change="
         (e) => {
-          language = languages.find(
-            (lang) => lang.id == parseInt((e.target as HTMLInputElement).value)
-          )!
+          language = languages.find((lang) => lang.id === (e.target as HTMLInputElement).value)!
         }
       "
     >
