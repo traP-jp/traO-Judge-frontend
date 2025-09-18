@@ -56,7 +56,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="fontstyle-document-body flex items-start whitespace-pre-wrap text-[#000000]">
+    <div class="fontstyle-ui-unit flex items-start whitespace-pre-wrap text-[#000000]">
       {{ editorialStatement }}
     </div>
   </div>
