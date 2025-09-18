@@ -8,7 +8,7 @@ import { type Language, LanguageApi, SubmissionsApi } from '@/api/generated'
 const router = useRouter()
 
 const { problemId } = defineProps<{
-  problemId: number
+  problemId: string
 }>()
 
 // ジャッジで使用可能な言語一覧

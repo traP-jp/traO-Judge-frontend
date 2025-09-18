@@ -14,14 +14,13 @@ const { language } = defineProps<{
   language: Language
 }>()
 
-const model = defineModel<string>({ required: true })
+const model = defineModel<string | null>({ required: false })
 
 let editor: monaco.editor.IStandaloneCodeEditor | undefined
 const element = useTemplateRef<HTMLElement>('codeBlock')
 
 let highlighter: Highlighter
 
-// APIより得られる言語名と、それに対応したフォーマットの対応
 const syntaxMapping: Map<string, BundledLanguage> = new Map(
   Object.entries({
     C: 'c',
@@ -77,7 +76,7 @@ onMounted(async () => {
   configureMonacoEditor()
 
   editor = monaco.editor.create(element.value!, {
-    value: model.value,
+    value: model.value ?? '',
     automaticLayout: true
   })
 
@@ -105,7 +104,8 @@ onBeforeUnmount(() => {
 })
 
 watch(model, () => {
-  if (model.value != editor?.getValue()) editor?.setValue(model.value)
+  const value = model.value ?? ''
+  if (value != editor?.getValue()) editor?.setValue(value)
 })
 </script>
 
