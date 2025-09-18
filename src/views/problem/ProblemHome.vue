@@ -79,9 +79,7 @@ const handleSubmit = async () => {
     </div>
     <template v-else>
       <div class="flex flex-col gap-4">
-        <h2 class="fontstyle-ui-subtitle text-text-primary">
-          {{ problem?.title || '問題文' }}
-        </h2>
+        <h2 class="fontstyle-ui-subtitle text-text-primary">問題文</h2>
         <div class="flex w-full items-center justify-center bg-background-tertiary py-16">
           <pre class="fontstyle-ui-body-2 whitespace-pre-wrap text-text-primary">{{
             problem?.statement || '問題本文をここに'
