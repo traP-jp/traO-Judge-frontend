@@ -40,6 +40,22 @@
   line-height: 1.5rem;
 }
 
+.fontstyle-ui-body-2 {
+  @apply font-primary;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5rem;
+}
+
+.fontstyle-ui-body-2-strong {
+  @apply font-primary;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
 .fontstyle-ui-control {
   @apply font-primary;
   font-size: 0.875rem;
