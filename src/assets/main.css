@@ -97,12 +97,12 @@
   line-height: 1rem;
 }
 
-.fontstyle-document-body {
+.fontstyle-ui-unit {
   @apply font-primary;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
+  line-height: 1rem;
 }
 
 input[type='number']::-webkit-outer-spin-button,

@@ -11,9 +11,7 @@ const {
   label = '',
   leftIcon,
   rightIcon,
-  supportingText,
-  containerClass = '',
-  unit
+  supportingText
 } = defineProps<{
   disabled?: boolean
   displaysLength?: boolean
@@ -25,18 +23,14 @@ const {
   required?: boolean
   rightIcon?: Icon
   supportingText?: string
-  containerClass?: string
-  unit?: string
 }>()
 const emit = defineEmits(['clickRight', 'focusin', 'blur'])
 const value = defineModel<string>()
-const displaysError = computed(() => error || errorMessage !== '')
+const displaysError = computed(() => error || errorMessage != '')
 const displaysLeftIcon = computed(() => leftIcon != null)
 const displaysRightIcon = computed(() => rightIcon != null)
 const displaysSupportingText = computed(() => supportingText != null)
-const displaysUnit = computed(() => unit != null)
-
-const input = useTemplateRef('input')
+const textarea = useTemplateRef('textarea')
 const isFocused = ref<boolean>(false)
 const onFocusin = (): void => {
   isFocused.value = true
@@ -49,55 +43,55 @@ const onBlur = (): void => {
 const onClickInnerBorder = (e: MouseEvent) => {
   e.stopPropagation()
   e.preventDefault()
-  if (!isFocused.value) input.value?.focus()
+  if (!isFocused.value) textarea.value?.focus()
 }
 </script>
 
 <template>
-  <div class="w-full">
+  <div>
     <div class="flex flex-col gap-1">
       <span v-if="label != ''" class="flex items-center gap-2">
         <label class="fontstyle-ui-control text-text-primary" :for="id">{{ label }}</label>
         <span v-if="required" class="fontstyle-ui-caption-strong text-status-error">必須</span>
       </span>
-      <div class="flex items-center gap-2">
-        <span
-          class="flex rounded border bg-background-primary p-2"
-          :class="[
-            { 'outline outline-1': isFocused },
-            { 'border-border-secondary outline-text-primary': !displaysError },
-            { 'border-status-error outline outline-1 outline-status-error': displaysError },
-            { 'border-text-primary': isFocused && !displaysError },
-            { 'bg-background-secondary': disabled },
-            containerClass,
-            'w-full'
-          ]"
-          @mousedown="onClickInnerBorder"
-        >
-          <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
-          <input
-            v-bind="$attrs"
-            :id="id"
-            ref="input"
-            v-model="value"
-            :disabled="disabled"
-            class="fontstyle-ui-body w-full min-w-0 bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
-            @focusin="onFocusin"
-            @blur="onBlur"
-          />
-          <span class="inline-flex items-center gap-2">
+      <span
+        class="flex rounded border bg-background-primary p-2"
+        :class="[
+          { 'outline outline-1': isFocused },
+          { 'border-border-secondary outline-text-primary': !displaysError },
+          { 'border-status-error outline outline-1 outline-status-error': displaysError },
+          { 'border-text-primary': isFocused && !displaysError },
+          { 'bg-background-secondary': disabled }
+        ]"
+        @mousedown="onClickInnerBorder"
+      >
+        <div class="flex w-full flex-col">
+          <div class="flex w-full">
+            <MaterialIcon v-if="displaysLeftIcon" :icon="leftIcon!" size="1.25rem" />
+            <textarea
+              v-bind="$attrs"
+              :id="id"
+              ref="textarea"
+              v-model="value"
+              :disabled="disabled"
+              class="fontstyle-ui-body w-full min-w-0 resize-none bg-transparent px-2 text-text-primary outline-none placeholder:text-text-tertiary"
+              @focusin="onFocusin"
+              @blur="onBlur"
+            ></textarea>
+          </div>
+          <span class="inline-flex items-center justify-end gap-2">
             <span v-if="displaysLength" class="fontstyle-ui-caption text-text-secondary">{{
               value?.length ?? 0
             }}</span>
-            <button v-if="displaysRightIcon" type="button" @click="emit('clickRight')">
-              <MaterialIcon :icon="rightIcon!" size="1.25rem" class="flex items-center" />
-            </button>
+            <MaterialIcon
+              v-if="displaysRightIcon"
+              :icon="rightIcon!"
+              size="1.25rem"
+              @click="emit('clickRight')"
+            />
           </span>
-        </span>
-        <span v-if="displaysUnit" class="fontstyle-ui-unit text-text-primary">
-          {{ unit }}
-        </span>
-      </div>
+        </div>
+      </span>
       <span
         v-if="displaysSupportingText"
         class="fontstyle-ui-caption whitespace-pre-line text-text-secondary"
