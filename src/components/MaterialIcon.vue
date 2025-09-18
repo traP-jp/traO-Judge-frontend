@@ -2,6 +2,7 @@
 export type Icon =
   | 'add'
   | 'alternate_email'
+  | 'arrow_left_alt'
   | 'assignment'
   | 'assignment_turned_in'
   | 'close'

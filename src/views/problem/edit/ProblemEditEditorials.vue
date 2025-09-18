@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
+import EditorialsList from '@/components/EditorialsList.vue'
 
 const route = useRoute()
 
@@ -16,9 +17,11 @@ watch(
 </script>
 
 <template>
-  <div>
-    <h1>This is a Editorial Page for {{ problemId }}</h1>
-  </div>
+  <section class="flex flex-col gap-4">
+    <EditorialsList :problem-id="problemId">
+      <span class="grow">解説</span>
+    </EditorialsList>
+  </section>
 </template>
 
 <style scoped></style>

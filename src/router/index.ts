@@ -104,8 +104,8 @@ const router = createRouter({
       path: '/problems/:id/edit',
       component: () => import('@/views/ProblemEditView.vue'),
       children: [
-        { 
-          path: '', 
+        {
+          path: '',
           redirect: (to) => {
             return `/problems/${to.params.id}/edit/basic`
           }
@@ -125,6 +125,10 @@ const router = createRouter({
         {
           path: 'editorials',
           component: () => import('@/views/problem/edit/ProblemEditEditorials.vue')
+        },
+        {
+          path: 'editorials/:editorialId',
+          component: () => import('@/views/problem/edit/ProblemEditEditorial.vue')
         }
       ]
     },
