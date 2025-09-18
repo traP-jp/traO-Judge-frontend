@@ -5,7 +5,7 @@ import { ResponseError } from '@/api/generated/runtime'
 import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
 
-const editorialId = ref<number>(0)
+const editorialId = ref<string>('')
 const editorialAuthroId = ref<string>('')
 const editorialUpdatedAt = ref<string>('')
 const editorialStatement = ref<string>('')
