@@ -9,7 +9,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 if [ "$1" = "production" ]; then
-  BASE_PATH="https://trao-judge-backend.trap.show/v0"
+  BASE_PATH="https://trao-judge-backend.trap.show"
 elif [ "$1" = "development" ]; then
   BASE_PATH="http://localhost:4010"
 else
