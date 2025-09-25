@@ -11,10 +11,12 @@ export type SideMenuProps = {
   href?: string
   onClick?: () => void
 }
+
 const { bottomContents = [] } = defineProps<{
   mainContents: SideMenuProps[]
   bottomContents?: SideMenuProps[]
 }>()
+
 const currentTab = defineModel<number>({ default: 0 })
 </script>
 
@@ -27,7 +29,7 @@ const currentTab = defineModel<number>({ default: 0 })
       <ul class="flex flex-col gap-1">
         <component
           :is="content.href == null ? 'span' : 'a'"
-          v-for="content in mainContents"
+          v-for="(content, index) in mainContents"
           :key="content.text"
           :href="content.href"
           @click.prevent
@@ -35,10 +37,10 @@ const currentTab = defineModel<number>({ default: 0 })
           <li>
             <MenuButton
               :icon="content.icon"
-              :selected="mainContents.indexOf(content) === currentTab"
+              :selected="index === currentTab"
               @click="
                 () => {
-                  currentTab = mainContents.indexOf(content)
+                  currentTab = index
                   content.onClick?.()
                   if (content.href != null) router.push(content.href)
                 }
@@ -52,7 +54,7 @@ const currentTab = defineModel<number>({ default: 0 })
       <ul class="mt-auto flex flex-col gap-1 pb-6">
         <component
           :is="content.href == null ? 'span' : 'a'"
-          v-for="content in bottomContents"
+          v-for="(content, index) in bottomContents"
           :key="content.text"
           :href="content.href"
           @click.prevent
@@ -60,10 +62,10 @@ const currentTab = defineModel<number>({ default: 0 })
           <li>
             <MenuButton
               :icon="content.icon"
-              :selected="mainContents.length + bottomContents.indexOf(content) === currentTab"
+              :selected="mainContents.length + index === currentTab"
               @click="
                 () => {
-                  currentTab = mainContents.length + bottomContents.indexOf(content)
+                  currentTab = mainContents.length + index
                   content.onClick?.()
                   if (content.href != null) router.push(content.href)
                 }
