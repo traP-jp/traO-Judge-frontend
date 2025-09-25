@@ -714,7 +714,7 @@
             "responses": [
                 {
                     "uuid": "9713fd85-5c01-45d1-8081-9e02a517fc76",
-                    "body": "{\n  \"id\": \"{{faker 'string.uuid'}}\",\n  \"userId\": \"{{faker 'string.uuid'}}\",\n  \"userName\": \"{{faker 'internet.userName'}}\",\n  \"problemId\": {{faker 'number.int' min=100 max=1000}},\n  \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n  \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n  \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n  \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n  \"languageId\": {{body 'languageId'}},\n  \"overallJudgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n  \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"judgeResults\": [\n    {{#repeat 3}}\n    {\n      \"testcaseId\": \"{{faker 'string.uuid'}}\",\n      \"testcaseName\": \"{{faker 'internet.userName'}}\",\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"score\": {{faker 'number.int' min=100 max=1000}},\n      \"time\": {{faker 'number.int' min=100 max=1000}},\n      \"memory\": {{faker 'number.float' min=100 max=1000}},\n    }\n    {{/repeat}}\n  ]\n}\n",
+                    "body": "{\n  \"id\": \"{{faker 'string.uuid'}}\",\n  \"userId\": \"{{faker 'string.uuid'}}\",\n  \"userName\": \"{{faker 'internet.userName'}}\",\n  \"problemId\": {{faker 'number.int' min=100 max=1000}},\n  \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n  \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n  \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n  \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n  \"languageId\": \"{{body 'languageId'}}\",\n  \"overallJudgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n  \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"judgeResults\": [\n    {{#repeat 3}}\n    {\n      \"testcaseId\": \"{{faker 'string.uuid'}}\",\n      \"testcaseName\": \"{{faker 'internet.userName'}}\",\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"score\": {{faker 'number.int' min=100 max=1000}},\n      \"time\": {{faker 'number.int' min=100 max=1000}},\n      \"memory\": {{faker 'number.float' min=100 max=1000}}\n    }\n    {{/repeat}}\n  ]\n}\n",
                     "latency": 0,
                     "statusCode": 201,
                     "label": "",
@@ -780,7 +780,7 @@
             "responses": [
                 {
                     "uuid": "3cf210e3-b730-4b1a-a652-7899a949a8b8",
-                    "body": "{\n  \"total\": {{queryParam 'limit' 20}},\n  \"submissions\": [\n    {{#repeat (queryParam 'limit' 20)}}\n    {\n      \"id\": \"{{faker 'string.uuid'}}\",\n      \"userId\": \"{{faker 'string.uuid'}}\",\n      \"userName\": \"{{faker 'internet.userName'}}\",\n      \"problemId\": {{faker 'number.int' min=100 max=1000}},\n      \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n      \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n      \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n      \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n      \"languageId\": \"{{body 'languageId'}},\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n    }\n    {{/repeat}}\n  ]\n}",
+                    "body": "{\n  \"total\": {{queryParam 'limit' 20}},\n  \"submissions\": [\n    {{#repeat (queryParam 'limit' 20)}}\n    {\n      \"id\": \"{{faker 'string.uuid'}}\",\n      \"userId\": \"{{faker 'string.uuid'}}\",\n      \"userName\": \"{{faker 'internet.userName'}}\",\n      \"problemId\": {{faker 'number.int' min=100 max=1000}},\n      \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n      \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n      \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n      \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n      \"languageId\": \"{{faker 'number.int' min=1 max=10}}\",\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\"\n    }\n    {{/repeat}}\n  ]\n}",
                     "latency": 0,
                     "statusCode": 200,
                     "label": "",
@@ -811,7 +811,7 @@
             "responses": [
                 {
                     "uuid": "fc3acdfa-24cc-4a96-a00d-f07861ab8b39",
-                    "body": "{\n  \"id\": \"{{urlParam 'submissionId'}}\",\n  \"userId\": \"{{faker 'string.uuid'}}\",\n  \"userName\": \"{{faker 'internet.userName'}}\",\n  \"problemId\": {{faker 'number.int' min=100 max=1000}},\n  \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n  \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n  \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n  \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n  \"languageId\": \"{{body 'languageId'}},\n  \"overallJudgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n  \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"judgeResults\": [\n    {{#repeat 3}}\n    {\n      \"testcaseId\": \"{{faker 'string.uuid'}}\",\n      \"testcaseName\": \"{{faker 'internet.userName'}}\",\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"score\": {{faker 'number.int' min=100 max=1000}},\n      \"time\": {{faker 'number.int' min=100 max=1000}},\n      \"memory\": {{faker 'number.float' min=100 max=1000}},\n    }\n    {{/repeat}}\n  ]\n}",
+                    "body": "{\n  \"id\": \"{{urlParam 'submissionId'}}\",\n  \"userId\": \"{{faker 'string.uuid'}}\",\n  \"userName\": \"{{faker 'internet.userName'}}\",\n  \"problemId\": {{faker 'number.int' min=100 max=1000}},\n  \"totalScore\": {{faker 'number.int' min=100 max=1000}},\n  \"maxTime\": {{faker 'number.int' min=100 max=1000}},\n  \"maxMemory\": {{faker 'number.float' min=100 max=1000}},\n  \"codeLength\": {{faker 'number.float' min=100 max=1000}},\n  \"languageId\": \"{{faker 'number.int' min=1 max=10}}\",\n  \"overallJudgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n  \"submittedAt\": \"{{date '2020-01-01' '2024-11-05' 'yyyy-MM-dd\\'T\\'HH:mm:ss.SSS\\'Z\\''}}\",\n  \"judgeResults\": [\n    {{#repeat 3}}\n    {\n      \"testcaseId\": \"{{faker 'string.uuid'}}\",\n      \"testcaseName\": \"{{faker 'internet.userName'}}\",\n      \"judgeStatus\": \"{{oneOf (array 'AC' 'WA' 'TLE' 'CE')}}\",\n      \"score\": {{faker 'number.int' min=100 max=1000}},\n      \"time\": {{faker 'number.int' min=100 max=1000}},\n      \"memory\": {{faker 'number.float' min=100 max=1000}}\n    }\n    {{/repeat}}\n  ]\n}",
                     "latency": 0,
                     "statusCode": 200,
                     "label": "",
@@ -970,7 +970,7 @@
             "responses": [
                 {
                     "uuid": "6f9c5036-4eba-463a-a7a2-49a1d0b82a33",
-                    "body": "[\n    { \"id\": 1, \"name\": \"C\" },\n    { \"id\": 2, \"name\": \"C++\" },\n    { \"id\": 3, \"name\": \"Java\" },\n    { \"id\": 4, \"name\": \"Python\" },\n    { \"id\": 5, \"name\": \"JavaScript\" },\n    { \"id\": 6, \"name\": \"Ruby\" },\n    { \"id\": 7, \"name\": \"Swift\" },\n    { \"id\": 8, \"name\": \"Go\" },\n    { \"id\": 9, \"name\": \"Rust\" },\n    { \"id\": 10, \"name\": \"Kotlin\" }\n]\n",
+                    "body": "[\n    { \"id\": \"1\", \"name\": \"C\" },\n    { \"id\": \"2\", \"name\": \"C++\" },\n    { \"id\": \"3\", \"name\": \"Java\" },\n    { \"id\": \"4\", \"name\": \"Python\" },\n    { \"id\": \"5\", \"name\": \"JavaScript\" },\n    { \"id\": \"6\", \"name\": \"Ruby\" },\n    { \"id\": \"7\", \"name\": \"Swift\" },\n    { \"id\": \"8\", \"name\": \"Go\" },\n    { \"id\": \"9\", \"name\": \"Rust\" },\n    { \"id\": \"10\", \"name\": \"Kotlin\" }\n]\n",
                     "latency": 0,
                     "statusCode": 200,
                     "label": "",
@@ -1687,7 +1687,7 @@
             "id": "zeip",
             "name": "PostSubmissionRequest",
             "documentation": "",
-            "value": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"languageId\": { \"type\": \"integer\" },\n    \"source\": { \"type\": \"string\" }\n  },\n  \"required\": [\"languageId\"]\n}"
+            "value": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"languageId\": { \"type\": \"string\" },\n    \"source\": { \"type\": \"string\" }\n  },\n  \"required\": [\"languageId\"]\n}"
         },
         {
             "uuid": "d32cdb07-bb4b-49ba-9fe4-727404c3459d",

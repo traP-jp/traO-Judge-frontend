@@ -3,61 +3,101 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import CodeBlock from '@/components/CodeBlock.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
-import { type Language, LanguageApi, SubmissionsApi } from '@/api/generated'
+import SelectBox from '@/components/Controls/SelectBox.vue'
+import { LanguageApi, SubmissionsApi } from '@/api/generated'
+import type { Language } from '@/api/generated'
 
 const router = useRouter()
 
 const { problemId } = defineProps<{
-  problemId: number
+  problemId: string
 }>()
 
-// ジャッジで使用可能な言語一覧
 const languages = ref<Language[]>([])
-// 現在選択されている言語
-const language = ref<Language>({ id: '', name: 'none' })
+const selectedLanguage = ref<Language>({ id: '', name: '' })
+const sourceCode = ref<string | null>(null)
+
+const isLoading = ref(true)
+const isSubmitting = ref(false)
+
+const error = ref<string>('')
 
 onMounted(async () => {
-  languages.value = await new LanguageApi().getLanguages()
-  language.value = languages.value[0]
+  try {
+    const languagesResponse = await new LanguageApi().getLanguages()
+
+    languages.value = languagesResponse
+
+    if (languagesResponse.length > 0) {
+      selectedLanguage.value = languagesResponse[0]
+    }
+  } catch (err) {
+    console.error('Failed to load languages:', err)
+    error.value = '言語データの読み込みに失敗しました'
+  } finally {
+    isLoading.value = false
+  }
 })
 
-// 入力したコード
-const source = ref<string>('')
+const handleSubmit = async () => {
+  if (!selectedLanguage.value.id || !sourceCode.value?.trim()) {
+    alert('言語とソースコードを選択/入力してください')
+    return
+  }
 
-// 提出
-const submit = async () => {
-  const submission = await new SubmissionsApi().postSubmission({
-    problemId: problemId,
-    postSubmissionRequest: {
-      languageId: language.value.id,
-      source: source.value
-    }
-  })
-  // 提出ページに遷移
-  await router.push(`/submissions/${submission.id}`)
+  isSubmitting.value = true
+  try {
+    const submission = await new SubmissionsApi().postSubmission({
+      problemId: problemId,
+      postSubmissionRequest: {
+        languageId: selectedLanguage.value.id,
+        source: sourceCode.value
+      }
+    })
+
+    await router.push(`/submissions/${submission.id}`)
+  } catch (err) {
+    console.error('Submission failed:', err)
+    alert(`提出に失敗しました: ${err instanceof Error ? err.message : 'Unknown error'}`)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
 <template>
-  <div>
-    <div class="fontstyle-ui-body-strong py-1">言語</div>
-    <select
-      class="fontstyle-ui-body rounded border border-border-primary px-4 py-2 text-text-primary"
-      @change="
-        (e) => {
-          language = languages.find((lang) => lang.id === (e.target as HTMLInputElement).value)!
-        }
-      "
-    >
-      <option v-for="lang in languages" :key="lang.id" :value="lang.id">
-        {{ lang.name }}
-      </option>
-    </select>
-    <div class="fontstyle-ui-body-strong py-1">ソースコード</div>
-    <CodeBlock v-model="source" class="size-full" :language="language" />
-    <div class="py-2">
-      <PrimaryButton @click="submit">提出</PrimaryButton>
+  <div class="flex flex-col gap-4">
+    <div v-if="error" class="rounded border border-status-error bg-background-tertiary p-4">
+      <p class="fontstyle-ui-body text-status-error">{{ error }}</p>
     </div>
+    <div v-if="isLoading" class="flex items-center justify-center py-8">
+      <p class="fontstyle-ui-body text-text-secondary">読み込み中...</p>
+    </div>
+    <template v-else>
+      <h2 class="fontstyle-ui-subtitle text-text-primary">提出</h2>
+      <div class="w-80">
+        <SelectBox
+          v-model="selectedLanguage"
+          :options="languages"
+          label="言語"
+          placeholder="言語を選択"
+          required
+        />
+      </div>
+      <div class="w-full">
+        <CodeBlock v-model="sourceCode" :language="selectedLanguage" class="w-full" />
+      </div>
+      <div class="mt-2">
+        <PrimaryButton
+          :disabled="isSubmitting"
+          class="h-12 w-24"
+          right-icon="send"
+          @click="handleSubmit"
+        >
+          {{ isSubmitting ? '提出中...' : '提出' }}
+        </PrimaryButton>
+      </div>
+    </template>
   </div>
 </template>
 
