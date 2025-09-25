@@ -17,6 +17,9 @@ export default {
       'text-tertiary': '#9a9a9a',
       'text-inv-primary': '#f0f0f0',
       'status-error': '#e02a2a',
+      'status-accepted': '#31bf8c',
+      'status-failed': '#dc802c',
+      'status-pending': '#74889a',
       red: '#ff0000',
       white: '#ffffff',
       transparent: 'transparent'
