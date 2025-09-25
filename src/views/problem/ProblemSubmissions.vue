@@ -20,11 +20,9 @@ const loadSubmissions = async (pageNum: number) => {
   })
 
   // SubmissionSummaryをMapに変換
-  const submissionsMap = new Map<string, SubmissionSummary & { problemTitle?: string }>()
+  const submissionsMap = new Map<string, SubmissionSummary>()
   if (response.submissions) {
     response.submissions.forEach((submission) => {
-      // APIレスポンスには問題名が含まれないため、別途取得する必要があるかもしれません
-      // 現時点では問題IDのみを表示
       submissionsMap.set(submission.id, submission)
     })
   }

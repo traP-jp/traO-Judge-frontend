@@ -5,6 +5,7 @@ export type Icon =
   | 'arrow_left_alt'
   | 'assignment'
   | 'assignment_turned_in'
+  | 'check'
   | 'close'
   | 'code'
   | 'content_copy'
