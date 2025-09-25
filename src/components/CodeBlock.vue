@@ -41,7 +41,6 @@ const setLanguage = async (language?: Language) => {
   let syntaxName: BundledLanguage | undefined
   if (language != undefined && syntaxMapping.has(language.name)) {
     syntaxName = syntaxMapping.get(language.name)!
-    await highlighter.loadLanguage(syntaxName)
     monaco.languages.register({ id: syntaxName })
   }
   // 対応していない言語の場合、textフォーマッタを使用
@@ -82,7 +81,7 @@ onMounted(async () => {
 
   highlighter = await createHighlighter({
     themes: ['github-light'],
-    langs: []
+    langs: ['c', 'cpp', 'java', 'python', 'javascript', 'ruby', 'swift', 'go', 'rust', 'kotlin', 'text'] // TODO: ハードコーディングしないように
   })
 
   shikiToMonaco(highlighter, monaco)
