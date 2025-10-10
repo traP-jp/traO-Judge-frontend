@@ -7,19 +7,17 @@ import SideMenuBase, {
 
 const route = useRoute()
 
-const { isMe = false, username } = defineProps<{
+const { isMe = false, username, iconUrl = '' } = defineProps<{
   isMe?: boolean
   username: string
+  iconUrl?: string
 }>()
-console.log(isMe)
 
 const mainContents: SideMenuProps[] = [
   {
     text: 'プロフィール',
     icon: 'id_card',
-    onClick: () => {
-      console.log('TODO: プロフィール')
-    }
+    href: `/users/${username}`
   },
   {
     text: '提出一覧',
@@ -63,7 +61,7 @@ watch(
     :main-contents="mainContents"
   >
     <div class="flex w-full flex-col items-center justify-center">
-      <img src="" alt="user-icon" class="size-40 rounded-full" />
+      <img :src="iconUrl" alt="user-icon" class="size-40 rounded-full" />
       <span class="mt-2 font-primary text-xl font-semibold text-text-primary">{{ username }}</span>
     </div>
   </SideMenuBase>

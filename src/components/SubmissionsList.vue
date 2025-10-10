@@ -4,6 +4,7 @@ import { dateToString } from '@/utils/date'
 import { SubmissionsApi, type SubmissionSummaries, type SubmissionSummary } from '@/api/generated'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import SimplePagination from '@/components/Controls/Pagination/SimplePagination.vue'
+import JudgeResultBadge from '@/components/JudgeResultBadge.vue'
 
 const { username, rowPerPage = 20 } = defineProps<{ username: string; rowPerPage?: number }>()
 const page = defineModel<number>('page', { default: 0 })
@@ -79,7 +80,10 @@ const cols: (Column & { name: string })[] = [
         {{ Math.ceil(submissions.get(rowId)?.codeLength ?? -1) }} Byte
       </template>
       <template v-else-if="colId === 'judgeStatus'">
-        {{ submissions.get(rowId)?.judgeStatus }}
+        <JudgeResultBadge
+          v-if="submissions.get(rowId)?.judgeStatus"
+          :status="submissions.get(rowId)!.judgeStatus"
+        />
       </template>
       <template v-else-if="colId === 'maxTime'">
         {{ submissions.get(rowId)?.maxTime }} ms
