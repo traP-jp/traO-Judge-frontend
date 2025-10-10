@@ -40,7 +40,7 @@ onMounted(() => {
 })
 
 const cols: (Column & { name: string })[] = [
-  { id: 'title', textAlign: 'start', name: '名前' },
+  { id: 'title', textAlign: 'start', name: 'タイトル' },
   { id: 'updatedAt', textAlign: 'start', name: '更新日時', width: '176px' },
   { id: 'actions', textAlign: 'start', name: '操作', width: '100px' }
 ] as const
