@@ -12,7 +12,6 @@ const { isMe = false, username, iconUrl = '' } = defineProps<{
   username: string
   iconUrl?: string
 }>()
-console.log(isMe)
 
 const mainContents: SideMenuProps[] = [
   {
