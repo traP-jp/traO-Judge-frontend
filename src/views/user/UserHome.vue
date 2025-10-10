@@ -1,42 +1,14 @@
 <script setup lang="ts">
 import Link from '@/components/Link.vue'
-import { onMounted, ref } from 'vue'
-import { UsersApi, type User, ResponseError } from '@/api/generated'
+import { computed } from 'vue'
+import type { User } from '@/api/generated'
 
-const { username } = defineProps<{ username: string }>()
+const { user } = defineProps<{ username: string; user: User | null }>()
 
-const traqId = ref<string>('')
-const githubId = ref<string>('')
-const xId = ref<string>('')
-const selfIntroduction = ref<string>('')
-
-const loadUser = async () => {
-  try {
-    const user: User = await new UsersApi().getUser({ userId: username })
-    traqId.value = user.traqId ?? ''
-    githubId.value = user.githubId ?? ''
-    xId.value = user.xId ?? ''
-    selfIntroduction.value = user.selfIntroduction ?? ''
-  } catch (error) {
-    if (error instanceof ResponseError) {
-      switch (error.response.status) {
-        case 400:
-          alert('ユーザーが見つかりません。')
-          break
-        default:
-          alert('エラーが発生しました。')
-          break
-      }
-    } else {
-      console.error('API Error:', error)
-      alert('不明なエラーが発生しました。')
-    }
-  }
-}
-
-onMounted(() => {
-  loadUser()
-})
+const traqId = computed(() => user?.traqId ?? '')
+const githubId = computed(() => user?.githubId ?? '')
+const xId = computed(() => user?.xId ?? '')
+const selfIntroduction = computed(() => user?.selfIntroduction ?? '')
 </script>
 
 <template>
