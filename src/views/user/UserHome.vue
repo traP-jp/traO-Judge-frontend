@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Link from '@/components/Link.vue'
 import { onMounted, ref } from 'vue'
-import { UsersApi, type User } from '@/api/generated'
+import { UsersApi, type User, ResponseError } from '@/api/generated'
 
 const { username } = defineProps<{ username: string }>()
 
@@ -18,8 +18,19 @@ const loadUser = async () => {
     xId.value = user.xId ?? ''
     selfIntroduction.value = user.selfIntroduction ?? ''
   } catch (error) {
-    console.error('API Error:', error)
-    alert(`API Error: ${error}`)
+    if (error instanceof ResponseError) {
+      switch (error.response.status) {
+        case 400:
+          alert('ユーザーが見つかりません。')
+          break
+        default:
+          alert('エラーが発生しました。')
+          break
+      }
+    } else {
+      console.error('API Error:', error)
+      alert('不明なエラーが発生しました。')
+    }
   }
 }
 
