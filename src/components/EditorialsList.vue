@@ -84,7 +84,7 @@ function closeActionMenu() {
 </script>
 
 <template>
-  <div class="fontstyle-ui-subtitle flex items-center text-text-primary">
+  <div class="fontstyle-ui-subtitle flex items-center justify-end self-stretch text-text-primary">
     <slot />
     <BorderedButton class="h-8 !px-2" @click="handleAddEditorial">
       <span class="mx-0 inline-flex items-center gap-2">
