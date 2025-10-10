@@ -18,9 +18,7 @@ const mainContents: SideMenuProps[] = [
   {
     text: 'プロフィール',
     icon: 'id_card',
-    onClick: () => {
-      console.log('TODO: プロフィール')
-    }
+    href: `/users/${username}`
   },
   {
     text: '提出一覧',
