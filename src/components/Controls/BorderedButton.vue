@@ -15,7 +15,7 @@ function onClick() {
 <template>
   <button
     :disabled="disabled"
-    class="fontstyle-ui-control-strong inline-flex h-10 items-center rounded border border-brand-primary px-6 text-brand-primary enabled:hover:bg-brand-light-primary disabled:opacity-50"
+    class="fontstyle-ui-control-strong inline-flex h-10 items-center justify-center rounded border border-brand-primary px-6 text-brand-primary enabled:hover:bg-brand-light-primary disabled:opacity-50"
     :style="{ paddingLeft: padding, paddingRight: padding }"
     @click="onClick"
   >

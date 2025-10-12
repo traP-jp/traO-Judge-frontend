@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import SubmitForm from '@/components/SubmitForm.vue'
 import { ProblemsApi } from '@/api/generated'
 import type { Problem } from '@/api/generated'
+import MarkdownIt from 'markdown-it'
 
 const route = useRoute()
 
@@ -14,6 +15,18 @@ const problem = ref<Problem | null>(null)
 const isLoading = ref(true)
 
 const error = ref<string>('')
+
+// TODO: markdwonの中での数式やコードハイライト，サニタイズの対応
+const md = new MarkdownIt({
+  html: false,
+  linkify: true,
+  typographer: true
+})
+
+const renderedStatement = computed(() => {
+  if (!problem.value?.statement) return '問題文が取得できませんでした'
+  return md.render(problem.value.statement)
+})
 
 onMounted(async () => {
   try {
@@ -40,11 +53,10 @@ onMounted(async () => {
     <template v-else>
       <div class="flex flex-col gap-4">
         <h2 class="fontstyle-ui-subtitle text-text-primary">問題文</h2>
-        <div class="flex w-full items-center justify-center bg-background-tertiary py-16">
-          <pre class="fontstyle-ui-body-2 whitespace-pre-wrap text-text-primary">{{
-            problem?.statement || '問題本文をここに'
-          }}</pre>
-        </div>
+        <div
+          class="prose prose-sm max-w-none text-text-primary [&>h1]:text-2xl [&>h1]:font-bold [&>h2]:text-xl [&>h2]:font-semibold"
+          v-html="renderedStatement"
+        ></div>
       </div>
       <hr class="border-t border-border-secondary" />
       <SubmitForm :problem-id="problemId" />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
-import EditorialsList from '@/components/EditorialsList.vue'
+import EditableEditorialsList from '@/components/EditableEditorialsList.vue'
 
 const route = useRoute()
 
@@ -18,9 +18,9 @@ watch(
 
 <template>
   <section class="flex flex-col gap-4">
-    <EditorialsList :problem-id="problemId">
+    <EditableEditorialsList :problem-id="problemId">
       <span class="grow">解説</span>
-    </EditorialsList>
+    </EditableEditorialsList>
   </section>
 </template>
 
