@@ -28,10 +28,43 @@ npx @openapitools/openapi-generator-cli generate \
   -g typescript-fetch \
   -o "$ROOT_DIR/src/api/generated"
 
-# 生成されたファイルの中で BASE_PATH を置換
+# 生成されたファイルの後処理
 GENERATED_FILE_PATH="$ROOT_DIR/src/api/generated/runtime.ts"
 
+echo "Generated file path: $GENERATED_FILE_PATH"
+
+# 生成されたファイルの存在確認
+if [ ! -f "$GENERATED_FILE_PATH" ]; then
+    echo "Error: Generated runtime.ts file not found at $GENERATED_FILE_PATH"
+    exit 1
+fi
+
+echo "Applying post-generation modifications..."
+
+# 1. BASE_PATH の置換
+echo "  - Updating BASE_PATH to: $BASE_PATH"
 sed -i.bak "s|export const BASE_PATH = .*|export const BASE_PATH = '$BASE_PATH';|" "$GENERATED_FILE_PATH"
 
+# 2. DefaultConfig に credentials: 'include' を設定
+echo "  - Adding credentials: 'include' to DefaultConfig"
+if grep -q "export const DefaultConfig = new Configuration();" "$GENERATED_FILE_PATH"; then
+    # シンプルなDefaultConfigが見つかった場合は置換
+    sed -i.bak2 "s/export const DefaultConfig = new Configuration();/export const DefaultConfig = new Configuration({\
+credentials: 'include'\
+});/" "$GENERATED_FILE_PATH"
+    echo "    ✓ DefaultConfig updated with credentials: 'include'"
+elif grep -q "credentials: 'include'" "$GENERATED_FILE_PATH"; then
+    echo "    ✓ credentials: 'include' already present in DefaultConfig"
+else
+    echo "    ⚠ Warning: Could not automatically update DefaultConfig"
+    echo "    Please manually add credentials: 'include' or use src/api/config.ts"
+fi
+
 # バックアップファイルを削除
-rm "${GENERATED_FILE_PATH}.bak"
+rm -f "${GENERATED_FILE_PATH}.bak" "${GENERATED_FILE_PATH}.bak2"
+
+echo "Post-generation modifications completed!"
+echo ""
+echo "Note: If automatic credential configuration failed, you can use:"
+echo "  import { apiConfig } from '@/api/config'"
+echo "  const api = new SomeApi(apiConfig)"
