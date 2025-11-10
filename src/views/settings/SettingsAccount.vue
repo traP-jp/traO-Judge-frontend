@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { MeApi } from '@/api/generated/apis/MeApi'
-import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
 import { ResponseError } from '@/api/generated/runtime'
 import BorderedButton from '@/components/Controls/BorderedButton.vue'
 import { passwordValidator } from '@/utils/validator'
 import isEmail from 'validator/lib/isEmail'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useOAuthStore } from '@/stores/oauth'
 
 import GitHubIcon from '@/assets/service_icons/github.svg'
 import GoogleIcon from '@/assets/service_icons/google.svg'
@@ -52,54 +52,32 @@ const services = ref<Service[]>([
   { name: 'traQ', linked: false, ID: '', icon: traQIcon }
 ])
 
+const oauthStore = useOAuthStore()
+const currentProcessingService = ref<string | null>(null)
+
 async function toggleLink(service: Service) {
   if (service.name === 'GitHub' || service.name === 'Google') {
+    currentProcessingService.value = service.name
     if (service.linked) {
       try {
-        const oauth2Api = new Oauth2Api()
-        if (service.name === 'GitHub') {
-          await oauth2Api.revokeGithubAuth()
-        } else {
-          await oauth2Api.revokeGoogleAuth()
-        }
-        service.linked = false
-        service.ID = ''
+        const provider = service.name.toLowerCase() as 'github' | 'google'
+        await oauthStore.revokeOAuth(provider)
+        await fetchUserData()
       } catch (error) {
-        if (error instanceof ResponseError) {
-          const responseJson = await error.response.json()
-          switch (error.response.status) {
-            case 400:
-              throw new Error(`Bad Request: ${responseJson.message}`)
-            case 401:
-              throw new Error(`Unauthorized: ${responseJson.message}`)
-            case 404:
-              throw new Error(`Not Found: ${responseJson.message}`)
-            case 500:
-              throw new Error(`Internal Server Error: ${responseJson.message}`)
-            default:
-              throw new Error(`Unknown error: ${error.response.status}`)
-          }
-        }
         console.error(`Revoke ${service.name} OAuth Error:`, error)
+        alert(`${service.name}の連携解除に失敗しました。`)
+      } finally {
+        currentProcessingService.value = null
       }
     } else {
       try {
-        const oauth2Api = new Oauth2Api()
-        const response =
-          service.name === 'GitHub'
-            ? await oauth2Api.getgithubAuthParams({ oauthAction: 'bind' })
-            : await oauth2Api.getGoogleAuthParams({ oauthAction: 'bind' })
-        router.push(response.url)
-      } catch (error: unknown) {
-        if (error instanceof ResponseError) {
-          if (error.response.status === 500) {
-            const responseJson = await error.response.json()
-            throw new Error(`Internal Server Error: ${responseJson.message}`)
-          }
-
-          throw new Error(`Unknown error: ${error.response.status}`)
-        }
+        const provider = service.name.toLowerCase() as 'github' | 'google'
+        await oauthStore.initiateOAuth(provider, 'bind')
+      } catch (error) {
         console.error(`Bind ${service.name} OAuth Error:`, error)
+        alert(`${service.name}との連携に失敗しました。`)
+      } finally {
+        currentProcessingService.value = null
       }
     }
   } else {
@@ -410,10 +388,16 @@ onMounted(() => {
                 </span>
               </div>
               <button
-                class="h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary"
+                class="h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary disabled:opacity-50"
+                :disabled="oauthStore.isOAuthInProgress"
                 @click="toggleLink(service)"
               >
-                {{ service.linked ? '連携解除' : '連携' }}
+                <span v-if="oauthStore.isOAuthInProgress && currentProcessingService === service.name">
+                  処理中...
+                </span>
+                <span v-else>
+                  {{ service.linked ? '連携解除' : '連携' }}
+                </span>
               </button>
             </div>
           </div>
