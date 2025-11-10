@@ -35,7 +35,7 @@ async function onOAuthClick() {
 
 <template>
   <button
-    :disabled="disabled"
+    :disabled="disabled || oauthStore.isOAuthInProgress"
     class="fontstyle-ui-control-strong inline-block space-x-2.5 rounded-lg border border-border-secondary px-3 py-2 text-text-primary enabled:hover:bg-background-secondary disabled:opacity-50"
     @click="onOAuthClick"
   >
@@ -48,8 +48,16 @@ async function onOAuthClick() {
     <span v-if="app === 'traQ'" class="inline-block align-middle"
       ><img src="/src/assets/service_icons/traq.svg" class="size-5"
     /></span>
-    <span class="inline-block align-middle"
-      >{{ app }} で{{ action === 'signup' ? '新規登録' : 'ログイン' }}</span
+    <span v-if="oauthStore.isOAuthInProgress" class="inline-block align-middle">
+      <span
+        class="border-current inline-block size-4 animate-spin rounded-full border-2 border-r-transparent"
+      ></span>
+      処理中...
+    </span>
+    <span v-else class="inline-block align-middle"
+      >{{ app }} で{{
+        action === 'signup' ? '新規登録' : action === 'login' ? 'ログイン' : '連携'
+      }}</span
     >
   </button>
 </template>

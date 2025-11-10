@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
-import { Oauth2Api, GetGoogleAuthParamsOauthActionEnum, GetgithubAuthParamsOauthActionEnum, PostGoogleOAuthAuthorizeOauthActionEnum, PostGithubOAuthAuthorizeOauthActionEnum } from '@/api/generated'
+import { Oauth2Api } from '@/api/generated'
 import type { OAuthProvider, OAuthAction, OAuthState } from '@/types/oauth'
 
 export const useOAuthStore = defineStore('oauth', () => {
@@ -18,7 +18,7 @@ export const useOAuthStore = defineStore('oauth', () => {
     const keys = Object.keys(sessionStorage)
     const now = Date.now()
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key.startsWith('oauth_state_')) {
         try {
           const stateData = sessionStorage.getItem(key)
@@ -39,39 +39,10 @@ export const useOAuthStore = defineStore('oauth', () => {
 
   cleanupExpiredStates()
 
-  const getGoogleActionEnum = (action: OAuthAction) => {
-    switch (action) {
-      case 'login': return GetGoogleAuthParamsOauthActionEnum.Login
-      case 'signup': return GetGoogleAuthParamsOauthActionEnum.Signup
-      case 'bind': return GetGoogleAuthParamsOauthActionEnum.Bind
-    }
-  }
-  const getGithubActionEnum = (action: OAuthAction) => {
-    switch (action) {
-      case 'login': return GetgithubAuthParamsOauthActionEnum.Login
-      case 'signup': return GetgithubAuthParamsOauthActionEnum.Signup
-      case 'bind': return GetgithubAuthParamsOauthActionEnum.Bind
-    }
-  }
-  const getGoogleAuthorizeEnum = (action: OAuthAction) => {
-    switch (action) {
-      case 'login': return PostGoogleOAuthAuthorizeOauthActionEnum.Login
-      case 'signup': return PostGoogleOAuthAuthorizeOauthActionEnum.Signup
-      case 'bind': return PostGoogleOAuthAuthorizeOauthActionEnum.Bind
-    }
-  }
-  const getGithubAuthorizeEnum = (action: OAuthAction) => {
-    switch (action) {
-      case 'login': return PostGithubOAuthAuthorizeOauthActionEnum.Login
-      case 'signup': return PostGithubOAuthAuthorizeOauthActionEnum.Signup
-      case 'bind': return PostGithubOAuthAuthorizeOauthActionEnum.Bind
-    }
-  }
-
   const generateSecureState = (): string => {
     const array = new Uint8Array(32)
     crypto.getRandomValues(array)
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('')
   }
 
   const initiateOAuth = async (provider: OAuthProvider, action: OAuthAction) => {
@@ -92,12 +63,12 @@ export const useOAuthStore = defineStore('oauth', () => {
       switch (provider) {
         case 'google':
           response = await oauth2Api.getGoogleAuthParams({
-            oauthAction: getGoogleActionEnum(action)
+            oauthAction: action
           })
           break
         case 'github':
-          response = await oauth2Api.getgithubAuthParams({ 
-            oauthAction: getGithubActionEnum(action) 
+          response = await oauth2Api.getgithubAuthParams({
+            oauthAction: action
           })
           break
         default:
@@ -110,7 +81,7 @@ export const useOAuthStore = defineStore('oauth', () => {
       window.location.href = urlWithState
     } catch (error) {
       console.error('OAuth initiation failed:', error)
-      oauthError.value = 'OAuth認証の開始に失敗しました'
+      oauthError.value = 'OAuthの開始に失敗しました'
       isOAuthInProgress.value = false
       throw error
     }
@@ -144,13 +115,13 @@ export const useOAuthStore = defineStore('oauth', () => {
       switch (state.provider) {
         case 'google':
           response = await oauth2Api.postGoogleOAuthAuthorize({
-            oauthAction: getGoogleAuthorizeEnum(state.action),
+            oauthAction: state.action,
             oAuthAuthorizationCode: { code }
           })
           break
         case 'github':
           response = await oauth2Api.postGithubOAuthAuthorize({
-            oauthAction: getGithubAuthorizeEnum(state.action),
+            oauthAction: state.action,
             oAuthAuthorizationCode: { code }
           })
           break
@@ -160,17 +131,13 @@ export const useOAuthStore = defineStore('oauth', () => {
 
       // レスポンスに基づいて処理
       if (state.action === 'signup' && response?.token) {
-        // 新規登録時はJWTトークンが返却される
-        localStorage.setItem('signup_token', response.token)
-        router.push('/signup/register?oauth=true')
+        router.push(`/signup/register?oauth=true&token=${encodeURIComponent(response.token)}`)
       } else if (state.action === 'login') {
-        // ログイン成功時はセッションIDがCookieにセットされる
-        // ページリロードでセッション状態を更新
-        window.location.href = '/problems'
+        await router.push('/problems')
+        router.go(0)
       } else if (state.action === 'bind') {
-        // アカウント連携成功
-        // 設定ページをリロードして最新の連携状態を反映
-        window.location.href = '/settings/account'
+        await router.push('/settings/account')
+        router.go(0)
       }
 
       // 使用済みstateを削除
@@ -185,7 +152,6 @@ export const useOAuthStore = defineStore('oauth', () => {
     }
   }
 
-  // OAuth連携解除
   const revokeOAuth = async (provider: OAuthProvider) => {
     try {
       switch (provider) {
@@ -212,12 +178,10 @@ export const useOAuthStore = defineStore('oauth', () => {
   }
 
   return {
-    // State
     pendingOAuthState: computed(() => pendingOAuthState.value),
     isOAuthInProgress: computed(() => isOAuthInProgress.value),
     oauthError: computed(() => oauthError.value),
 
-    // Actions
     initiateOAuth,
     handleOAuthCallback,
     revokeOAuth,

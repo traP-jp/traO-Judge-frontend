@@ -53,18 +53,21 @@ const services = ref<Service[]>([
 ])
 
 const oauthStore = useOAuthStore()
+const currentProcessingService = ref<string | null>(null)
 
 async function toggleLink(service: Service) {
   if (service.name === 'GitHub' || service.name === 'Google') {
+    currentProcessingService.value = service.name
     if (service.linked) {
       try {
         const provider = service.name.toLowerCase() as 'github' | 'google'
         await oauthStore.revokeOAuth(provider)
-        // ページをリロードして最新の連携状態を反映
-        window.location.reload()
+        await fetchUserData()
       } catch (error) {
         console.error(`Revoke ${service.name} OAuth Error:`, error)
         alert(`${service.name}の連携解除に失敗しました。`)
+      } finally {
+        currentProcessingService.value = null
       }
     } else {
       try {
@@ -73,6 +76,8 @@ async function toggleLink(service: Service) {
       } catch (error) {
         console.error(`Bind ${service.name} OAuth Error:`, error)
         alert(`${service.name}との連携に失敗しました。`)
+      } finally {
+        currentProcessingService.value = null
       }
     }
   } else {
@@ -383,10 +388,16 @@ onMounted(() => {
                 </span>
               </div>
               <button
-                class="h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary"
+                class="h-8 rounded border border-border-secondary px-4 py-1 text-sm text-text-secondary disabled:opacity-50"
+                :disabled="oauthStore.isOAuthInProgress"
                 @click="toggleLink(service)"
               >
-                {{ service.linked ? '連携解除' : '連携' }}
+                <span v-if="oauthStore.isOAuthInProgress && currentProcessingService === service.name">
+                  処理中...
+                </span>
+                <span v-else>
+                  {{ service.linked ? '連携解除' : '連携' }}
+                </span>
               </button>
             </div>
           </div>
