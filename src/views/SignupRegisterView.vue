@@ -29,9 +29,9 @@ try {
   if (typeof route.query.token !== 'string') {
     throw new Error('Invalid token')
   }
-  const token = route.query.token
+  token.value = route.query.token
   if (!oauth.value) {
-    const decodedToken = jwtDecode<{ email: string }>(token)
+    const decodedToken = jwtDecode<{ email: string }>(token.value)
     emailAddress.value = decodedToken.email
   }
 } catch (error) {
@@ -137,7 +137,7 @@ async function onSignupRegister() {
 
       <!-- TODO: form全体の横幅の扱いが確定したらここの横幅も変える -->
       <form class="flex flex-col items-center" @submit.prevent="onSignupRegister">
-        <PrimaryButton class="h-10 w-5/12 px-4 py-3" @click="onSignupRegister">次へ</PrimaryButton>
+        <PrimaryButton type="submit" class="h-10 w-5/12 px-4 py-3">次へ</PrimaryButton>
       </form>
     </div>
   </div>
