@@ -64,3 +64,7 @@ fi
 rm -f "${GENERATED_FILE_PATH}.bak" "${GENERATED_FILE_PATH}.bak2"
 
 echo "Post-generation modifications completed!"
+echo ""
+echo "Note: If automatic credential configuration failed, you can use:"
+echo "  import { apiConfig } from '@/api/config'"
+echo "  const api = new SomeApi(apiConfig)"
