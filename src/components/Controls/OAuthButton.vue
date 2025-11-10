@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { generateRandomString } from '@/utils/random'
 import { useRouter } from 'vue-router'
-import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
-import { ResponseError } from '@/api/generated/runtime'
+import { useOAuthStore } from '@/stores/oauth'
+import type { OAuthProvider, OAuthAction } from '@/types/oauth'
 
 const {
   disabled = false,
@@ -11,38 +10,25 @@ const {
 } = defineProps<{
   disabled?: boolean
   app: string
-  action: 'signup' | 'login'
+  action: 'signup' | 'login' | 'bind'
 }>()
 
 const router = useRouter()
+const oauthStore = useOAuthStore()
 
 async function onOAuthClick() {
   try {
     if (app === 'GitHub' || app === 'Google') {
-      const oauth2Api = new Oauth2Api()
-      const response =
-        app === 'GitHub'
-          ? await oauth2Api.getgithubAuthParams({ oauthAction: action })
-          : await oauth2Api.getGoogleAuthParams({ oauthAction: action })
-      const oauthState = generateRandomString(32)
-      sessionStorage.setItem('oauth_state', oauthState)
-      router.push(response.url + `&state=${oauthState}`)
+      const provider = app.toLowerCase() as OAuthProvider
+      await oauthStore.initiateOAuth(provider, action as OAuthAction)
     } else if (app === 'traQ') {
       router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
     } else {
       throw new Error('Unknown OAuth app: ' + app)
     }
-  } catch (error: unknown) {
-    if (error instanceof ResponseError) {
-      if (error.response.status === 500) {
-        const responseJson = await error.response.json()
-        console.error('Internal Server Error: ' + responseJson.message)
-      } else {
-        console.error('Unknown error: ' + error.response.status)
-      }
-    } else {
-      console.error('OAuth Error:', error)
-    }
+  } catch (error) {
+    // TODO: Error handling
+    console.error('OAuth Error:', error)
   }
 }
 </script>
