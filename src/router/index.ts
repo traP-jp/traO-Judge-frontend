@@ -53,12 +53,7 @@ const router = createRouter({
     },
     {
       path: '/auth/:provider/:action/callback',
-      redirect: (to) => {
-        return {
-          path: '/oauth/callback',
-          query: to.query
-        }
-      }
+      component: () => import('@/views/OAuthCallbackView.vue')
     },
     {
       path: '/users/:id',
