@@ -76,6 +76,19 @@ export const useOAuthStore = defineStore('oauth', () => {
             oauthAction: action
           })
           break
+        case 'traq': {
+          // traQは直接認証APIを叩く
+          await oauth2Api.postTraqOAuthAuthorize({
+            oauthAction: action
+          })
+
+          const userStore = useUserStore()
+          await userStore.fetchCurrentUser()
+
+          const redirectTarget = redirectTo || '/problems'
+          await router.push(redirectTarget)
+          return
+        }
         default:
           throw new Error(`Unsupported OAuth provider: ${provider}`)
       }
@@ -172,6 +185,12 @@ export const useOAuthStore = defineStore('oauth', () => {
           break
         case 'github':
           await oauth2Api.revokeGithubAuth()
+          break
+        case 'traq':
+          // TODO: この実装は正しい？
+          await oauth2Api.revokeTraqAuth({
+            revokeTraqAuthRequest: { token: '' }
+          })
           break
         default:
           throw new Error(`Unsupported OAuth provider: ${provider}`)

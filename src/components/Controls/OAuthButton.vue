@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useOAuthStore } from '@/stores/oauth'
 import type { OAuthProvider, OAuthAction } from '@/types/oauth'
 
@@ -13,16 +12,13 @@ const {
   action: 'signup' | 'login' | 'bind'
 }>()
 
-const router = useRouter()
 const oauthStore = useOAuthStore()
 
 async function onOAuthClick() {
   try {
-    if (app === 'GitHub' || app === 'Google') {
+    if (app === 'GitHub' || app === 'Google' || app === 'traQ') {
       const provider = app.toLowerCase() as OAuthProvider
       await oauthStore.initiateOAuth(provider, action as OAuthAction)
-    } else if (app === 'traQ') {
-      router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
     } else {
       throw new Error('Unknown OAuth app: ' + app)
     }

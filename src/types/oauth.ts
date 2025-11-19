@@ -1,4 +1,4 @@
-export type OAuthProvider = 'google' | 'github'
+export type OAuthProvider = 'google' | 'github' | 'traq'
 export type OAuthAction = 'login' | 'signup' | 'bind'
 
 export interface OAuthState {
