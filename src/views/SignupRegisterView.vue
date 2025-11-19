@@ -29,9 +29,9 @@ try {
   if (typeof route.query.token !== 'string') {
     throw new Error('Invalid token')
   }
-  const token = route.query.token
+  token.value = route.query.token
   if (!oauth.value) {
-    const decodedToken = jwtDecode<{ email: string }>(token)
+    const decodedToken = jwtDecode<{ email: string }>(token.value)
     emailAddress.value = decodedToken.email
   }
 } catch (error) {
@@ -77,7 +77,7 @@ async function onSignupRegister() {
     await authApi.postSignup({
       signup: {
         userName: username.value,
-        password: password.value,
+        password: oauth.value ? undefined : password.value,
         token: token.value
       }
     })
