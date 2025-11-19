@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { generateRandomString } from '@/utils/random'
-import { useRouter } from 'vue-router'
-import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
+import { useOAuthStore } from '@/stores/oauth'
+import type { OAuthProvider, OAuthAction } from '@/types/oauth'
 import { ResponseError } from '@/api/generated/runtime'
 
 const {
@@ -14,21 +13,13 @@ const {
   action: 'signup' | 'login'
 }>()
 
-const router = useRouter()
+const oauthStore = useOAuthStore()
 
 async function onOAuthClick() {
   try {
-    if (app === 'GitHub' || app === 'Google') {
-      const oauth2Api = new Oauth2Api()
-      const response =
-        app === 'GitHub'
-          ? await oauth2Api.getgithubAuthParams({ oauthAction: action })
-          : await oauth2Api.getGoogleAuthParams({ oauthAction: action })
-      const oauthState = generateRandomString(32)
-      sessionStorage.setItem('oauth_state', oauthState)
-      router.push(response.url + `&state=${oauthState}`)
-    } else if (app === 'traQ') {
-      router.push('/_oauth/login?redirect=/') // TODO: Redirect to the correct URL
+    if (app === 'GitHub' || app === 'Google' || app === 'traQ') {
+      const provider = app.toLowerCase() as OAuthProvider
+      await oauthStore.initiateOAuth(provider, action as OAuthAction)
     } else {
       throw new Error('Unknown OAuth app: ' + app)
     }
