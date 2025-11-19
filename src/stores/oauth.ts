@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import { Oauth2Api } from '@/api/generated'
+import { useUserStore } from '@/stores/user'
 import type { OAuthProvider, OAuthAction, OAuthState } from '@/types/oauth'
 
 export const useOAuthStore = defineStore('oauth', () => {
@@ -138,9 +139,15 @@ export const useOAuthStore = defineStore('oauth', () => {
       if (state.action === 'signup' && response?.token) {
         router.push(`/signup/register?oauth=true&token=${encodeURIComponent(response.token)}`)
       } else if (state.action === 'login') {
-        const redirectTarget = state.redirectTo || '/problems'
-        await router.push(redirectTarget)
-        router.go(0)
+        const userStore = useUserStore()
+        try {
+          await userStore.fetchCurrentUser()
+          const redirectTarget = state.redirectTo || '/problems'
+          await router.push(redirectTarget)
+        } catch (error) {
+          console.error('Failed to fetch user after OAuth:', error)
+          await router.push('/login')
+        }
       } else if (state.action === 'bind') {
         await router.push('/settings/account')
         router.go(0)
