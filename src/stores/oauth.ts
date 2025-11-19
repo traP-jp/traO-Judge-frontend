@@ -51,7 +51,6 @@ export const useOAuthStore = defineStore('oauth', () => {
       isOAuthInProgress.value = true
       oauthError.value = null
 
-      // 現在のredirectパラメータを取得
       const currentRoute = router.currentRoute.value
       const redirectTo = currentRoute.query.redirect as string
 
@@ -60,7 +59,7 @@ export const useOAuthStore = defineStore('oauth', () => {
         provider,
         action,
         timestamp: Date.now(),
-        redirectTo // redirectTo を保存
+        redirectTo
       }
       sessionStorage.setItem(`oauth_state_${stateValue}`, JSON.stringify(stateMetadata))
       pendingOAuthState.value = stateMetadata

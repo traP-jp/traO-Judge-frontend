@@ -8,6 +8,7 @@ import { passwordValidator, usernameValidator } from '@/utils/validator'
 import { jwtDecode } from 'jwt-decode'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const oauth = ref(false)
 const username = ref('')
@@ -19,8 +20,10 @@ const passwordErrorMessage = ref<string | undefined>('')
 const confirmPassword = ref('')
 const confirmPasswordErrorMessage = ref<string | undefined>('')
 const formError = ref<string | undefined>()
+const isSubmitting = ref(false)
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 try {
   if (route.query.oauth !== undefined) {
@@ -73,6 +76,7 @@ async function onSignupRegister() {
 
   const authApi = new AuthenticationApi()
 
+  isSubmitting.value = true
   try {
     await authApi.postSignup({
       signup: {
@@ -81,7 +85,8 @@ async function onSignupRegister() {
         token: token.value
       }
     })
-    router.push('/login')
+    await userStore.fetchCurrentUser()
+    router.push('/')
   } catch (error: unknown) {
     if (error instanceof ResponseError) {
       const status = error.response.status
@@ -96,6 +101,8 @@ async function onSignupRegister() {
       formError.value = '予期せぬエラーが発生しました。もう一度お試しください。'
       console.error('サインアップエラー:', error)
     }
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>
@@ -137,7 +144,13 @@ async function onSignupRegister() {
 
       <!-- TODO: form全体の横幅の扱いが確定したらここの横幅も変える -->
       <form class="flex flex-col items-center" @submit.prevent="onSignupRegister">
-        <PrimaryButton class="h-10 w-5/12 px-4 py-3" @click="onSignupRegister">次へ</PrimaryButton>
+        <PrimaryButton
+          class="h-10 w-5/12 px-4 py-3"
+          type="submit"
+          :disabled="isSubmitting"
+        >
+          {{ isSubmitting ? '登録中...' : '次へ' }}
+        </PrimaryButton>
       </form>
     </div>
   </div>
