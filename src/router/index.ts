@@ -1,12 +1,14 @@
 import TopView from '@/views/TopView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      component: TopView
+      component: TopView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/signup',
@@ -58,6 +60,7 @@ const router = createRouter({
     {
       path: '/users/:id',
       component: () => import('@/views/UserView.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -72,11 +75,13 @@ const router = createRouter({
     },
     {
       path: '/problems',
-      component: () => import('@/views/ProblemsView.vue')
+      component: () => import('@/views/ProblemsView.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/problems/:id',
       component: () => import('@/views/ProblemView.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -107,6 +112,7 @@ const router = createRouter({
     {
       path: '/problems/:id/edit',
       component: () => import('@/views/ProblemEditView.vue'),
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -139,6 +145,7 @@ const router = createRouter({
     {
       path: '/settings',
       component: () => import('@/views/SettingsView.vue'),
+      meta: { requiresAuth: true },
       children: [
         { path: '', redirect: '/settings/account' },
         {
@@ -152,6 +159,38 @@ const router = createRouter({
       ]
     }
   ]
+})
+
+router.beforeEach(async (to, _, next) => {
+  const userStore = useUserStore()
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!userStore.isAuthenticated && userStore.hasSessionFlag()) {
+      try {
+        await userStore.fetchCurrentUser()
+      } catch {
+        next({
+          path: '/login',
+          query: { redirect: to.fullPath }
+        })
+        return
+      }
+    }
+
+    if (!userStore.isAuthenticated) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+      return
+    }
+  }
+
+  if (to.path === '/login' && userStore.isAuthenticated) {
+    next('/')
+    return
+  }
+  next()
 })
 
 export default router

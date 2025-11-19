@@ -3,6 +3,8 @@ import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import IconDropdownTriangle from '@/components/icons/IconDropdownTriangle.vue'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const { isLoggedIn = false, username = '' } = defineProps<{
   isLoggedIn: boolean
@@ -10,6 +12,8 @@ const { isLoggedIn = false, username = '' } = defineProps<{
 }>()
 
 const isMenuOpen = ref(false)
+const router = useRouter()
+const userStore = useUserStore()
 
 const modalHandler = (e: MouseEvent) => {
   if (!(e.target instanceof HTMLElement) || e.target.closest('#top-navbar-menu')) return
@@ -24,6 +28,27 @@ const setMenuState = (state: boolean) => {
   isMenuOpen.value = state
   if (state) document.addEventListener('mousedown', modalHandler)
   else document.removeEventListener('mousedown', modalHandler)
+}
+
+const handleLogout = async () => {
+  try {
+    await userStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('ログアウトエラー:', error)
+  }
+}
+
+const handleLogin = () => {
+  router.push('/login')
+}
+
+const handleProfile = () => {
+  router.push(`/users/${username}`)
+}
+
+const handleSettings = () => {
+  router.push('/settings/profile')
 }
 </script>
 
@@ -42,11 +67,7 @@ const setMenuState = (state: boolean) => {
         v-if="!isLoggedIn"
         padding="1rem"
         class="h-10 px-3 py-2"
-        @click="
-          () => {
-            console.log('TODO: login')
-          }
-        "
+        @click="handleLogin"
       >
         ログイン
       </PrimaryButton>
@@ -64,31 +85,19 @@ const setMenuState = (state: boolean) => {
         >
           <MenuButton
             icon="person"
-            @click="
-              () => {
-                console.log('TODO: プロフィール画面へ遷移')
-              }
-            "
+            @click="handleProfile"
           >
             プロフィール
           </MenuButton>
           <MenuButton
             icon="settings"
-            @click="
-              () => {
-                console.log('TODO: 設定画面へ遷移')
-              }
-            "
+            @click="handleSettings"
           >
             設定
           </MenuButton>
           <MenuButton
             icon="logout"
-            @click="
-              () => {
-                console.log('TODO: ログアウト')
-              }
-            "
+            @click="handleLogout"
           >
             ログアウト
           </MenuButton>

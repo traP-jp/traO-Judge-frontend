@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { AuthenticationApi } from '@/api/generated'
 import isEmail from 'validator/lib/isEmail'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 import OAuthButton from '@/components/Controls/OAuthButton.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
@@ -14,6 +14,8 @@ const emailErrorMessage = ref<string | undefined>()
 const password = ref<string>('')
 const passwordErrorMessage = ref<string | undefined>()
 const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
 
 const handleLogin = async () => {
   if (!email.value || !password.value) {
@@ -28,15 +30,14 @@ const handleLogin = async () => {
     return
   }
 
-  const authApi = new AuthenticationApi()
   try {
-    await authApi.postLogin({
-      userEmailAndPassword: {
-        email: email.value,
-        password: password.value
-      }
+    await userStore.login({
+      email: email.value,
+      password: password.value
     })
-    router.push('/')
+    // リダイレクト先がある場合はそこへ、なければホームへ
+    const redirectTo = route.query.redirect as string
+    router.push(redirectTo || '/')
   } catch (error) {
     emailErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'
     passwordErrorMessage.value = 'メールアドレスまたはパスワードが正しくありません。'

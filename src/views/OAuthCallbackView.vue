@@ -17,20 +17,16 @@ const goToLogin = () => {
 
 onMounted(async () => {
   try {
-    // URLパラメータから認証コードを取得
     const params = route.query as OAuthCallbackParams
-    
+
     if (params.error) {
       throw new Error(params.error)
     }
-    
     if (!params.code) {
       throw new Error('認証コードが見つかりません')
     }
 
-    // OAuthコールバック処理
     await oauthStore.handleOAuthCallback(params.code, params.state)
-    
   } catch (err: Error | unknown) {
     console.error('OAuth callback error:', err)
     error.value = err instanceof Error ? err.message : '認証処理中にエラーが発生しました'
