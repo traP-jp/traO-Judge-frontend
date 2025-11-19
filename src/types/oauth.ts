@@ -5,6 +5,7 @@ export interface OAuthState {
   provider: OAuthProvider
   action: OAuthAction
   timestamp: number
+  redirectTo?: string
 }
 
 export interface OAuthCallbackParams {

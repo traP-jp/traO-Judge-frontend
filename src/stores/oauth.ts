@@ -50,11 +50,16 @@ export const useOAuthStore = defineStore('oauth', () => {
       isOAuthInProgress.value = true
       oauthError.value = null
 
+      // 現在のredirectパラメータを取得
+      const currentRoute = router.currentRoute.value
+      const redirectTo = currentRoute.query.redirect as string
+
       const stateValue = generateSecureState()
       const stateMetadata: OAuthState = {
         provider,
         action,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        redirectTo // redirectTo を保存
       }
       sessionStorage.setItem(`oauth_state_${stateValue}`, JSON.stringify(stateMetadata))
       pendingOAuthState.value = stateMetadata
@@ -133,7 +138,8 @@ export const useOAuthStore = defineStore('oauth', () => {
       if (state.action === 'signup' && response?.token) {
         router.push(`/signup/register?oauth=true&token=${encodeURIComponent(response.token)}`)
       } else if (state.action === 'login') {
-        await router.push('/problems')
+        const redirectTarget = state.redirectTo || '/problems'
+        await router.push(redirectTarget)
         router.go(0)
       } else if (state.action === 'bind') {
         await router.push('/settings/account')
