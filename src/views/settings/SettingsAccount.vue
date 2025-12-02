@@ -116,7 +116,7 @@ async function toggleLink(service: Service) {
       }
     } else {
       const callbackPath = '/oauth/traq/bind/callback?redirect=/settings/account'
-      const traQRedirectUrl = `/_oauth/login?redirect=${encodeURIComponent(callbackPath)}`
+      const traQRedirectUrl = `/_oauth/login?redirect=${callbackPath}`
       await router.push(traQRedirectUrl)
     }
   }
