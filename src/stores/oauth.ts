@@ -80,12 +80,8 @@ export const useOAuthStore = defineStore('oauth', () => {
           const finalRedirectUrl = redirectTo || '/problems'
           const callbackPath = `/oauth/traq/${action}/callback?redirect=${finalRedirectUrl}`
 
-          await router.push({
-            path: '/_oauth/login',
-            query: {
-              redirect: callbackPath
-            }
-          })
+          const encodedCallbackPath = encodeURIComponent(callbackPath)
+          window.location.href = `/_oauth/login?redirect=${encodedCallbackPath}`
           return
         }
         default:
