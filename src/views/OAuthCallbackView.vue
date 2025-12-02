@@ -2,11 +2,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOAuthStore } from '@/stores/oauth'
+import { Oauth2Api } from '@/api/generated'
+import { useUserStore } from '@/stores/user'
 import type { OAuthCallbackParams } from '@/types/oauth'
 
 const route = useRoute()
 const router = useRouter()
 const oauthStore = useOAuthStore()
+const userStore = useUserStore()
 
 const isProcessing = ref(true)
 const error = ref<string | null>(null)
@@ -17,16 +20,46 @@ const goToLogin = () => {
 
 onMounted(async () => {
   try {
-    const params = route.query as OAuthCallbackParams
+    const provider = route.params.provider as string
+    const action = route.params.action as string
 
-    if (params.error) {
-      throw new Error(params.error)
-    }
-    if (!params.code) {
-      throw new Error('認証コードが見つかりません')
-    }
+    if (provider === 'traq') {
+      const redirectTarget = route.query.redirect as string || '/problems'
 
-    await oauthStore.handleOAuthCallback(params.code, params.state)
+      if (!action || !['login', 'signup', 'bind'].includes(action)) {
+        throw new Error('Invalid OAuth action')
+      }
+
+      const oauth2Api = new Oauth2Api()
+      await oauth2Api.postTraqOAuthAuthorize({
+        oauthAction: action as 'login' | 'signup' | 'bind'
+      })
+
+      switch (action) {
+        case 'signup':
+          await router.push('/signup/register?oauth=true&provider=traq')
+          break
+        case 'login':
+          await userStore.fetchCurrentUser()
+          await router.push(redirectTarget)
+          break
+        case 'bind':
+          await router.push('/settings/account')
+          router.go(0)
+          break
+      }
+    } else {
+      const params = route.query as OAuthCallbackParams
+
+      if (params.error) {
+        throw new Error(params.error)
+      }
+      if (!params.code) {
+        throw new Error('認証コードが見つかりません')
+      }
+
+      await oauthStore.handleOAuthCallback(params.code, params.state)
+    }
   } catch (err: Error | unknown) {
     console.error('OAuth callback error:', err)
     error.value = err instanceof Error ? err.message : '認証処理中にエラーが発生しました'

@@ -77,16 +77,12 @@ export const useOAuthStore = defineStore('oauth', () => {
           })
           break
         case 'traq': {
-          // traQは直接認証APIを叩く
-          await oauth2Api.postTraqOAuthAuthorize({
-            oauthAction: action
-          })
+          const finalRedirectUrl = redirectTo || '/problems'
 
-          const userStore = useUserStore()
-          await userStore.fetchCurrentUser()
+          const callbackPath = `/oauth/traq/${action}/callback?redirect=${encodeURIComponent(finalRedirectUrl)}`
+          const traQRedirectUrl = `/_oauth/login?redirect=${encodeURIComponent(callbackPath)}`
 
-          const redirectTarget = redirectTo || '/problems'
-          await router.push(redirectTarget)
+          await router.push(traQRedirectUrl)
           return
         }
         default:

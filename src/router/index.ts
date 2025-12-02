@@ -50,10 +50,6 @@ const router = createRouter({
       ]
     },
     {
-      path: `/oauth/:provider/:action/callback`,
-      component: () => import('@/views/OAuthCallbackView.vue')
-    },
-    {
       path: '/oauth/:provider/:action/callback',
       component: () => import('@/views/OAuthCallbackView.vue')
     },
