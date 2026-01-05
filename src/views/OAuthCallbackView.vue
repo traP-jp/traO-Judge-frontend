@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOAuthStore } from '@/stores/oauth'
-import { Oauth2Api } from '@/api/generated'
+import { Oauth2Api, ResponseError } from '@/api/generated'
 import { useUserStore } from '@/stores/user'
 import type { OAuthCallbackParams } from '@/types/oauth'
 
@@ -24,16 +24,50 @@ onMounted(async () => {
     const action = route.params.action as string
 
     if (provider === 'traq') {
-      const redirectTarget = route.query.redirect as string || '/problems'
+      const redirectTarget = (route.query.redirect as string) || '/problems'
 
       if (!action || !['login', 'signup', 'bind'].includes(action)) {
         throw new Error('Invalid OAuth action')
       }
 
       const oauth2Api = new Oauth2Api()
-      await oauth2Api.postTraqOAuthAuthorize({
-        oauthAction: action as 'login' | 'signup' | 'bind'
-      })
+      try {
+        await oauth2Api.postTraqOAuthAuthorize({
+          oauthAction: action as 'login' | 'signup' | 'bind'
+        })
+      } catch (apiError) {
+        console.error('traQ OAuth API error:', apiError)
+
+        if (!(apiError instanceof ResponseError)) {
+          throw new Error('認証処理中に予期しないエラーが発生しました')
+        }
+
+        const status = apiError.response.status
+
+        switch (status) {
+          case 409:
+            switch (action) {
+              case 'login':
+                throw new Error(
+                  'このtraQアカウントはまだ登録されていません。先にサインアップしてください。'
+                )
+              case 'signup':
+                throw new Error('このtraQアカウントは既に別のユーザーに紐付けられています。')
+              case 'bind':
+                throw new Error('このtraQアカウントは既に別のユーザーに紐付けられています。')
+            }
+            break
+          case 400:
+            if (action === 'signup') {
+              throw new Error(
+                '既存ユーザーが存在するためサインアップできません。ログインを試してください。'
+              )
+            }
+            throw new Error(`認証に失敗しました (${status})`)
+          default:
+            throw new Error(`認証に失敗しました (${status})`)
+        }
+      }
 
       switch (action) {
         case 'signup':
