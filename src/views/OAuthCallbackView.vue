@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOAuthStore } from '@/stores/oauth'
-import { Oauth2Api } from '@/api/generated'
+import { Oauth2Api, ResponseError } from '@/api/generated'
 import { useUserStore } from '@/stores/user'
 import type { OAuthCallbackParams } from '@/types/oauth'
 
@@ -35,10 +35,14 @@ onMounted(async () => {
         await oauth2Api.postTraqOAuthAuthorize({
           oauthAction: action as 'login' | 'signup' | 'bind'
         })
-      } catch (apiError: any) {
+      } catch (apiError) {
         console.error('traQ OAuth API error:', apiError)
 
-        const status = apiError?.response?.status
+        if (!(apiError instanceof ResponseError)) {
+          throw new Error('認証処理中に予期しないエラーが発生しました')
+        }
+
+        const status = apiError.response.status
 
         switch (status) {
           case 409:
@@ -62,7 +66,7 @@ onMounted(async () => {
             }
             throw new Error(`認証に失敗しました (${status})`)
           default:
-            throw new Error(`認証に失敗しました (${status ?? 'unknown'})`)
+            throw new Error(`認証に失敗しました (${status})`)
         }
       }
 
