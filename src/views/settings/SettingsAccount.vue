@@ -102,8 +102,24 @@ async function toggleLink(service: Service) {
         console.error(`Bind ${service.name} OAuth Error:`, error)
       }
     }
-  } else {
-    console.log(`TODO: ${service.name} との連携を${service.linked ? '解除' : '開始'}する`)
+  } else if (service.name === 'traQ') {
+    if (service.linked) {
+      try {
+        const oauth2Api = new Oauth2Api()
+        await oauth2Api.revokeTraqAuth({
+          revokeTraqAuthRequest: { token: '' }
+        })
+        service.linked = false
+        service.ID = ''
+      } catch (error) {
+        console.error('Revoke traQ OAuth Error:', error)
+      }
+    } else {
+      const callbackPath = '/oauth/traq/bind/callback?redirect=/settings/account'
+
+      const encodedCallbackPath = encodeURIComponent(callbackPath)
+      window.location.href = `/_oauth/login?redirect=${encodedCallbackPath}`
+    }
   }
 }
 

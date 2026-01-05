@@ -1,119 +1,128 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Oauth2Api } from '@/api/generated/apis/Oauth2Api'
-import { ResponseError } from '@/api/generated/runtime'
+import { useOAuthStore } from '@/stores/oauth'
+import { Oauth2Api, ResponseError } from '@/api/generated'
+import { useUserStore } from '@/stores/user'
+import type { OAuthCallbackParams } from '@/types/oauth'
 
-onBeforeMount(async () => {
-  const route = useRoute()
+const route = useRoute()
+const router = useRouter()
+const oauthStore = useOAuthStore()
+const userStore = useUserStore()
 
-  if (
-    route.params.provider !== 'google' &&
-    route.params.provider !== 'github' &&
-    route.params.provider !== 'traq'
-  )
-    throw new Error('Invalid provider')
+const isProcessing = ref(true)
+const error = ref<string | null>(null)
 
-  if (
-    route.params.action !== 'login' &&
-    route.params.action !== 'signup' &&
-    route.params.action !== 'bind'
-  )
-    throw new Error('Invalid action')
+const goToLogin = () => {
+  router.push('/login')
+}
 
-  if (typeof route.query.code !== 'string') throw new Error('Invalid code')
-  if (typeof route.query.state !== 'string') throw new Error('Invalid state')
-
-  const provider = route.params.provider
-  const action = route.params.action
-  const code = route.query.code
-  const state = route.query.state
-
-  if (state !== sessionStorage.getItem('oauth_state'))
-    throw new Error('Invalid state - Possible CSRF attack')
-  sessionStorage.removeItem('oauth_state')
-
-  const router = useRouter()
-
-  // traQのOAuthは未実装
-
+onMounted(async () => {
   try {
-    if (action == 'signup') {
-      const oauth2Api = new Oauth2Api()
-      const response =
-        provider === 'github'
-          ? await oauth2Api.postGithubOAuthAuthorizeRaw({
-              oauthAction: 'signup',
-              oAuthAuthorizationCode: { code: code }
-            })
-          : await oauth2Api.postGoogleOAuthAuthorizeRaw({
-              oauthAction: 'signup',
-              oAuthAuthorizationCode: { code: code }
-            })
-      if (response.raw.status === 200) {
-        const data = await response.value()
-        const token = data.token
-        router.push(`/signup/register?token=${token}&oauth=true`)
-      } else if (response.raw.status === 204) {
-        alert('The OAuth account is already registered')
-        router.push('/')
+    const provider = route.params.provider as string
+    const action = route.params.action as string
+
+    if (provider === 'traq') {
+      const redirectTarget = (route.query.redirect as string) || '/problems'
+
+      if (!action || !['login', 'signup', 'bind'].includes(action)) {
+        throw new Error('Invalid OAuth action')
       }
-    } else if (action == 'login') {
+
       const oauth2Api = new Oauth2Api()
-      const response =
-        provider === 'github'
-          ? await oauth2Api.postGithubOAuthAuthorizeRaw({
-              oauthAction: 'login',
-              oAuthAuthorizationCode: { code: code }
-            })
-          : await oauth2Api.postGoogleOAuthAuthorizeRaw({
-              oauthAction: 'login',
-              oAuthAuthorizationCode: { code: code }
-            })
-      if (response.raw.status === 200) {
-        alert('The OAuth account is not registered, please register at first')
-        const data = await response.value()
-        const token = data.token
-        router.push(`/signup/register?token=${token}&oauth=true`)
-      } else if (response.raw.status === 204) {
-        router.push('/')
+      try {
+        await oauth2Api.postTraqOAuthAuthorize({
+          oauthAction: action as 'login' | 'signup' | 'bind'
+        })
+      } catch (apiError) {
+        console.error('traQ OAuth API error:', apiError)
+
+        if (!(apiError instanceof ResponseError)) {
+          throw new Error('認証処理中に予期しないエラーが発生しました')
+        }
+
+        const status = apiError.response.status
+
+        switch (status) {
+          case 409:
+            switch (action) {
+              case 'login':
+                throw new Error(
+                  'このtraQアカウントはまだ登録されていません。先にサインアップしてください。'
+                )
+              case 'signup':
+                throw new Error('このtraQアカウントは既に別のユーザーに紐付けられています。')
+              case 'bind':
+                throw new Error('このtraQアカウントは既に別のユーザーに紐付けられています。')
+              default:
+                throw new Error(`認証に失敗しました: 不正なアクション (${action})`)
+            }
+          case 400:
+            if (action === 'signup') {
+              throw new Error(
+                '既存ユーザーが存在するためサインアップできません。ログインを試してください。'
+              )
+            }
+            throw new Error(`認証に失敗しました (${status})`)
+          default:
+            throw new Error(`認証に失敗しました (${status})`)
+        }
       }
-    } else if (action == 'bind') {
-      const oauth2Api = new Oauth2Api()
-      const response =
-        provider === 'github'
-          ? await oauth2Api.postGithubOAuthAuthorizeRaw({
-              oauthAction: 'bind',
-              oAuthAuthorizationCode: { code: code }
-            })
-          : await oauth2Api.postGoogleOAuthAuthorizeRaw({
-              oauthAction: 'bind',
-              oAuthAuthorizationCode: { code: code }
-            })
-      if (response.raw.status === 204) {
-        router.push('/settings/account')
-      }
-    }
-  } catch (error: unknown) {
-    if (error instanceof ResponseError) {
-      if (error.response.status === 400) {
-        console.error('Invalid authorization code')
-      } else if (error.response.status === 401) {
-        console.error('Unauthorized')
-      } else if (error.response.status === 500) {
-        console.error('Internal Server Error')
-      } else {
-        console.error('Unknown error: ' + error.response.status)
+
+      switch (action) {
+        case 'signup':
+          await router.push('/signup/register?oauth=true&provider=traq')
+          break
+        case 'login':
+          await userStore.fetchCurrentUser()
+          await router.push(redirectTarget)
+          break
+        case 'bind':
+          await router.push('/settings/account')
+          router.go(0)
+          break
       }
     } else {
-      console.error('OAuth Error (' + action + '): ', error)
+      const params = route.query as OAuthCallbackParams
+
+      if (params.error) {
+        throw new Error(params.error)
+      }
+      if (!params.code) {
+        throw new Error('認証コードが見つかりません')
+      }
+
+      await oauthStore.handleOAuthCallback(params.code, params.state)
     }
+  } catch (err: Error | unknown) {
+    console.error('OAuth callback error:', err)
+    error.value = err instanceof Error ? err.message : '認証処理中にエラーが発生しました'
+  } finally {
+    isProcessing.value = false
   }
 })
 </script>
 
 <template>
-  <div class="text-text-primary">Processing OAuth callback, please wait...</div>
+  <div class="flex h-header-offset items-center justify-center bg-background-secondary p-6">
+    <div
+      class="flex w-[360px] flex-col items-center justify-center gap-6 rounded-15 bg-background-primary px-8 py-6"
+    >
+      <div v-if="isProcessing" class="flex flex-col items-center gap-4">
+        <div class="size-8 animate-spin rounded-full border-b-2 border-text-primary"></div>
+        <p class="fontstyle-ui-body text-text-primary">認証処理中...</p>
+      </div>
+      <div v-else-if="error" class="flex flex-col items-center gap-4 text-center">
+        <h1 class="fontstyle-ui-subtitle text-red-500">認証エラー</h1>
+        <p class="fontstyle-ui-body text-text-secondary">{{ error }}</p>
+        <button
+          class="fontstyle-ui-control-strong bg-primary-500 hover:bg-primary-600 rounded-lg px-4 py-2 text-white"
+          @click="goToLogin"
+        >
+          ログイン画面へ戻る
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
-
-<style scoped></style>
