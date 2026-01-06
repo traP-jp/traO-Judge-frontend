@@ -2,8 +2,9 @@
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import IconDropdownTriangle from '@/components/icons/IconDropdownTriangle.vue'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
+import traOLogo from '@/assets/traO_logo.svg'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const { isLoggedIn = false, username = '' } = defineProps<{
@@ -56,13 +57,13 @@ const handleSettings = () => {
   <header
     class="sticky top-0 z-50 flex h-14 w-full items-center bg-background-tertiary px-8 font-primary text-text-primary"
   >
-    <a class="flex items-center gap-3" href="/">
-      <img src="" class="inline-block size-7.5" />
+    <RouterLink class="flex items-center gap-3" to="/">
+      <img :src="traOLogo" class="inline-block size-7.5" />
       <span class="text-xl font-semibold">traO Judge</span>
-    </a>
+    </RouterLink>
     <span class="fontstyle-ui-control-strong ml-auto flex items-center gap-5">
-      <button>問題一覧</button>
-      <button>提出一覧</button>
+      <RouterLink to="/problems" class="hover:text-text-secondary">問題一覧</RouterLink>
+      <RouterLink v-if="isLoggedIn" :to="`/users/${username}/submissions`" class="hover:text-text-secondary">提出一覧</RouterLink>
       <PrimaryButton
         v-if="!isLoggedIn"
         padding="1rem"

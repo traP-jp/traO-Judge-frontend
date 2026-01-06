@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import SubmissionsTable from '@/components/SubmissionsTable.vue'
+import SubmissionsFilter from '@/components/SubmissionsFilter.vue'
 import { SubmissionsApi, type SubmissionSummary } from '@/api/generated'
 
 const route = useRoute()
@@ -19,7 +20,6 @@ const loadSubmissions = async (pageNum: number) => {
     offset: (pageNum - 1) * rowPerPage
   })
 
-  // SubmissionSummaryをMapに変換
   const submissionsMap = new Map<string, SubmissionSummary>()
   if (response.submissions) {
     response.submissions.forEach((submission) => {
@@ -37,7 +37,11 @@ const loadSubmissions = async (pageNum: number) => {
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-6">
+  <div class="flex flex-col gap-6 py-6">
+    <SubmissionsFilter>
+      <template #title>提出一覧</template>
+    </SubmissionsFilter>
+
     <SubmissionsTable v-model="page" :load-submissions="loadSubmissions" />
   </div>
 </template>
