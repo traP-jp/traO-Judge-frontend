@@ -55,7 +55,7 @@ const handleSubmit = async () => {
       }
     })
 
-    await router.push(`/submissions/${submission.id}`)
+    await router.push(`/problems/${problemId}/submissions`)
   } catch (err) {
     console.error('Submission failed:', err)
     alert(`提出に失敗しました: ${err instanceof Error ? err.message : 'Unknown error'}`)
