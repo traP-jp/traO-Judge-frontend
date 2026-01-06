@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useQueryParamInt } from '@/composables/useQueryParam'
-import SubmissionsList from '@/components/SubmissionsList.vue'
-import MonochromeButton from '@/components/Controls/MonochromeButton.vue'
-import MaterialIcon from '@/components/MaterialIcon.vue'
+import SubmissionsTable from '@/components/SubmissionsTable.vue'
+import SubmissionsFilter from '@/components/SubmissionsFilter.vue'
+import { SubmissionsApi, type SubmissionSummary } from '@/api/generated'
 
 const { username } = defineProps<{ username: string }>()
 const page = useQueryParamInt('page', 0, true)
 
-const filterMenuShown = ref(false)
-const toggleFilterMenu = () => {
-  filterMenuShown.value = !filterMenuShown.value
+const rowPerPage = 20
+
+const loadSubmissions = async (
+  currentPage: number
+): Promise<{ submissions: Map<string, SubmissionSummary>; totalPage: number }> => {
+  const summaries = await new SubmissionsApi().getSubmissions({
+    orderBy: 'submittedAtDesc',
+    username,
+    limit: rowPerPage,
+    offset: currentPage * rowPerPage
+  })
+
+  const submissions = new Map(
+    summaries.submissions?.map((submission) => [submission.id, submission])
+  )
+  const totalPage = Math.ceil((summaries.total ?? 0) / rowPerPage)
+
+  return { submissions, totalPage }
 }
 </script>
 
 <template>
   <div class="flex flex-col gap-6 py-6">
-    <div class="relative flex items-center gap-4">
-      <h2 class="fontstyle-ui-subtitle flex-1 text-text-primary">
+    <SubmissionsFilter>
+      <template #title>
         <span>{{ username }}</span>
         <span>の提出</span>
-      </h2>
-      <MonochromeButton small @click="toggleFilterMenu">
-        <span class="inline-flex items-center gap-1">
-          <span>フィルタ</span>
-          <MaterialIcon icon="tune" size="20px" />
-        </span>
-      </MonochromeButton>
+      </template>
+    </SubmissionsFilter>
 
-      <div v-if="filterMenuShown" class="absolute right-0 top-full z-10 pt-2">
-        <div
-          class="rounded-lg border border-border-secondary bg-background-primary p-4 text-text-secondary shadow-lg"
-        >
-          <p class="fontstyle-ui-body text-text-tertiary">実装予定です</p>
-        </div>
-      </div>
-    </div>
-
-    <SubmissionsList v-model:page="page" :username="username" />
+    <SubmissionsTable v-model="page" :load-submissions="loadSubmissions" />
   </div>
 </template>
 
