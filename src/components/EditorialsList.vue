@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
-import { EditorialsApi, type EditorialSummary, type User } from '@/api/generated'
+import { EditorialsApi, type EditorialSummary, type User, UsersApi } from '@/api/generated'
 import { dateToString } from '@/utils/date'
 import MaterialIcon from '@/components/MaterialIcon.vue'
-import router from '@/router'
-import { UsersApi } from '@/api/generated'
 
 const { problemId } = defineProps<{
   problemId: string
 }>()
+
+const router = useRouter()
 
 const isLoaded = ref<boolean>(false)
 const editorialIds = ref<string[]>([])
