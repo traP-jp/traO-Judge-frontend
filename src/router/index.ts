@@ -77,7 +77,7 @@ const router = createRouter({
     {
       path: '/problems/create',
       component: () => import('@/views/problem/create/ProblemCreateView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, requiresTraqAuth: true }
     },
     {
       path: '/problems/:id',
@@ -113,7 +113,7 @@ const router = createRouter({
     {
       path: '/problems/:id/edit',
       component: () => import('@/views/ProblemEditView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresTraqAuth: true },
       children: [
         {
           path: '',
@@ -173,6 +173,14 @@ router.beforeEach(async (to, _, next) => {
         path: '/login',
         query: { redirect: to.fullPath }
       })
+      return
+    }
+  }
+
+  if (to.matched.some(record => record.meta.requiresTraqAuth)) {
+    const isTraqAuthenticated = !!userStore.user?.authentication?.traqAuth
+    if (!isTraqAuthenticated) {
+      next('/')
       return
     }
   }

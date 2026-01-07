@@ -14,8 +14,10 @@ import type {
   PostTestcaseRequestInner,
   PutTestcaseRequest
 } from '@/api/generated/models'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 
 const route = useRoute()
+const { requireTraqAuth } = useTraqAuthGuard()
 
 if (typeof route.params.id !== 'string') throw new Error('Invalid route')
 const problemId = ref<string>('')
@@ -139,7 +141,7 @@ async function handleDelete(id: string) {
   const testcase = testcases.value.get(id)
   if (testcase && confirm(`テストケース「${testcase.name}」を削除しますか？`)) {
     try {
-      await testcasesApi.deleteTestcase({ testcaseId: id })
+      await requireTraqAuth(() => testcasesApi.deleteTestcase({ testcaseId: id }))
 
       testcases.value.delete(id)
       testcaseDetails.value.delete(id)
@@ -148,8 +150,8 @@ async function handleDelete(id: string) {
       if (editingTestcase.value?.id === id) {
         closeEditArea()
       }
-    } catch {
-      alert('テストケースの削除に失敗しました')
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'テストケースの削除に失敗しました')
     }
   }
   dropdownOpenId.value = null
@@ -174,10 +176,12 @@ async function handleSaveTestcase() {
         testOutput: formData.value.output
       }
 
-      await testcasesApi.putTestcase({
-        testcaseId: editingTestcase.value.id,
-        putTestcaseRequest: putRequest
-      })
+      await requireTraqAuth(() =>
+        testcasesApi.putTestcase({
+          testcaseId: editingTestcase.value!.id,
+          putTestcaseRequest: putRequest
+        })
+      )
 
       testcaseDetails.value.set(editingTestcase.value.id, {
         ...editingTestcase.value,
@@ -194,10 +198,12 @@ async function handleSaveTestcase() {
       }
       // TODO: 配列型でいいのか確認
       // 複数の一括追加を想定して作ったが，本当に必要？
-      await testcasesApi.postTestcases({
-        problemId: problemId.value,
-        postTestcaseRequestInner: [postRequest]
-      })
+      await requireTraqAuth(() =>
+        testcasesApi.postTestcases({
+          problemId: problemId.value,
+          postTestcaseRequestInner: [postRequest]
+        })
+      )
     }
 
     await fetchTestcases()
@@ -205,8 +211,8 @@ async function handleSaveTestcase() {
     editingTestcase.value = null
     formData.value = { name: '', input: '', output: '' }
     showEditForm.value = false
-  } catch {
-    alert('テストケースの保存に失敗しました')
+  } catch (error) {
+    alert(error instanceof Error ? error.message : 'テストケースの保存に失敗しました')
   }
 }
 

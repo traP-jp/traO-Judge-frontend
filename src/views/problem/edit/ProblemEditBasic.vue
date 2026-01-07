@@ -7,7 +7,10 @@ import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
 import LabeledCheckbox from '@/components/Controls/LabeledCheckbox.vue'
 import { ProblemsApi, type Problem } from '@/api/generated'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import { type Ref } from 'vue'
+
+const { requireTraqAuth } = useTraqAuthGuard()
 
 const problem = ref<Problem>()
 
@@ -93,14 +96,16 @@ async function saveSetting() {
     problem.value.timeLimit = timeLimit.value!
     problem.value.memoryLimit = memoryLimit.value! * 1024 // MiB to KiB
     problem.value.isPublic = isPublic.value
-    await problemsApi.putProblem({
-      problemId: problemId.value,
-      putProblemRequest: problem.value
-    })
+    await requireTraqAuth(() =>
+      problemsApi.putProblem({
+        problemId: problemId.value,
+        putProblemRequest: problem.value!
+      })
+    )
     saveSuccess.value = true
   } catch (error) {
     console.error('基本設定の保存に失敗しました:', error)
-    saveError.value = '基本設定の保存に失敗しました。'
+    saveError.value = error instanceof Error ? error.message : '基本設定の保存に失敗しました。'
     saveErrorShow.value = true
   } finally {
     isLoading.value = false

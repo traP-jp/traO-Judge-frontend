@@ -7,9 +7,11 @@ import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
 import PlainTextArea from '@/components/PlainTextArea.vue'
 import { ProblemsApi } from '@/api/generated'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import { type Ref } from 'vue'
 
 const router = useRouter()
+const { requireTraqAuth } = useTraqAuthGuard()
 
 const title = ref<string>('')
 const difficulty = ref<number>()
@@ -56,19 +58,21 @@ const problemsApi = new ProblemsApi()
 async function createProblem() {
   isLoading.value = true
   try {
-    const createdProblem = await problemsApi.postProblem({
-      postProblemRequest: {
-        title: title.value,
-        difficulty: difficulty.value!,
-        timeLimit: timeLimit.value!,
-        memoryLimit: memoryLimit.value! * 1024, // MiB to KiB
-        statement: statement.value
-      }
-    })
+    const createdProblem = await requireTraqAuth(() =>
+      problemsApi.postProblem({
+        postProblemRequest: {
+          title: title.value,
+          difficulty: difficulty.value!,
+          timeLimit: timeLimit.value!,
+          memoryLimit: memoryLimit.value! * 1024, // MiB to KiB
+          statement: statement.value
+        }
+      })
+    )
     router.push(`/problems/${createdProblem.id}/edit`)
   } catch (error) {
     console.error('問題の作成に失敗しました:', error)
-    saveError.value = '問題の作成に失敗しました。'
+    saveError.value = error instanceof Error ? error.message : '問題の作成に失敗しました。'
     saveErrorShow.value = true
   } finally {
     isLoading.value = false
