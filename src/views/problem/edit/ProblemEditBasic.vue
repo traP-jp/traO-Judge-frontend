@@ -5,6 +5,7 @@ import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
+import LabeledCheckbox from '@/components/Controls/LabeledCheckbox.vue'
 import { ProblemsApi, type Problem } from '@/api/generated'
 import { type Ref } from 'vue'
 
@@ -14,6 +15,7 @@ const title = ref<string>('')
 const difficulty = ref<number>()
 const timeLimit = ref<number>()
 const memoryLimit = ref<number>()
+const isPublic = ref<boolean>(false)
 
 const problemTitleError = ref<string>('')
 const difficultyError = ref<string>('')
@@ -72,6 +74,7 @@ async function fetchProblem() {
     difficulty.value = problem.value.difficulty
     timeLimit.value = problem.value.timeLimit
     memoryLimit.value = problem.value.memoryLimit
+    isPublic.value = problem.value.isPublic
   } catch (error) {
     console.error('問題の取得に失敗しました:', error)
     saveError.value = '問題の取得に失敗しました。'
@@ -89,6 +92,7 @@ async function saveSetting() {
     problem.value.difficulty = difficulty.value!
     problem.value.timeLimit = timeLimit.value!
     problem.value.memoryLimit = memoryLimit.value!
+    problem.value.isPublic = isPublic.value
     await problemsApi.putProblem({
       problemId: problemId.value,
       putProblemRequest: problem.value
@@ -176,6 +180,12 @@ onMounted(() => {
             />
           </div>
         </div>
+
+        <LabeledCheckbox
+          id="is-public"
+          v-model="isPublic"
+          label="問題を公開する"
+        />
 
         <PrimaryButton
           class="h-10 w-18 px-3 py-2"
