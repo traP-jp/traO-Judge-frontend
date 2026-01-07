@@ -30,19 +30,13 @@ try {
     oauth.value = route.query.oauth === 'true'
   }
   
-  const provider = route.query.provider as string
-  if (provider === 'traq') {
-    // traQの場合はtokenは不要
-    token.value = 'traq-oauth'
-  } else {
-    if (typeof route.query.token !== 'string') {
-      throw new Error('Invalid token')
-    }
-    token.value = route.query.token
-    if (!oauth.value) {
-      const decodedToken = jwtDecode<{ email: string }>(token.value)
-      emailAddress.value = decodedToken.email
-    }
+  if (typeof route.query.token !== 'string') {
+    throw new Error('Invalid token')
+  }
+  token.value = route.query.token
+  if (!oauth.value) {
+    const decodedToken = jwtDecode<{ email: string }>(token.value)
+    emailAddress.value = decodedToken.email
   }
 } catch (error) {
   console.error('Signup Register Error:', error)
