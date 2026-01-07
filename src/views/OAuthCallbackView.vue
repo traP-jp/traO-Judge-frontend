@@ -72,6 +72,7 @@ onMounted(async () => {
 
       switch (action) {
         case 'signup':
+          await userStore.fetchCurrentUser()
           await router.push('/')
           break
         case 'login':
