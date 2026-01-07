@@ -17,7 +17,9 @@ const isMenuOpen = ref(false)
 const router = useRouter()
 const userStore = useUserStore()
 
-const isTraqAuthenticated = computed(() => !!userStore.user?.authentication?.traqAuth)
+const canCreateProblem = computed(() =>
+  userStore.user?.role === 'Admin' || !!userStore.user?.authentication?.traqAuth
+)
 
 const modalHandler = (e: MouseEvent) => {
   if (!(e.target instanceof HTMLElement) || e.target.closest('#top-navbar-menu')) return
@@ -65,7 +67,7 @@ const handleSettings = () => {
       <span class="text-xl font-semibold">traO Judge</span>
     </RouterLink>
     <span class="fontstyle-ui-control-strong ml-auto flex items-center gap-5">
-      <RouterLink v-if="isTraqAuthenticated" to="/problems/create" class="hover:text-text-secondary">問題作成</RouterLink>
+      <RouterLink v-if="canCreateProblem" to="/problems/create" class="hover:text-text-secondary">問題作成</RouterLink>
       <RouterLink to="/problems" class="hover:text-text-secondary">問題一覧</RouterLink>
       <RouterLink v-if="isLoggedIn" :to="`/users/${userId}/submissions`" class="hover:text-text-secondary">提出一覧</RouterLink>
       <PrimaryButton
