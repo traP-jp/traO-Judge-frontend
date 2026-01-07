@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import SideMenuUserPage from '@/components/Navigations/SideMenu/SideMenuUserPage.vue'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { UsersApi, type User, ResponseError } from '@/api/generated'
 
 const route = useRoute()
@@ -38,10 +38,6 @@ watch(
   },
   { immediate: true }
 )
-
-onMounted(() => {
-  loadUser()
-})
 </script>
 
 <template>
