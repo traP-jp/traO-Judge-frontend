@@ -8,6 +8,7 @@ import type { SubmissionSummary } from '@/api/generated'
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
+  displayUsername?: boolean
   loadSubmissions: (
     page: number
   ) => Promise<{
@@ -21,6 +22,7 @@ const page = defineModel<number>({ required: true })
 const cols: (Column & { name: string })[] = [
   { id: 'submittedAt', textAlign: 'start', name: '提出日時', width: '176px' },
   { id: 'title', textAlign: 'start', name: '問題' },
+  { id: 'userName', textAlign: 'start', name: '提出者', width: '200px' },
   { id: 'totalScore', textAlign: 'end', name: '得点', width: '64px' },
   { id: 'judgeStatus', textAlign: 'center', name: '結果', width: '80px' },
   { id: 'maxTime', textAlign: 'end', name: '実行時間', width: '112px' },
@@ -46,7 +48,13 @@ watch([page], () => updateSubmissions(), {
 </script>
 
 <template>
-  <ListingTable v-if="isLoaded" :cols="cols" :row-ids="[...submissions.keys()]">
+  <ListingTable 
+    v-if="isLoaded" 
+    :cols="cols.filter(col => 
+      (props.displayUsername ? col.id !== 'title' : col.id !== 'userName')
+    )" 
+    :row-ids="[...submissions.keys()]"
+  >
     <template #head="{ colId }">
       {{ cols.find(({ id }) => id === colId)?.name }}
     </template>
@@ -57,6 +65,11 @@ watch([page], () => updateSubmissions(), {
       <template v-else-if="colId === 'title'">
         <Link :href="`/problems/${submissions.get(rowId)?.problemId}`" :new-tab="true">
           {{ submissions.get(rowId)?.title }}
+        </Link>
+      </template>
+      <template v-else-if="colId === 'userName'">
+        <Link :href="`/users/${submissions.get(rowId)?.userId}`" :new-tab="true">
+          {{ submissions.get(rowId)?.userName }}
         </Link>
       </template>
       <template v-else-if="colId === 'totalScore'">

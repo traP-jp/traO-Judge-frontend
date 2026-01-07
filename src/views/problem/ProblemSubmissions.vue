@@ -37,12 +37,12 @@ const loadSubmissions = async (pageNum: number) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 py-6">
+  <div class="flex w-full flex-col gap-6 py-6">
     <SubmissionsFilter>
       <template #title>提出一覧</template>
     </SubmissionsFilter>
 
-    <SubmissionsTable v-model="page" :load-submissions="loadSubmissions" />
+    <SubmissionsTable v-model="page" :display-username="true" :load-submissions="loadSubmissions" />
   </div>
 </template>
 
