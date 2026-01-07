@@ -1588,7 +1588,7 @@
     },
     {
       "key": "Access-Control-Allow-Origin",
-      "value": "*"
+      "value": "http://localhost:5173"
     },
     {
       "key": "Access-Control-Allow-Methods",
@@ -1597,6 +1597,10 @@
     {
       "key": "Access-Control-Allow-Headers",
       "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    },
+    {
+      "key": "Access-Control-Allow-Credentials",
+      "value": "true"
     }
   ],
   "proxyReqHeaders": [
