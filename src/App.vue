@@ -19,7 +19,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TopNavbar :is-logged-in="userStore.isAuthenticated" :username="userStore.username" />
+  <TopNavbar :is-logged-in="userStore.isAuthenticated" :user-id="userStore.userId" :username="userStore.username" />
   <main>
     <RouterView />
   </main>

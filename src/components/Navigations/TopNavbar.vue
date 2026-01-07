@@ -7,8 +7,9 @@ import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
-const { isLoggedIn = false, username = '' } = defineProps<{
+const { isLoggedIn = false, userId = '', username = '' } = defineProps<{
   isLoggedIn: boolean
+  userId: string
   username: string
 }>()
 
@@ -45,7 +46,7 @@ const handleLogin = () => {
 }
 
 const handleProfile = () => {
-  router.push(`/users/${username}`)
+  router.push(`/users/${userId}`)
 }
 
 const handleSettings = () => {
@@ -63,7 +64,7 @@ const handleSettings = () => {
     </RouterLink>
     <span class="fontstyle-ui-control-strong ml-auto flex items-center gap-5">
       <RouterLink to="/problems" class="hover:text-text-secondary">問題一覧</RouterLink>
-      <RouterLink v-if="isLoggedIn" :to="`/users/${username}/submissions`" class="hover:text-text-secondary">提出一覧</RouterLink>
+      <RouterLink v-if="isLoggedIn" :to="`/users/${userId}/submissions`" class="hover:text-text-secondary">提出一覧</RouterLink>
       <PrimaryButton
         v-if="!isLoggedIn"
         padding="1rem"

@@ -3,7 +3,7 @@ import Link from '@/components/Link.vue'
 import { computed } from 'vue'
 import type { User } from '@/api/generated'
 
-const { user } = defineProps<{ username: string; user: User | null }>()
+const { user } = defineProps<{ userId: string; user: User | null }>()
 
 const traqId = computed(() => user?.traqId ?? '')
 const githubId = computed(() => user?.githubId ?? '')

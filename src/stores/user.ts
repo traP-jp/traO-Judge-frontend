@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
   const error = ref<string | null>(null)
 
   const isAuthenticated = computed(() => !!user.value)
+  const userId = computed(() => user.value?.id ?? '')
   const username = computed(() => user.value?.name ?? '')
 
   const SESSION_FLAG_KEY = 'traOJudge_hasSession'
@@ -113,6 +114,7 @@ export const useUserStore = defineStore('user', () => {
     isLoading,
     error,
     isAuthenticated,
+    userId,
     username,
     hasSessionFlag,
     fetchCurrentUser,
