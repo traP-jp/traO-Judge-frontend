@@ -7,29 +7,30 @@ import SideMenuBase, {
 
 const route = useRoute()
 
-const { isMe = false, username, iconUrl = '' } = defineProps<{
+const { isMe = false, userId, username, iconUrl = '' } = defineProps<{
   isMe?: boolean
+  userId: string
   username: string
   iconUrl?: string
 }>()
 
-const mainContents: SideMenuProps[] = [
+const mainContents = computed<SideMenuProps[]>(() => [
   {
     text: 'プロフィール',
     icon: 'id_card',
-    href: `/users/${username}`
+    href: `/users/${userId}`
   },
   {
     text: '提出一覧',
     icon: 'format_list_bulleted',
-    href: `/users/${username}/submissions`
+    href: `/users/${userId}/submissions`
   },
   {
     text: '問題一覧',
     icon: 'library_books',
-    href: `/users/${username}/problems`
+    href: `/users/${userId}/problems`
   }
-]
+])
 const bottomContents = computed((): SideMenuProps[] => {
   if (!isMe) return []
   return [
@@ -47,7 +48,7 @@ const currentTab = ref<number>(0)
 watch(
   () => route.path,
   (path) => {
-    const index = mainContents.findIndex((content) => content.href === path)
+    const index = mainContents.value.findIndex((content) => content.href === path)
     if (index >= 0) currentTab.value = index
   },
   { immediate: true }

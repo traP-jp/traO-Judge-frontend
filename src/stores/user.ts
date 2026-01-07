@@ -9,8 +9,11 @@ export const useUserStore = defineStore('user', () => {
   const user = ref<Me | null>(null)
   const isLoading = ref(false)
   const error = ref<string | null>(null)
+  const isInitialized = ref(false)
+  let initPromise: Promise<void> | null = null
 
   const isAuthenticated = computed(() => !!user.value)
+  const userId = computed(() => user.value?.id ?? '')
   const username = computed(() => user.value?.name ?? '')
 
   const SESSION_FLAG_KEY = 'traOJudge_hasSession'
@@ -25,6 +28,25 @@ export const useUserStore = defineStore('user', () => {
 
   const hasSessionFlag = (): boolean => {
     return localStorage.getItem(SESSION_FLAG_KEY) === 'true'
+  }
+
+  const initialize = async () => {
+    if (initPromise) {
+      return initPromise
+    }
+
+    initPromise = (async () => {
+      if (hasSessionFlag()) {
+        try {
+          await fetchCurrentUser()
+        } catch {
+          // ignore
+        }
+      }
+      isInitialized.value = true
+    })()
+
+    return initPromise
   }
 
   const fetchCurrentUser = async () => {
@@ -113,7 +135,10 @@ export const useUserStore = defineStore('user', () => {
     isLoading,
     error,
     isAuthenticated,
+    isInitialized,
+    userId,
     username,
+    initialize,
     hasSessionFlag,
     fetchCurrentUser,
     login,

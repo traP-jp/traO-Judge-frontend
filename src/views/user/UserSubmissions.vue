@@ -2,9 +2,9 @@
 import { useQueryParamInt } from '@/composables/useQueryParam'
 import SubmissionsTable from '@/components/SubmissionsTable.vue'
 import SubmissionsFilter from '@/components/SubmissionsFilter.vue'
-import { SubmissionsApi, type SubmissionSummary } from '@/api/generated'
+import { SubmissionsApi, type SubmissionSummary, type User } from '@/api/generated'
 
-const { username } = defineProps<{ username: string }>()
+const props = defineProps<{ userId: string; user: User | null }>()
 const page = useQueryParamInt('page', 0, true)
 
 const rowPerPage = 20
@@ -14,7 +14,7 @@ const loadSubmissions = async (
 ): Promise<{ submissions: Map<string, SubmissionSummary>; totalPage: number }> => {
   const summaries = await new SubmissionsApi().getSubmissions({
     orderBy: 'submittedAtDesc',
-    username,
+    userId: props.userId,
     limit: rowPerPage,
     offset: currentPage * rowPerPage
   })
@@ -32,7 +32,7 @@ const loadSubmissions = async (
   <div class="flex flex-col gap-6 py-6">
     <SubmissionsFilter>
       <template #title>
-        <span>{{ username }}</span>
+        <span>{{ props.user?.name }}</span>
         <span>の提出</span>
       </template>
     </SubmissionsFilter>

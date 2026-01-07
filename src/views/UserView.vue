@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import SideMenuUserPage from '@/components/Navigations/SideMenu/SideMenuUserPage.vue'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { UsersApi, type User, ResponseError } from '@/api/generated'
 
 const route = useRoute()
 
 if (typeof route.params.id !== 'string') throw new Error('Invalid route')
-const username = ref<string>('')
+const userId = ref<string>('')
 const user = ref<User | null>(null)
 
 const loadUser = async () => {
   try {
-    user.value = await new UsersApi().getUser({ userId: username.value })
+    user.value = await new UsersApi().getUser({ userId: userId.value })
   } catch (error) {
     if (error instanceof ResponseError) {
       switch (error.response.status) {
@@ -33,24 +33,20 @@ const loadUser = async () => {
 watch(
   () => route.params.id,
   (id) => {
-    username.value = `${id}`
+    userId.value = `${id}`
     loadUser()
   },
   { immediate: true }
 )
-
-onMounted(() => {
-  loadUser()
-})
 </script>
 
 <template>
   <div class="flex gap-8 px-container-x">
     <nav class="sticky top-14 h-header-offset">
-      <SideMenuUserPage :username="username" :icon-url="user?.iconUrl ?? ''" />
+      <SideMenuUserPage :user-id="userId" :username="user?.name ?? ''" :icon-url="user?.iconUrl ?? ''" />
     </nav>
     <main class="flex-auto py-6">
-      <RouterView :username="username" :user="user" />
+      <RouterView :user-id="userId" :user="user" />
     </main>
   </div>
 </template>

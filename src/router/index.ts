@@ -160,19 +160,9 @@ const router = createRouter({
 router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore()
 
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!userStore.isAuthenticated && userStore.hasSessionFlag()) {
-      try {
-        await userStore.fetchCurrentUser()
-      } catch {
-        next({
-          path: '/login',
-          query: { redirect: to.fullPath }
-        })
-        return
-      }
-    }
+  await userStore.initialize()
 
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!userStore.isAuthenticated) {
       next({
         path: '/login',
