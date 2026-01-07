@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import SideMenuBase, {
   type SideMenuProps
 } from '@/components/Navigations/SideMenu/SideMenuBase.vue'
-import MaterialIcon from '@/components/MaterialIcon.vue'
+import { ProblemsApi } from '@/api/generated'
 
 const route = useRoute()
 
@@ -36,6 +36,19 @@ const mainContents = computed((): SideMenuProps[] => [
 ])
 
 const currentTab = ref<number>(0)
+
+const problemTitle = ref<string>('')
+
+const fetchProblemTitle = async () => {
+  try {
+    const api = new ProblemsApi()
+    const response = await api.getProblem({ problemId })
+    problemTitle.value = response.title ?? ''
+  } catch (error) {
+    console.error('問題の取得に失敗しました:', error)
+  }
+}
+
 watch(
   () => route.path,
   (path) => {
@@ -44,15 +57,19 @@ watch(
   },
   { immediate: true }
 )
+
+watch(
+  () => problemId,
+  fetchProblemTitle,
+  { immediate: true }
+)
 </script>
 
 <template>
   <SideMenuBase v-model="currentTab" :main-contents="mainContents">
-    <div class="flex w-full flex-col items-center justify-center">
-      <div class="flex size-40 items-center justify-center rounded-full bg-background-tertiary">
-        <MaterialIcon icon="edit" size="4rem" />
-      </div>
+    <div class="flex w-full flex-col justify-center">
       <span class="mt-2 font-primary text-xl font-semibold text-text-primary">問題設定</span>
+      <span class="mt-2 font-primary text-base font-semibold text-text-tertiary">{{ problemTitle }}</span>
     </div>
   </SideMenuBase>
 </template>
