@@ -5,7 +5,7 @@ import SubmissionsFilter from '@/components/SubmissionsFilter.vue'
 import { SubmissionsApi, type SubmissionSummary, type User } from '@/api/generated'
 
 const props = defineProps<{ userId: string; user: User | null }>()
-const page = useQueryParamInt('page', 0, true)
+const page = useQueryParamInt('page', 1, true)
 
 const rowPerPage = 20
 
@@ -16,7 +16,7 @@ const loadSubmissions = async (
     orderBy: 'submittedAtDesc',
     userId: props.userId,
     limit: rowPerPage,
-    offset: currentPage * rowPerPage
+    offset: (currentPage - 1) * rowPerPage
   })
 
   const submissions = new Map(
