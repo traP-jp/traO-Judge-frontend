@@ -42,7 +42,7 @@ const loadSubmissions = async (pageNum: number) => {
       <template #title>提出一覧</template>
     </SubmissionsFilter>
 
-    <SubmissionsTable v-model="page" :load-submissions="loadSubmissions" />
+    <SubmissionsTable v-model="page" :display-username="true" :load-submissions="loadSubmissions" />
   </div>
 </template>
 
