@@ -72,7 +72,7 @@ onMounted(async () => {
 
       switch (action) {
         case 'signup':
-          await router.push('/signup/register?oauth=true&provider=traq')
+          await router.push('/')
           break
         case 'login':
           await userStore.fetchCurrentUser()
