@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { ref, watch, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ref, computed } from 'vue'
 import AlertBox from '@/components/AlertBox.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import PlainTextbox from '@/components/Controls/Textbox/PlainTextbox.vue'
 import NumberTextbox from '@/components/Controls/Textbox/NumberTextbox.vue'
-import LabeledCheckbox from '@/components/Controls/LabeledCheckbox.vue'
-import { ProblemsApi, type Problem } from '@/api/generated'
+import PlainTextArea from '@/components/PlainTextArea.vue'
+import { ProblemsApi } from '@/api/generated'
 import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import { type Ref } from 'vue'
 
+const router = useRouter()
 const { requireTraqAuth } = useTraqAuthGuard()
-
-const problem = ref<Problem>()
 
 const title = ref<string>('')
 const difficulty = ref<number>()
-const timeLimit = ref<number>()
-const memoryLimit = ref<number>()
-const isPublic = ref<boolean>(false)
+const timeLimit = ref<number>(2000)
+const memoryLimit = ref<number>(256)
+const statement = ref<string>('')
 
 const problemTitleError = ref<string>('')
 const difficultyError = ref<string>('')
@@ -26,7 +25,6 @@ const timeLimitError = ref<string>('')
 const memoryLimitError = ref<string>('')
 
 const saveError = ref<string>('')
-const saveSuccess = ref<boolean>(false)
 const saveErrorShow = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 
@@ -41,18 +39,6 @@ const inputInvalid = computed<boolean>(() => {
   if (memoryLimit.value < 1) return true
   return false
 })
-
-const route = useRoute()
-
-if (typeof route.params.id !== 'string') throw new Error('Invalid route')
-const problemId = ref<string>('')
-watch(
-  () => route.params.id,
-  (id) => {
-    problemId.value = `${id}`
-  },
-  { immediate: true }
-)
 
 function validateRequiredField<Value>(valueRef: Ref<Value>, errorRef: Ref<string>) {
   if (!valueRef.value) {
@@ -69,59 +55,36 @@ const onChangeMemoryLimit = validateRequiredField.bind(null, memoryLimit, memory
 
 const problemsApi = new ProblemsApi()
 
-async function fetchProblem() {
+async function createProblem() {
   isLoading.value = true
   try {
-    problem.value = await problemsApi.getProblem({ problemId: problemId.value })
-    title.value = problem.value.title
-    difficulty.value = problem.value.difficulty
-    timeLimit.value = problem.value.timeLimit
-    memoryLimit.value = problem.value.memoryLimit / 1024 // KiB to MiB
-    isPublic.value = problem.value.isPublic
-  } catch (error) {
-    console.error('問題の取得に失敗しました:', error)
-    saveError.value = '問題の取得に失敗しました。'
-    saveErrorShow.value = true
-  } finally {
-    isLoading.value = false
-  }
-}
-
-async function saveSetting() {
-  if (problem.value == null) return
-  isLoading.value = true
-  try {
-    problem.value.title = title.value
-    problem.value.difficulty = difficulty.value!
-    problem.value.timeLimit = timeLimit.value!
-    problem.value.memoryLimit = memoryLimit.value! * 1024 // MiB to KiB
-    problem.value.isPublic = isPublic.value
-    await requireTraqAuth(() =>
-      problemsApi.putProblem({
-        problemId: problemId.value,
-        putProblemRequest: problem.value!
+    const createdProblem = await requireTraqAuth(() =>
+      problemsApi.postProblem({
+        postProblemRequest: {
+          title: title.value,
+          difficulty: difficulty.value!,
+          timeLimit: timeLimit.value!,
+          memoryLimit: memoryLimit.value! * 1024, // MiB to KiB
+          statement: statement.value
+        }
       })
     )
-    saveSuccess.value = true
+    router.push(`/problems/${createdProblem.id}/edit`)
   } catch (error) {
-    console.error('基本設定の保存に失敗しました:', error)
-    saveError.value = error instanceof Error ? error.message : '基本設定の保存に失敗しました。'
+    console.error('問題の作成に失敗しました:', error)
+    saveError.value = error instanceof Error ? error.message : '問題の作成に失敗しました。'
     saveErrorShow.value = true
   } finally {
     isLoading.value = false
   }
 }
-
-onMounted(() => {
-  fetchProblem()
-})
 </script>
 
 <template>
-  <div class="flex w-full font-primary">
-    <div class="flex w-full flex-col">
-      <div class="flex max-w-profile-max flex-col items-start justify-start gap-4">
-        <h2 class="text-xl font-medium">基本設定</h2>
+  <div class="flex min-h-screen w-full justify-center px-container-x py-6 font-primary">
+    <div class="flex w-full max-w-profile-max flex-col">
+      <div class="flex flex-col items-start justify-start gap-4">
+        <h2 class="text-xl font-medium">問題の新規作成</h2>
 
         <div class="w-full">
           <PlainTextbox
@@ -186,20 +149,20 @@ onMounted(() => {
           </div>
         </div>
 
-        <LabeledCheckbox
-          id="is-public"
-          v-model="isPublic"
-          label="問題を公開する"
-        />
+        <div class="w-full">
+          <label class="fontstyle-ui-control mb-1 block text-text-primary" for="problem-statement">
+            問題文
+          </label>
+          <PlainTextArea id="problem-statement" v-model="statement" class="h-64 w-full" />
+        </div>
 
         <PrimaryButton
           class="h-10 w-18 px-3 py-2"
           :disabled="isLoading || inputInvalid"
-          @click="saveSetting"
+          @click="createProblem"
         >
-          保存
+          作成
         </PrimaryButton>
-        <AlertBox v-model:show="saveSuccess" text="基本設定が保存されました。" />
         <AlertBox v-model:show="saveErrorShow" :text="saveError" type="error" />
       </div>
     </div>

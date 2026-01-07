@@ -2,11 +2,14 @@
 import { onMounted, ref } from 'vue'
 import ListingTable, { type Column } from '@/components/ListingTable.vue'
 import { EditorialsApi, type EditorialSummary } from '@/api/generated'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import { dateToString } from '@/utils/date'
 import MenuButton from '@/components/Navigations/MenuButton.vue'
 import MaterialIcon from '@/components/MaterialIcon.vue'
 import BorderedButton from './Controls/BorderedButton.vue'
 import router from '@/router'
+
+const { requireTraqAuth } = useTraqAuthGuard()
 
 const { problemId } = defineProps<{
   problemId: string
@@ -57,12 +60,12 @@ async function deleteEditorial() {
   if (!editorial) return
 
   try {
-    await editorialsApi.deleteEditorial({ editorialId: editorial.id })
+    await requireTraqAuth(() => editorialsApi.deleteEditorial({ editorialId: editorial.id }))
     editorials.value.delete(focused.value)
     editorialIds.value = editorialIds.value.filter((id) => id !== editorial.id)
   } catch (error) {
     console.error('API Error:', error)
-    alert(`API Error: ${error}`)
+    alert(error instanceof Error ? error.message : `API Error: ${error}`)
   } finally {
     closeActionMenu()
   }

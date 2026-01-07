@@ -4,9 +4,11 @@ import { ref, watch, onMounted } from 'vue'
 import PlainTextArea from '@/components/PlainTextArea.vue'
 import PrimaryButton from '@/components/Controls/PrimaryButton.vue'
 import { ProblemsApi, type Problem } from '@/api/generated'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import AlertBox from '@/components/AlertBox.vue'
 
 const route = useRoute()
+const { requireTraqAuth } = useTraqAuthGuard()
 
 const problem = ref<Problem>()
 const body = ref<string>('')
@@ -47,14 +49,16 @@ async function saveStatement() {
   isLoading.value = true
   try {
     problem.value.statement = body.value
-    await problemsApi.putProblem({
-      problemId: problemId.value,
-      putProblemRequest: problem.value
-    })
+    await requireTraqAuth(() =>
+      problemsApi.putProblem({
+        problemId: problemId.value,
+        putProblemRequest: problem.value!
+      })
+    )
     saveSuccess.value = true
   } catch (error) {
     console.error('問題文の保存に失敗しました:', error)
-    saveError.value = '問題文の保存に失敗しました。'
+    saveError.value = error instanceof Error ? error.message : '問題文の保存に失敗しました。'
     saveErrorShow.value = true
   } finally {
     isLoading.value = false

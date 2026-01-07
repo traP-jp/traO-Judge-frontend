@@ -73,8 +73,8 @@ watch([page], () => updateSubmissions(), {
         <span class="fontstyle-ui-body-2 ml-1">ms</span>
       </template>
       <template v-else-if="colId === 'maxMemory'">
-        <span>{{ Math.round((submissions.get(rowId)?.maxMemory ?? 0) * 1024) }}</span>
-        <span class="fontstyle-ui-body-2 ml-1">KB</span>
+        <span>{{ submissions.get(rowId)?.maxMemory ?? 0 }}</span>
+        <span class="fontstyle-ui-body-2 ml-1">KiB</span>
       </template>
       <template v-else>Unknown column: {{ colId }}</template>
     </template>
