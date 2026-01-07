@@ -14,7 +14,7 @@ onMounted(async () => {
   try {
     const editorialsApi = new EditorialsApi()
     const response = await editorialsApi.getEditorial({
-      editorialId: useRoute().params.id as string
+      editorialId: useRoute().params.editorialId as string
     })
     editorialId.value = response.id
     editorialAuthroId.value = response.authorId
