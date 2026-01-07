@@ -37,7 +37,7 @@ const loadSubmissions = async (pageNum: number) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 py-6">
+  <div class="flex w-full flex-col gap-6 py-6">
     <SubmissionsFilter>
       <template #title>提出一覧</template>
     </SubmissionsFilter>
