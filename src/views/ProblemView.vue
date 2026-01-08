@@ -29,7 +29,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mx-auto flex max-w-300 items-start gap-8 self-stretch">
+  <div class="flex items-start gap-8 px-container-x">
     <SideMenuProblem :problem-name="problemName" :is-editorial-available="true"/>
     <RouterView/>
   </div>
