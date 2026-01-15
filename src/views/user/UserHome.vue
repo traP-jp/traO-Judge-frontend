@@ -31,7 +31,7 @@ const selfIntroduction = computed(() => user?.selfIntroduction ?? '')
         <img src="/src/assets/service_icons/x.svg" class="size-5" />
       </span>
       <span class="px-2">
-        <Link :href="`https://x.com/${xId}`" new-tab>@{{ xId }}</Link>
+        <Link :href="`https://x.com/intent/user?screen_name=${xId}`" new-tab>@{{ xId }}</Link>
       </span>
     </div>
     <div v-if="traqId" class="flex items-center">
