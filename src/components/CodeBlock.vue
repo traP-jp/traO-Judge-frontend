@@ -21,28 +21,38 @@ const element = useTemplateRef<HTMLElement>('codeBlock')
 
 let highlighter: Highlighter
 
-const syntaxMapping: Map<string, BundledLanguage> = new Map(
-  Object.entries({
-    C: 'c',
-    'C++': 'cpp',
-    Java: 'java',
-    Python: 'python',
-    JavaScript: 'javascript',
-    Ruby: 'ruby',
-    Swift: 'swift',
-    Go: 'go',
-    Rust: 'rust',
-    Kotlin: 'kotlin'
-  })
-)
+const syntaxMapping: [string, BundledLanguage][] = [
+  ['C++', 'cpp'],
+  ['C', 'c'],
+  ['Java', 'java'],
+  ['Python', 'python'],
+  ['JavaScript', 'javascript'],
+  ['Ruby', 'ruby'],
+  ['Swift', 'swift'],
+  ['Go', 'go'],
+  ['Rust', 'rust'],
+  ['Kotlin', 'kotlin']
+]
+
+const getSyntaxName = (languageName: string): BundledLanguage | undefined => {
+  for (const [prefix, syntax] of syntaxMapping) {
+    if (languageName.startsWith(prefix)) {
+      return syntax
+    }
+  }
+  return undefined
+}
 
 const setLanguage = async (language?: Language) => {
   if (editor == undefined) return
   let syntaxName: BundledLanguage | undefined
-  if (language != undefined && syntaxMapping.has(language.name)) {
-    syntaxName = syntaxMapping.get(language.name)!
-    await highlighter.loadLanguage(syntaxName)
-    monaco.languages.register({ id: syntaxName })
+  if (language != undefined) {
+    syntaxName = getSyntaxName(language.name)
+    if (syntaxName) {
+      await highlighter.loadLanguage(syntaxName)
+      monaco.languages.register({ id: syntaxName })
+      shikiToMonaco(highlighter, monaco)
+    }
   }
   // 対応していない言語の場合、textフォーマッタを使用
   monaco.editor.setModelLanguage(editor!.getModel()!, syntaxName || 'text')
@@ -77,7 +87,8 @@ onMounted(async () => {
 
   editor = monaco.editor.create(element.value!, {
     value: model.value ?? '',
-    automaticLayout: true
+    automaticLayout: true,
+    theme: 'github-light'
   })
 
   highlighter = await createHighlighter({

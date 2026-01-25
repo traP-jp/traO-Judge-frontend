@@ -6,6 +6,7 @@ import { useRoute } from 'vue-router'
 import { onMounted, ref } from 'vue'
 
 const editorialId = ref<string>('')
+const editorialTitle = ref<string>('')
 const editorialAuthroId = ref<string>('')
 const editorialUpdatedAt = ref<string>('')
 const editorialStatement = ref<string>('')
@@ -14,10 +15,11 @@ onMounted(async () => {
   try {
     const editorialsApi = new EditorialsApi()
     const response = await editorialsApi.getEditorial({
-      editorialId: useRoute().params.id as string
+      editorialId: useRoute().params.editorialId as string
     })
     editorialId.value = response.id
     editorialAuthroId.value = response.authorId
+    editorialTitle.value = response.title
     editorialUpdatedAt.value =
       response.updatedAt?.toLocaleDateString('ja-JP', {
         year: 'numeric',
@@ -42,7 +44,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-[1_0_0] flex-col items-start gap-6 py-6">
     <div class="flex flex-col items-start gap-1 self-stretch">
-      <div class="fontstyle-ui-subtitle text-text-primary">解説 {{ editorialId }}</div>
+      <div class="fontstyle-ui-subtitle text-text-primary">{{ editorialTitle }}</div>
       <div class="flex flex-col items-start">
         <div class="flex items-center justify-center gap-3">
           <div class="fontstyle-ui-body-2 text-text-secondary">著者</div>

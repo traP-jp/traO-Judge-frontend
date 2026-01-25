@@ -15,7 +15,10 @@ import {
   type PutEditorialOperationRequest,
   type PutEditorialRequest
 } from '@/api/generated'
+import { useTraqAuthGuard } from '@/composables/useTraqAuthGuard'
 import router from '@/router'
+
+const { requireTraqAuth } = useTraqAuthGuard()
 
 const title = ref<string>('')
 const body = ref<string>('')
@@ -107,17 +110,21 @@ async function saveEditorial() {
 
   try {
     if (editorialId.value === 'new') {
-      const response = await editorialApi.postEditorial({
-        problemId: problemId.value,
-        postEditorialRequest: editorialPayload as PostEditorialRequest
-      } as PostEditorialOperationRequest)
+      const response = await requireTraqAuth(() =>
+        editorialApi.postEditorial({
+          problemId: problemId.value,
+          postEditorialRequest: editorialPayload as PostEditorialRequest
+        } as PostEditorialOperationRequest)
+      )
 
       router.push(`/problems/${problemId.value}/edit/editorials/${response.id}`)
     } else {
-      await editorialApi.putEditorial({
-        editorialId: editorialId.value,
-        putEditorialRequest: editorialPayload as PutEditorialRequest
-      } as PutEditorialOperationRequest)
+      await requireTraqAuth(() =>
+        editorialApi.putEditorial({
+          editorialId: editorialId.value,
+          putEditorialRequest: editorialPayload as PutEditorialRequest
+        } as PutEditorialOperationRequest)
+      )
     }
 
     saveSuccess.value = true

@@ -50,13 +50,6 @@ const bottomContents = computed((): SideMenuProps[] => {
         text: '問題設定',
         icon: 'edit_note',
         href: `/problems/${problemId}/edit`
-      },
-      {
-        text: 'ジャッジ設定',
-        icon: 'code',
-        onClick: () => {
-          console.log('TODO: ジャッジ設定')
-        }
       }
     ]
   } else {
